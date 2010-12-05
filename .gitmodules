@@ -1,9 +1,6 @@
 [submodule "adapters"]
 	path = adapters
 	url = rp@ridiculouspower.com:rpersistence/adapters
-[submodule "versioning"]
-	path = versioning
-	url = rp@ridiculouspower.com:rpersistence/versioning
-[submodule "sharding"]
-	path = sharding
-	url = rp@ridiculouspower.com:rpersistence/sharding
+[submodule "modules"]
+	path = modules
+	url = rp@ridiculouspower.com:rpersistence/modules
