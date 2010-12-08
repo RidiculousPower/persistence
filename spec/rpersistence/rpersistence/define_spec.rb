@@ -6,16 +6,16 @@ describe Rpersistence::Define do
   #  self.persist_declared_by  #
   ##############################
 
-  ##################
-  #  self.atomic!  #
-  ##################
+  ########################
+  #  self.attrs_atomic!  #
+  ########################
 
   it "can declare all of its attributes atomic" do
 
     class TestClass
       attr_accessor   :unique_id, :atomic_value
       persist_by      :unique_id
-      atomic!
+      attrs_atomic!
     end
     test_instance = TestClass.new
     test_instance.unique_id = 'unique object id'
@@ -89,9 +89,9 @@ describe Rpersistence::Define do
 
   end
 
-  ######################
-  #  self.non_atomic!  #
-  ######################
+  ############################
+  #  self.attrs_non_atomic!  #
+  ############################
 
   it "can declare all of its attributes non-atomic" do
 
@@ -99,7 +99,7 @@ describe Rpersistence::Define do
       attr_accessor     :unique_id, :atomic_value
       persist_by        :unique_id
       attr_atomic   :atomic_value
-      non_atomic!
+      attrs_non_atomic!
     end
     test_instance = TestClass.new
     test_instance.unique_id = 'unique object id'
@@ -178,21 +178,16 @@ describe Rpersistence::Define do
 
   end
   
-  ################################################################################
-  #  self.attr_shared( class, attr_shared_name )                                 #
-  #  self.attr_shared( class, attr_shared_name, local_attribute_alias )          #
-  ################################################################################
-  
-  it "can share attributes between classes; this implies an atomic operation for both classes, even if not otherwise specified" do
-    
-  end
-  
   ####################################################################################################################################
   #  self.attr_share( class, :attr_shared_name, ... )                                                                                #
   #  self.attr_share( class, :attr_shared_name => :local_attribute_alias, ... )                                                      #
   #  self.attr_share( class, :attr_shared_name, ... ) { { :attr_shared_name => :local_attribute_alias } }                            #
   #  self.attr_share( class, :attr_shared_name => :local_attribute_alias, ... ) { { :attr_shared_name => :local_attribute_alias } }  #
   ####################################################################################################################################
+
+  it "can share attributes between classes; this implies an atomic operation for both classes, even if not otherwise specified" do
+    
+  end
 
   it "can share multiple attributes between classes in a single call" do
     
@@ -210,11 +205,10 @@ describe Rpersistence::Define do
     
   end
 
-  #########################################################################################################
-  #  self.attr_share!( class, ... )                                                                       #
-  #  self.attr_share!( class ) { { :attr_shared_name => :local_attribute_alias } }                        #
-  #  self.attr_share!( class, ... ) { { ClassName => { :attr_shared_name => :local_attribute_alias } } }  #
-  #########################################################################################################
+  ###################################################################################
+  #  self.attr_share!( class )                                                      #
+  #  self.attr_share!( class ) { { :attr_shared_name => :local_attribute_alias } }  #
+  ###################################################################################
   
   it "can implicitly share all attributes from another class" do
     
@@ -229,83 +223,78 @@ describe Rpersistence::Define do
   end
 
   ########################
-  #  delete_cascades_to  #
+  #  self.attr_delegate  #
   ########################
   
-  # * delete_cascades_to  :accessor
-
+  # * attr_is_delegate  :accessor
   it "" do
     
   end
 
-  #####################
-  #  delete_excludes  #
-  #####################
-
-  # * delete_excludes     :accessor
-
+  ########################
+  #  self.attr_property  #
+  ########################
+  
+  # * attr_is_property     :accessor
   it "" do
     
   end
 
-  ###################
-  #  attr_required  #
-  ###################
+  ########################
+  #  self.attr_required  #
+  ########################
 
   # * attr_required   :accessor
-
   it "" do
     
   end
 
-  ####################
-  #  attr_validator  #
-  ####################
+  #########################
+  #  self.attr_validator  #
+  #########################
 
   # * attr_validator  :constraint_validation_method
-
   it "" do
     
   end
 
-  ####################
-  #  before_persist  #
-  ####################
+  #########################
+  #  self.before_persist  #
+  #########################
 
   it "" do
     
   end
-
-  ###################
-  #  after_persist  #
-  ###################
-
-  it "" do
-    
-  end
-
-  #####################
-  #  before_persist!  #
-  #####################
-
-  it "" do
-    
-  end
-
-  ####################
-  #  after_persist!  #
-  ####################
-
-  it "" do
-    
-  end
-
 
   ########################
-  #  version_controller  #
+  #  self.after_persist  #
   ########################
+
+  it "" do
+    
+  end
+
+  ##########################
+  #  self.before_persist!  #
+  ##########################
+
+  it "" do
+    
+  end
+
+  #########################
+  #  self.after_persist!  #
+  #########################
+
+  it "" do
+    
+  end
+
+  ##############
+  #  revision  #
+  ##############
   
-  it "can manage versions" do
+  it "can manage revisions" do
     
   end
    

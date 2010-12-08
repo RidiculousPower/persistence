@@ -12,41 +12,41 @@ require_relative './rpersistence_mocks.rb'
 describe Rpersistence do
 
   ###################################################################
-  #  Rpersistence.persist_with( storage_port )                          #
-  #  Rpersistence.persist_with( :storage_port_name, storage_port )      #
-  #  Rpersistence.persist_with( storage_port, :storage_port_name )      #
-  #  Rpersistence.storage_port=( storage_port )                         #
-  #  Rpersistence.storage_port=( :storage_port_name, storage_port )     #
-  #  Rpersistence.storage_port=( storage_port, :storage_port_name )     #
-  #  Rpersistence.set_storage_port( storage_port )                      #
-  #  Rpersistence.set_storage_port( :storage_port_name, storage_port )  #
-  #  Rpersistence.set_storage_port( storage_port, :storage_port_name )  #
+  #  Rpersistence.persist_with( persistence_port )                          #
+  #  Rpersistence.persist_with( :persistence_port_name, persistence_port )      #
+  #  Rpersistence.persist_with( persistence_port, :persistence_port_name )      #
+  #  Rpersistence.persistence_port=( persistence_port )                         #
+  #  Rpersistence.persistence_port=( :persistence_port_name, persistence_port )     #
+  #  Rpersistence.persistence_port=( persistence_port, :persistence_port_name )     #
+  #  Rpersistence.set_persistence_port( persistence_port )                      #
+  #  Rpersistence.set_persistence_port( :persistence_port_name, persistence_port )  #
+  #  Rpersistence.set_persistence_port( persistence_port, :persistence_port_name )  #
   ###################################################################
   
   it "requires that a storage port be specified" do
-    Rpersistence.storage_port = Rpersistence::Mock::StoragePort.new
+    Rpersistence.persistence_port = Rpersistence::Mock::StoragePort.new
   end
   
   it "can use a name to reference the storage port to allow multiple simultaneous storage ports" do
-    Rpersistence.set_storage_port( :storage_port, Rpersistence::Mock::StoragePort.new )
-    Rpersistence.set_storage_port( Rpersistence::Mock::StoragePort.new, :storage_port )
+    Rpersistence.set_persistence_port( :persistence_port, Rpersistence::Mock::StoragePort.new )
+    Rpersistence.set_persistence_port( Rpersistence::Mock::StoragePort.new, :persistence_port )
   end
   
   ####################################################
   #  persist!                                        #
-  #  persist!( storage_port )                        #
-  #  persist!( :storage_port_name )                  #
+  #  persist!( persistence_port )                        #
+  #  persist!( :persistence_port_name )                  #
   #  persists?                                       #
   #  self.persists?( :storage_id )                   #
   #  self.persist                                    #
-  #  self.persist( storage_port )                    #
-  #  self.persist( :storage_port_name )              #
+  #  self.persist( persistence_port )                    #
+  #  self.persist( :persistence_port_name )              #
   #  cease!                                          #
-  #  cease!( storage_port )                          #
-  #  cease!( :storage_port_name )                    #
+  #  cease!( persistence_port )                          #
+  #  cease!( :persistence_port_name )                    #
   #  self.cease!( unique_key )                       #
-  #  self.cease!( storage_port, unique_key )         #
-  #  self.cease!( :storage_port_name, unique_key )   #
+  #  self.cease!( persistence_port, unique_key )         #
+  #  self.cease!( :persistence_port_name, unique_key )   #
   ####################################################
   
   # => object.persist!
@@ -75,13 +75,13 @@ describe Rpersistence do
   
   it "can persist an object to and from a storage port and later cease in this persistence (which can be reverted)" do
     
-    Rpersistence.storage_port = Rpersistence::Mock::StoragePort.new
+    Rpersistence.persistence_port = Rpersistence::Mock::StoragePort.new
     
     # create and persist an object
     object = Rpersistence::Mock::Object.new
     object.unique_id = 'mock object id'
     object.value = 'value' 
-    object.persist!( storage_port )
+    object.persist!( persistence_port )
     object.persists?.should == true
 
     # persist object from storage
@@ -97,16 +97,16 @@ describe Rpersistence do
   #######################################################
   #  prune!                                             #
   #  prune!( version )                                  #
-  #  prune!( storage_port )                             #
-  #  prune!( storage_port, version )                    #
-  #  prune!( :storage_port )                            #
-  #  prune!( :storage_port, version )                   #
+  #  prune!( persistence_port )                             #
+  #  prune!( persistence_port, version )                    #
+  #  prune!( :persistence_port )                            #
+  #  prune!( :persistence_port, version )                   #
   #  self.prune!( unique_key )                          #
-  #  self.prune!( storage_port, unique_key )            #
-  #  self.prune!( :storage_port, unique_key )           #
+  #  self.prune!( persistence_port, unique_key )            #
+  #  self.prune!( :persistence_port, unique_key )           #
   #  self.prune!( unique_key, version )                 #
-  #  self.prune!( storage_port, unique_key, version )   #
-  #  self.prune!( :storage_port, unique_key, version )  #
+  #  self.prune!( persistence_port, unique_key, version )   #
+  #  self.prune!( :persistence_port, unique_key, version )  #
   #######################################################
 
   it "can prune old versions (which are permanently deleted)" do
@@ -127,11 +127,11 @@ describe Rpersistence do
 
   ###############################################
   #  delete!                                    #
-  #  delete!( storage_port )                    #
-  #  delete!( :storage_port )                   #
+  #  delete!( persistence_port )                    #
+  #  delete!( :persistence_port )                   #
   #  self.delete!( unique_key )                 #
-  #  self.delete!( storage_port, unique_key )   #
-  #  self.delete!( :storage_port, unique_key )  #
+  #  self.delete!( persistence_port, unique_key )   #
+  #  self.delete!( :persistence_port, unique_key )  #
   ###############################################
 
   it "can delete itself in a revertible way" do
@@ -140,11 +140,11 @@ describe Rpersistence do
 
   ################################################
   #  destroy!                                    #
-  #  destroy!( storage_port )                    #
-  #  destroy!( :storage_port )                   #
+  #  destroy!( persistence_port )                    #
+  #  destroy!( :persistence_port )                   #
   #  self.destroy!( unique_key )                 #
-  #  self.destroy!( storage_port, unique_key )   #
-  #  self.destroy!( :storage_port, unique_key )  #
+  #  self.destroy!( persistence_port, unique_key )   #
+  #  self.destroy!( :persistence_port, unique_key )  #
   ################################################
 
   it "can remove all evidence it ever existed" do
@@ -153,8 +153,8 @@ describe Rpersistence do
 
   ##########################################
   #  flash_persist!                        #
-  #  flash_persist!( storage_port )        #
-  #  flash_persist!( :storage_port_name )  #
+  #  flash_persist!( persistence_port )        #
+  #  flash_persist!( :persistence_port_name )  #
   #  flash_persisted?                      #
   ##########################################
 

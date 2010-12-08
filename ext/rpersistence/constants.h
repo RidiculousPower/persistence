@@ -10,6 +10,7 @@
 //	Instance variables defined in Object
 #define RPERSISTENCE_OBJECT_IVAR_UNIQUE_ID						"@__rpersistence_id__"
 #define RPERSISTENCE_OBJECT_IVAR_C_DATA								"@__rpersistence_c_data__"
+#define RPERSISTENCE_OBJECT_SYM_C_DATA								":__rpersistence_c_data__"
 
 /*********************************************************************************************************************
 ***********************************************  Private  ***********************************************************

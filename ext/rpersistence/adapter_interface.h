@@ -48,8 +48,6 @@
 	//	Struct defines storage format for object info so that location and recreation are possible
 	struct		Rpersistence_ObjectDataTable_s	{
 		
-		ruby_value_type										c_type;
-		VALUE															rb_class;
 		Rpersistence_VersionData_t*				c_version_data;
 		
 	};
@@ -68,10 +66,10 @@
 	struct 		Rpersistence_AdapterFunctions_s	{
 
 		//	Create and return globally unique ID for rb_object
-		VALUE	(*unique_id_function)( rb_storage_port, rb_object );
+		VALUE	(*unique_id_function)( rb_persistence_port, rb_object );
 		//	Create and return data table describing storage format for object info so that location and recreation are possible
-		Rpersistence_ObjectDataTable_t*	(*object_data_table)( rb_storage_port, rb_object );
+		Rpersistence_ObjectDataTable_t*	(*object_data_table)( rb_persistence_port, rb_object );
 		//	Store contents of IVar Hash from rb_object
-		VALUE	(*store_properties_for_object)( rb_storage_port, rb_object );
+		VALUE	(*store_properties_for_object)( rb_persistence_port, rb_object );
 
 	};
