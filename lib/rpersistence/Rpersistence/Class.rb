@@ -288,5 +288,27 @@ module Rpersistence::Class
   def shared?( *attributes )
     return attributes.all? { |this_attribute| @shared_attributes.has_key?[ this_attribute ] } 
   end
+
+  #################
+  #  self.cease!  #
+  #################
+
+	def cease!( *args )
+		unique_key			= nil
+		storage_port		=	nil
+		storage_bucket	=	nil
+		Rargs.define_and_parse( args ) do
+			# unique key
+			parameter_set(		parameter(		match_any(			unique_key ) ) )
+			# storage port, unique key
+			parameter_set(		parameter(		match_symbol(		) ),
+												parameter(		match_any(			unique_key ) ) )
+			# storage port, storage bucket, unique key
+			parameter_set(		parameter(		match_symbol() ),
+												parameter(		match_string_symbol(),
+												 							match_class() ),
+												parameter(		match_any(			unique_key ) ) )
+		end
+	end
   
 end

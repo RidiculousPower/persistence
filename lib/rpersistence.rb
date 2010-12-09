@@ -1,4 +1,3 @@
-require_relative 'rpersist/rpersist'
 
 module Rpersistence
 
@@ -9,3 +8,5 @@ module Rpersistence
   end
   
 end
+
+require_relative 'rpersist/rpersist'

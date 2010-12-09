@@ -22,7 +22,23 @@ module Rpersistence::Object
   #####################
   
   def persistence_key
-    return __send__.( persist_key_method, )
+    return __send__.( persistence_key_method )
   end
+
+  ################
+  #  persisted?  #
+  ################
+
+	def persisted?
+		
+	end
+
+  ############
+  #  cease!  #
+  ############
+
+	def cease!
+		
+	end
 
 end
