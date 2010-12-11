@@ -1,15 +1,20 @@
 
 module Rpersistence::Class
 
+	attr_reader		:persists_attributes, :persists_atomic, :persists_non_atomic, :persists_shared_attributes,
+								:persists_everything, :persists_default_atomic
+
   ################
   #  initialize  #
   ################
 
   def initialize
-    @attributes_default_atomic = false
-    @atomic_attributes = {}
-    @non_atomic_attributes = {}
-    @shared_attributes = {}
+    @persists_everything		 			= false
+    @persists_default_atomic 			= false
+    @persists_atomic 							= {}
+    @persists_non_atomic 					= {}
+		@persists_attributes					=	{}
+    @persists_shared_attributes 	= {}
   end
 
   #####################
@@ -20,15 +25,15 @@ module Rpersistence::Class
     @persist_by = unique_id_accessor
     return self
   end
-  alias persist_by persistence_key_method
+  alias :persist_by :persistence_key_method
 
-  ##############################
-  #  self.persist_declared_by  #
-  ##############################
+  ######################
+  #  self.persist_by!  #
+  ######################
   
-  def persist_declared_by( unique_id_accessor )
+  def persist_by!( unique_id_accessor )
     persist_by( unique_id_accessor )
-    @persist_declared_only = true
+    @persists_everything = true
     return self
   end
   
@@ -39,15 +44,15 @@ module Rpersistence::Class
   def store_as( persistence_bucket_class_or_name )
     @persistence_bucket = persistence_bucket_class_or_name
   end
-  alias store_as persistence_bucket_name
+  alias :store_as :persistence_bucket_name
 
   ########################
   #  self.attrs_atomic!  #
   ########################
 
   def attrs_atomic!
-    @attributes_default_atomic = true
-    @non_atomic_attributes = {}
+    @persists_default_atomic = true
+    @persists_non_atomic = {}
     return self
   end
 
@@ -56,13 +61,15 @@ module Rpersistence::Class
   ######################
 
   def attr_atomic( *attributes )
-    if @attributes_default_atomic
+    if @persists_default_atomic
       attributes.each do |this_attribute|
-        @atomic_attributes[ this_attribute ]  = :accessor
+        @persists_atomic[ this_attribute ]  	= :accessor
+				@persists_attributes[ this_attribute ]	=	:accessor
       end
     else
       attributes.each do |this_attribute|
-        @non_atomic_attributes.delete( this_attribute )
+        @persists_non_atomic.delete( this_attribute )
+				@persists_attributes.delete( this_attribute )
       end
     end
     return self
@@ -73,22 +80,33 @@ module Rpersistence::Class
   #############################
 
   def attr_atomic_getter( *attributes )
-    if @attributes_default_atomic
+    if @persists_default_atomic
       attributes.each do |this_attribute|
-        case accessor = @atomic_attributes[ this_attribute ]
+        case accessor = @persists_atomic[ this_attribute ]
           when :setter
-            @atomic_attributes[ this_attribute ] = :both
+            @persists_atomic[ this_attribute ] 		= :accessor
+						@persists_attributes[ this_attribute ]	=	:accessor
           when nil
-            @atomic_attributes[ this_attribute ] = :getter
+            @persists_atomic[ this_attribute ] 		= :getter
+						if @persists_attributes[ this_attribute ] == :setter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:getter
+						end
         end
       end
     else
       attributes.each do |this_attribute|
-        case accessor = @non_atomic_attributes[ this_attribute ]
-          when :both
-            @non_atomic_attributes[ this_attribute ] = :setter
+        case accessor = @persists_non_atomic[ this_attribute ]
+          when :accessor
+            @persists_non_atomic[ this_attribute ] 	= :setter
+						if @persists_attributes[ this_attribute ] == :getter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:setter
+						end
           when :getter
-            @non_atomic_attributes.delete( this_attribute )
+            @persists_non_atomic.delete( this_attribute )
         end
       end
     end
@@ -100,22 +118,34 @@ module Rpersistence::Class
   #############################
 
   def attr_atomic_setter( *attributes )
-    if @attributes_default_atomic
+    if @persists_default_atomic
       attributes.each do |this_attribute|
-        case accessor = @atomic_attributes[ this_attribute ]
+        case accessor = @persists_atomic[ this_attribute ]
           when :getter
-            @atomic_attributes[ this_attribute ] = :both
+            @persists_atomic[ this_attribute ] 		= :accessor
+						@persists_attributes[ this_attribute ]	=	:accessor
           when nil
-            @atomic_attributes[ this_attribute ] = :setter
+            @persists_atomic[ this_attribute ] 		= :setter
+						if @persists_attributes[ this_attribute ] == :getter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:setter
+						end
         end
       end
     else
       attributes.each do |this_attribute|
-        case accessor = @non_atomic_attributes[ this_attribute ]
-          when :both
-            @non_atomic_attributes[ this_attribute ] = :getter
+        case accessor = @persists_non_atomic[ this_attribute ]
+          when :accessor
+            @persists_non_atomic[ this_attribute ] 	= :getter
+						@persists_attributes[ this_attribute ]		=	:getter
+						if @persists_attributes[ this_attribute ] == :setter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:getter
+						end
           when :setter
-            @non_atomic_attributes.delete( this_attribute )
+            @persists_non_atomic.delete( this_attribute )
         end
       end
     end
@@ -127,8 +157,8 @@ module Rpersistence::Class
   ############################
 
   def attrs_non_atomic!
-    @attributes_default_atomic = false
-    @atomic_attributes = {}
+    @persists_default_atomic = false
+    @persists_atomic = {}
     return self
   end
 
@@ -137,7 +167,7 @@ module Rpersistence::Class
   ##########################
 
   def attr_non_atomic( *attributes )
-    attributes.each { |this_attribute| @atomic_attributes.delete( this_attribute ) } if @atomic_attributes
+    attributes.each { |this_attribute| @persists_atomic.delete( this_attribute ) } if @persists_atomic
     return self
   end
 
@@ -146,22 +176,38 @@ module Rpersistence::Class
   #################################
 
   def attr_non_atomic_getter( *attributes )
-    if @attributes_default_atomic
+    if @persists_default_atomic
       attributes.each do |this_attribute|
-        case accessor = @non_atomic_attributes[ this_attribute ]
+        case accessor = @persists_non_atomic[ this_attribute ]
           when :setter
-            @non_atomic_attributes[ this_attribute ] = :both
+            @persists_non_atomic[ this_attribute ] 	= :accessor
+						@persists_attributes[ this_attribute ]		=	:getter
+						if @persists_attributes[ this_attribute ] == :setter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:getter
+						end
           when nil
-            @non_atomic_attributes[ this_attribute ] = :setter
+            @persists_non_atomic[ this_attribute ] 	= :setter
+						if @persists_attributes[ this_attribute ] == :setter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:getter
+						end
         end
       end
     else
       attributes.each do |this_attribute|
-        case accessor = @atomic_attributes[ this_attribute ]
-          when :both
-            @atomic_attributes[ this_attribute ] = :setter
+        case accessor = @persists_atomic[ this_attribute ]
+          when :accessor
+            @persists_atomic[ this_attribute ] = :setter
+						if @persists_attributes[ this_attribute ] == :setter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:getter
+						end
           when :getter
-            @atomic_attributes.delete( this_attribute )
+            @persists_atomic.delete( this_attribute )
         end
       end
     end
@@ -173,36 +219,58 @@ module Rpersistence::Class
   #################################
 
   def attr_non_atomic_setter( *attributes )
-    if @attributes_default_atomic
+    if @persists_default_atomic
       attributes.each do |this_attribute|
-        case accessor = @non_atomic_attributes[ this_attribute ]
+        case accessor = @persists_non_atomic[ this_attribute ]
           when :getter
-            @non_atomic_attributes[ this_attribute ] = :both
+            @persists_non_atomic[ this_attribute ] 	= :accessor
+						@persists_attributes[ this_attribute ]		=	:accessor
           when nil
-            @non_atomic_attributes[ this_attribute ] = :getter
+            @persists_non_atomic[ this_attribute ] 	= :getter
+						@persists_attributes[ this_attribute ]		=	:getter
+						if @persists_attributes[ this_attribute ] == :setter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:getter
+						end
         end
       end
     else
       attributes.each do |this_attribute|
-        case accessor = @atomic_attributes[ this_attribute ]
-          when :both
-            @atomic_attributes[ this_attribute ] = :getter
+        case accessor = @persists_atomic[ this_attribute ]
+          when :accessor
+            @persists_atomic[ this_attribute ]	 		= :getter
+						if @persists_attributes[ this_attribute ] == :setter
+							@persists_attributes[ this_attribute ]	=	:accessor
+						else
+							@persists_attributes[ this_attribute ]	=	:getter
+						end
           when :setter
-            @atomic_attributes.delete( this_attribute )
+            @persists_atomic.delete( this_attribute )
         end
       end
     end
     return self
   end
 
+  ##############################
+  #  self.attr_non_persistent  #
+  ##############################
+
+	def attr_non_persistent( this_attribute )
+		@persists_atomic.delete( this_attribute )
+		@persists_non_atomic.delete( this_attribute )
+		@persists_attributes.delete( this_attribute )
+	end
+
   #####################
   #  self.attr_share  #
   #####################
 
   def attr_share( klass, *attributes )
-    @shared_attributes[ klass ] = {} unless @shared_attributes.has_key?( klass )
+    @persists_shared_attributes[ klass ] = {} unless @persists_shared_attributes.has_key?( klass )
     attributes.each do |this_local_attribute_name, this_remote_attribute_name| 
-      @shared_attributes[ klass ][ this_local_attribute_name ] = this_local_attribute_name
+      @persists_shared_attributes[ klass ][ this_local_attribute_name ] = this_local_attribute_name
     end
     return self
   end
@@ -212,7 +280,7 @@ module Rpersistence::Class
   #######################
 
   def attrs_share!( klass )
-    @shared_attributes[ klass ] = {}
+    @persists_shared_attributes[ klass ] = {}
     return self
   end
 
@@ -222,7 +290,7 @@ module Rpersistence::Class
 
   def attr_share( klass, *attributes )
     attributes.each do |this_local_attribute_name, this_remote_attribute_name| 
-      @shared_attributes[ this_local_attribute_name ] = {   :class      => klass, 
+      @persists_shared_attributes[ this_local_attribute_name ] = {   :class      => klass, 
                                                             :attribute  => this_local_attribute_name }
     end
     return self
@@ -233,7 +301,7 @@ module Rpersistence::Class
   ########################
 
   def attrs_isolate( klass )
-    @shared_attributes.delete( klass )
+    @persists_shared_attributes.delete( klass )
     return self
   end
 
@@ -242,7 +310,7 @@ module Rpersistence::Class
   #########################
 
   def attrs_isolate!
-    @shared_attributes = {}
+    @persists_shared_attributes = {}
     return self
   end
 
@@ -262,7 +330,7 @@ module Rpersistence::Class
   #####################
   
   def is_atomic?( *attributes )
-    return attributes.all? { |this_attribute| @atomic_attributes.has_key?[ this_attribute ] }    
+    return attributes.all? { |this_attribute| @persists_atomic.has_key?[ this_attribute ] }    
   end
 
   #######################
@@ -286,7 +354,7 @@ module Rpersistence::Class
   ##################
   
   def shared?( *attributes )
-    return attributes.all? { |this_attribute| @shared_attributes.has_key?[ this_attribute ] } 
+    return attributes.all? { |this_attribute| @persists_shared_attributes.has_key?[ this_attribute ] } 
   end
 
   #################

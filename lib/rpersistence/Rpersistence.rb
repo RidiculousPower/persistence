@@ -33,6 +33,7 @@ class Rpersistence
 																									adapter_class, 
 																									directory, 
 																									*persists_classes ).enable
+		return self
 	end
 
   ##################
@@ -42,6 +43,7 @@ class Rpersistence
 	# Rpersistence.disable_port( :port_name )
 	def disable_port( port_name )
 		@ports[ port_name ].disable
+		return self
 	end
 
   ######################
@@ -50,6 +52,7 @@ class Rpersistence
   
   def set_default_port( persistence_name )
 		@default_port	=	persistence_name
+		return self
   end
 
 	########################################
@@ -57,28 +60,7 @@ class Rpersistence
 	########################################
 	
 	def global_persistence_data_for_object( object )
-		object.persistence_id + BucketKeyDelimiter + object.persistence_bucket
-	end
-
-  #############################
-  #  storage_id_for_property  #
-  #############################
-  
-  def storage_id_for_property( object, property_name )
-		Kernel.sprintf( Rpersistence::Revisions::Format, object.persistence_id, Rpersistence::VersionDelimiter, property_name )
-  end
-  
-  ############################
-  #  persistence_ivars_hash  #
-  ############################
-
-	def persistence_ivars_hash( object )
-		object.instance_eval do
-			instance_variables.inject( {} ) do |hash, property_name|
-				persistence_hash[ storage_id_for_property( object, property_name ) ] = object.instance_variable_get( property_name )
-				hash
-			end
-		end
+		return Rpersistence::Adapter::ObjectTable.new( object.persistence_bucket, object.persistence_key )
 	end
 
 end

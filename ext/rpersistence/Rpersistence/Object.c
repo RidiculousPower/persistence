@@ -364,6 +364,7 @@ VALUE rb_Rpersistence_Object_storeFlatObject(	VALUE		rb_object,
 		case T_COMPLEX:
 
 		case T_FILE:
+			//	get file persistence location for object
 			//	store on disk and references in data table
 		
 	}
