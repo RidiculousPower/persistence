@@ -4,63 +4,73 @@ class Rpersistence
 	VersionDelimiter		=	'.'
 	BucketKeyDelimiter	=	'##__rp__##'
 
-	attr_reader	:default_port
+	class << self
+		attr_reader	:current_port
+	end
+
+  @ports = { }
 
   ################
   #  initialize  #
   ################
 
   def initialize
-    
-  end
+	end
 
   ##########
   #  port  #
   ##########
   
   def port( port_name )
-    return @ports[ port_name ]
+    return @ports[ port_name.to_sym ]
   end
 
-  #################
-  #  enable_port  #
-  #################
+  ######################
+  #  self.enable_port  #
+  ######################
 
 	# Rpersistence.enable_port( :port_name, AdapterClass, directory )
 	# Rpersistence.enable_port( :port_name, AdapterClass, directory, ObjectClass or [ ObjectClassAndDescending ] )
-	def enable_port( port_name, adapter_class, directory, *persists_classes )
-		@ports[ port_name ]	=	Rpersistence::Port.new(	port_name, 
-																									adapter_class, 
-																									directory, 
-																									*persists_classes ).enable
+	def self.enable_port( port_name, adapter_instance, *persists_classes )
+		port	=	Rpersistence::Port.new(	port_name, 
+																		adapter_instance, 
+																		*persists_classes ).enable
+		@ports[ port_name.to_sym ] = port
+		set_current_port( port ) unless current_port
 		return self
 	end
 
-  ##################
-  #  disable_port  #
-  ##################
+  #######################
+  #  self.disable_port  #
+  #######################
 
 	# Rpersistence.disable_port( :port_name )
-	def disable_port( port_name )
-		@ports[ port_name ].disable
+	def self.disable_port( port_name )
+		@ports[ port_name.to_sym ].disable
 		return self
 	end
 
-  ######################
-  #  set_default_port  #
-  ######################
+  ##################
+  #  current_port  #
+  ##################
   
-  def set_default_port( persistence_name )
-		@default_port	=	persistence_name
-		return self
+  def self.current_port
+		return @current_port
   end
 
-	########################################
-	#  global_persistence_data_for_object  #
-	########################################
-	
-	def global_persistence_data_for_object( object )
-		return Rpersistence::Adapter::ObjectTable.new( object.persistence_bucket, object.persistence_key )
-	end
+  ######################
+  #  set_current_port  #
+  ######################
+  
+  def self.set_current_port( persistence_port_or_name )
+	persistence_port = nil
+		if persistence_port_or_name.is_a?( String ) or persistence_port_or_name.is_a?( Symbol )
+			persistence_port = port( persistence_port_or_name )
+		else
+			persistence_port = persistence_port_or_name
+		end
+		@current_port	=	persistence_port
+		return self
+  end
 
 end

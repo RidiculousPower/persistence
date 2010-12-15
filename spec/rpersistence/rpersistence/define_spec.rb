@@ -47,15 +47,15 @@ describe Rpersistence::Define do
   end
 
   #############################
-  #  self.attr_atomic_getter  #
+  #  self.attr_atomic_reader  #
   #############################
 
-  it "can declare atomic getters" do
+  it "can declare atomic readers" do
 
     class TestClass
       attr_accessor   :unique_id, :atomic_value
       persist_by      :unique_id
-      attr_atomic_getter   :atomic_value
+      attr_atomic_reader   :atomic_value
     end
     test_instance = TestClass.new
     test_instance.unique_id = 'unique object id'
@@ -68,15 +68,15 @@ describe Rpersistence::Define do
   end
   
   #############################
-  #  self.attr_atomic_setter  #
+  #  self.attr_atomic_writer  #
   #############################
 
-  it "can declare atomic setters" do
+  it "can declare atomic writers" do
 
     class TestClass
       attr_accessor   :unique_id, :atomic_value
       persist_by      :unique_id
-      attr_atomic_setter   :atomic_value
+      attr_atomic_writer   :atomic_value
     end
     test_instance = TestClass.new
     test_instance.unique_id = 'unique object id'
@@ -120,7 +120,7 @@ describe Rpersistence::Define do
     class TestClass
       attr_accessor         :unique_id, :atomic_value
       persist_by            :unique_id
-      attr_atomic_getter         :atomic_value
+      attr_atomic_reader         :atomic_value
       attr_non_atomic   :atomic_value
     end
     test_instance = TestClass.new
@@ -134,16 +134,16 @@ describe Rpersistence::Define do
   end
 
   #################################
-  #  self.attr_non_atomic_getter  #
+  #  self.attr_non_atomic_reader  #
   #################################
 
-  it "can declare non-atomic getters" do
+  it "can declare non-atomic readers" do
 
     class TestClass
       attr_accessor         :unique_id, :atomic_value
       persist_by            :unique_id
-      attr_atomic_getter         :atomic_value
-      attr_non_atomic_getter     :atomic_value
+      attr_atomic_reader         :atomic_value
+      attr_non_atomic_reader     :atomic_value
     end
     test_instance = TestClass.new
     test_instance.unique_id = 'unique object id'
@@ -156,16 +156,16 @@ describe Rpersistence::Define do
   end
   
   #################################
-  #  self.attr_non_atomic_setter  #
+  #  self.attr_non_atomic_writer  #
   #################################
 
-  it "can declare non-atomic setters" do
+  it "can declare non-atomic writers" do
 
     class TestClass
       attr_accessor       :unique_id, :atomic_value
       persist_by          :unique_id
-      attr_atomic_setter       :atomic_value
-      attr_non_atomic_setter   :atomic_value
+      attr_atomic_writer       :atomic_value
+      attr_non_atomic_writer   :atomic_value
     end
     test_instance = TestClass.new
     test_instance.unique_id = 'unique object id'

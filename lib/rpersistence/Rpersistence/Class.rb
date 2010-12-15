@@ -1,382 +1,127 @@
 
-module Rpersistence::Class
+module Rpersistence::ObjectClass
 
 	attr_reader		:persists_attributes, :persists_atomic, :persists_non_atomic, :persists_shared_attributes,
-								:persists_everything, :persists_default_atomic
+								:persists_everything, :persists_defaults_atomic
 
-  ################
-  #  initialize  #
-  ################
+  ##############
+  #  extended  #
+  ##############
 
-  def initialize
+  def extended( class_or_module )
     @persists_everything		 			= false
-    @persists_default_atomic 			= false
+    @persists_defaults_atomic 		= false
     @persists_atomic 							= {}
     @persists_non_atomic 					= {}
 		@persists_attributes					=	{}
-    @persists_shared_attributes 	= {}
+    @persists_shared_attributes 	= {}		
+  end
+
+  #################
+  #  self.index!  #
+  #################
+
+  # creates independent index on each object ID
+  def index!
+    persistence_port.adapter.index_object!( self )
   end
 
   #####################
-  #  self.persist_by  #
+  #  self.attr_index  #
   #####################
+
+  # creates index for attribute
+  def attr_index( *attributes )
+    persistence_port.adapter.index_attribute_for_bucket!( self, *attributes )
+  end
+
+  ##################
+  #  self.persist  #
+  ##################
   
-  def persist_by( unique_id_accessor )
-    @persist_by = unique_id_accessor
-    return self
-  end
-  alias :persist_by :persistence_key_method
-
-  ######################
-  #  self.persist_by!  #
-  ######################
-  
-  def persist_by!( unique_id_accessor )
-    persist_by( unique_id_accessor )
-    @persists_everything = true
-    return self
-  end
-  
-  ###################
-  #  self.store_as  #
-  ###################
-
-  def store_as( persistence_bucket_class_or_name )
-    @persistence_bucket = persistence_bucket_class_or_name
-  end
-  alias :store_as :persistence_bucket_name
-
-  ########################
-  #  self.attrs_atomic!  #
-  ########################
-
-  def attrs_atomic!
-    @persists_default_atomic = true
-    @persists_non_atomic = {}
-    return self
+  def persist( with_persistence_key )
+    persistence_hash  = persistence_port.adapter.get_from_persistence_port( persistence_bucket, with_persistence_key )
+    return object_from_persistence_hash( persistence_hash )
   end
 
-  ######################
-  #  self.attr_atomic  #
-  ######################
+  ###########################################################################################################
+  #############################################  Private  ###################################################
+  ###########################################################################################################
 
-  def attr_atomic( *attributes )
-    if @persists_default_atomic
-      attributes.each do |this_attribute|
-        @persists_atomic[ this_attribute ]  	= :accessor
-				@persists_attributes[ this_attribute ]	=	:accessor
-      end
-    else
-      attributes.each do |this_attribute|
-        @persists_non_atomic.delete( this_attribute )
-				@persists_attributes.delete( this_attribute )
-      end
-    end
-    return self
-  end
+  private
 
-  #############################
-  #  self.attr_atomic_getter  #
-  #############################
-
-  def attr_atomic_getter( *attributes )
-    if @persists_default_atomic
-      attributes.each do |this_attribute|
-        case accessor = @persists_atomic[ this_attribute ]
-          when :setter
-            @persists_atomic[ this_attribute ] 		= :accessor
-						@persists_attributes[ this_attribute ]	=	:accessor
-          when nil
-            @persists_atomic[ this_attribute ] 		= :getter
-						if @persists_attributes[ this_attribute ] == :setter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:getter
-						end
-        end
-      end
-    else
-      attributes.each do |this_attribute|
-        case accessor = @persists_non_atomic[ this_attribute ]
-          when :accessor
-            @persists_non_atomic[ this_attribute ] 	= :setter
-						if @persists_attributes[ this_attribute ] == :getter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:setter
-						end
-          when :getter
-            @persists_non_atomic.delete( this_attribute )
-        end
-      end
-    end
-    return self
-  end
-
-  #############################
-  #  self.attr_atomic_setter  #
-  #############################
-
-  def attr_atomic_setter( *attributes )
-    if @persists_default_atomic
-      attributes.each do |this_attribute|
-        case accessor = @persists_atomic[ this_attribute ]
-          when :getter
-            @persists_atomic[ this_attribute ] 		= :accessor
-						@persists_attributes[ this_attribute ]	=	:accessor
-          when nil
-            @persists_atomic[ this_attribute ] 		= :setter
-						if @persists_attributes[ this_attribute ] == :getter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:setter
-						end
-        end
-      end
-    else
-      attributes.each do |this_attribute|
-        case accessor = @persists_non_atomic[ this_attribute ]
-          when :accessor
-            @persists_non_atomic[ this_attribute ] 	= :getter
-						@persists_attributes[ this_attribute ]		=	:getter
-						if @persists_attributes[ this_attribute ] == :setter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:getter
-						end
-          when :setter
-            @persists_non_atomic.delete( this_attribute )
-        end
-      end
-    end
-    return self
-  end
-
-  ############################
-  #  self.attrs_non_atomic!  #
-  ############################
-
-  def attrs_non_atomic!
-    @persists_default_atomic = false
-    @persists_atomic = {}
-    return self
-  end
-
-  ##########################
-  #  self.attr_non_atomic  #
-  ##########################
-
-  def attr_non_atomic( *attributes )
-    attributes.each { |this_attribute| @persists_atomic.delete( this_attribute ) } if @persists_atomic
-    return self
-  end
-
-  #################################
-  #  self.attr_non_atomic_getter  #
-  #################################
-
-  def attr_non_atomic_getter( *attributes )
-    if @persists_default_atomic
-      attributes.each do |this_attribute|
-        case accessor = @persists_non_atomic[ this_attribute ]
-          when :setter
-            @persists_non_atomic[ this_attribute ] 	= :accessor
-						@persists_attributes[ this_attribute ]		=	:getter
-						if @persists_attributes[ this_attribute ] == :setter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:getter
-						end
-          when nil
-            @persists_non_atomic[ this_attribute ] 	= :setter
-						if @persists_attributes[ this_attribute ] == :setter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:getter
-						end
-        end
-      end
-    else
-      attributes.each do |this_attribute|
-        case accessor = @persists_atomic[ this_attribute ]
-          when :accessor
-            @persists_atomic[ this_attribute ] = :setter
-						if @persists_attributes[ this_attribute ] == :setter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:getter
-						end
-          when :getter
-            @persists_atomic.delete( this_attribute )
-        end
-      end
-    end
-    return self
-  end
-
-  #################################
-  #  self.attr_non_atomic_setter  #
-  #################################
-
-  def attr_non_atomic_setter( *attributes )
-    if @persists_default_atomic
-      attributes.each do |this_attribute|
-        case accessor = @persists_non_atomic[ this_attribute ]
-          when :getter
-            @persists_non_atomic[ this_attribute ] 	= :accessor
-						@persists_attributes[ this_attribute ]		=	:accessor
-          when nil
-            @persists_non_atomic[ this_attribute ] 	= :getter
-						@persists_attributes[ this_attribute ]		=	:getter
-						if @persists_attributes[ this_attribute ] == :setter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:getter
-						end
-        end
-      end
-    else
-      attributes.each do |this_attribute|
-        case accessor = @persists_atomic[ this_attribute ]
-          when :accessor
-            @persists_atomic[ this_attribute ]	 		= :getter
-						if @persists_attributes[ this_attribute ] == :setter
-							@persists_attributes[ this_attribute ]	=	:accessor
-						else
-							@persists_attributes[ this_attribute ]	=	:getter
-						end
-          when :setter
-            @persists_atomic.delete( this_attribute )
-        end
-      end
-    end
-    return self
-  end
-
-  ##############################
-  #  self.attr_non_persistent  #
-  ##############################
-
-	def attr_non_persistent( this_attribute )
-		@persists_atomic.delete( this_attribute )
-		@persists_non_atomic.delete( this_attribute )
-		@persists_attributes.delete( this_attribute )
+	def add_attribute( atomic, attribute, reader_writer_accessor )
+		current_attribute_status = ( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ]
+		case current_attribute_status
+		when :reader
+			case reader_writer_accessor
+			when :writer
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :accessor
+			when nil
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :reader
+			end
+		when :writer
+			case reader_writer_accessor
+			when :reader
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :accessor
+			when nil
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :writer				
+			end
+		end
+		current_declared_status = @persists_attributes[ attribute ]
+	 	case reader_writer_accessor
+		when :accessor
+			@persists_attributes[ attribute ] = :accessor
+		when :reader
+			@persists_attributes[ attribute ] = ( current_declared_status == :writer ? :accessor : :reader )
+		when :writer
+			@persists_attributes[ attribute ] = ( current_declared_status == :reader ? :accessor : :writer )
+		end
+		flip_attribute_if_necessary( atomic, attribute, reader_writer_accessor )
 	end
 
-  #####################
-  #  self.attr_share  #
-  #####################
-
-  def attr_share( klass, *attributes )
-    @persists_shared_attributes[ klass ] = {} unless @persists_shared_attributes.has_key?( klass )
-    attributes.each do |this_local_attribute_name, this_remote_attribute_name| 
-      @persists_shared_attributes[ klass ][ this_local_attribute_name ] = this_local_attribute_name
-    end
-    return self
-  end
-
-  #######################
-  #  self.attrs_share!  #
-  #######################
-
-  def attrs_share!( klass )
-    @persists_shared_attributes[ klass ] = {}
-    return self
-  end
-
-  #######################
-  #  self.attr_isolate  #
-  #######################
-
-  def attr_share( klass, *attributes )
-    attributes.each do |this_local_attribute_name, this_remote_attribute_name| 
-      @persists_shared_attributes[ this_local_attribute_name ] = {   :class      => klass, 
-                                                            :attribute  => this_local_attribute_name }
-    end
-    return self
-  end
-
-  ########################
-  #  self.attrs_isolate  #
-  ########################
-
-  def attrs_isolate( klass )
-    @persists_shared_attributes.delete( klass )
-    return self
-  end
-
-  #########################
-  #  self.attrs_isolate!  #
-  #########################
-
-  def attrs_isolate!
-    @persists_shared_attributes = {}
-    return self
-  end
-
-  #################################
-  #  self.attrs_merge_like_hash!  #
-  #################################
-
-  def attrs_merge_like_hash!
-    merge_method_lambda = lambda { |other_instance| return Rpersist.merge_like_hash( self, other_instance ) }
-    metaclass = class << database_two ; self ; end
-    metaclass.__send__( :define_method, :merge, & merge_method_lambda )
-    return self
-  end
-
-  #####################
-  #  self.is_atomic?  #
-  #####################
-  
-  def is_atomic?( *attributes )
-    return attributes.all? { |this_attribute| @persists_atomic.has_key?[ this_attribute ] }    
-  end
-
-  #######################
-  #  self.is_delegate?  #
-  #######################
-  
-  def is_delegate?( *attributes )
-    return attributes.all? { |this_attribute| @delegate_attributes.has_key?[ this_attribute ] } 
-  end
-  
-  #######################
-  #  self.is_property?  #
-  #######################
-  
-  def is_property?( *attributes )
-    return attributes.all? { |this_attribute| @property_attributes.has_key?[ this_attribute ] } 
-  end
-
-  ##################
-  #  self.shared?  #
-  ##################
-  
-  def shared?( *attributes )
-    return attributes.all? { |this_attribute| @persists_shared_attributes.has_key?[ this_attribute ] } 
-  end
-
-  #################
-  #  self.cease!  #
-  #################
-
-	def cease!( *args )
-		unique_key			= nil
-		storage_port		=	nil
-		storage_bucket	=	nil
-		Rargs.define_and_parse( args ) do
-			# unique key
-			parameter_set(		parameter(		match_any(			unique_key ) ) )
-			# storage port, unique key
-			parameter_set(		parameter(		match_symbol(		) ),
-												parameter(		match_any(			unique_key ) ) )
-			# storage port, storage bucket, unique key
-			parameter_set(		parameter(		match_symbol() ),
-												parameter(		match_string_symbol(),
-												 							match_class() ),
-												parameter(		match_any(			unique_key ) ) )
+	def flip_attribute_if_necessary( atomic, attribute, reader_writer_accessor )
+		# making attribute atomic/non-atomic, ensuring it's not listed as non-atomic/atomic
+		current_attribute_status = ( atomic ? @persists_non_atomic : @persists_atomic )[ attribute ]
+		case current_attribute_status
+		when :accessor
+			( atomic ? @persists_non_atomic : @persists_atomic ).delete( attribute )
+		when :reader
+			case reader_writer_accessor
+			when :accessor
+				( atomic ? @persists_non_atomic : @persists_atomic )[ attribute ] = :writer
+			when :reader
+				( atomic ? @persists_non_atomic : @persists_atomic ).delete( attribute )
+			end
+		when :writer
+			case reader_writer_accessor
+			when :accessor
+				( atomic ? @persists_non_atomic : @persists_atomic )[ attribute ] = :reader
+			when :writer
+				( atomic ? @persists_non_atomic : @persists_atomic ).delete( attribute )
+			end
 		end
 	end
+
+	def delete_attribute( attribute )
+		@persists_atomic.delete( attribute )
+		@persists_non_atomic.delete( attribute )
+		@persists_attributes.delete( attribute )
+	end
+
+  ##################################
+  #  object_from_persistence_hash  #
+  ##################################
   
+  def object_from_persistence_hash( persistence_hash )
+    object = self.new
+    persistence_hash.each do |this_persistence_name, this_persistence_value|
+      instance_variable_set( "@" + this_persistence_name, this_persistence_value )
+    end
+  end
+  
+end
+
+class Class
+	extend Rpersistence::Class
 end

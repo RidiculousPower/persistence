@@ -1,7 +1,7 @@
 
-module Rpersistence
+class Rpersistence
 
-  module define
+  module Define
   end
 
   module Mock
@@ -9,4 +9,9 @@ module Rpersistence
   
 end
 
-require_relative 'rpersist/rpersist'
+require_relative 'rpersistence/Rpersistence.rb'
+require_relative 'rpersistence/Rpersistence/Port.rb'
+
+require_relative 'rpersistence/Rpersistence/Class.rb'
+require_relative 'rpersistence/Rpersistence/Object.rb'
+require_relative 'rpersistence/Rpersistence/String.rb'

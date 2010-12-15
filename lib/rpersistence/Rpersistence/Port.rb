@@ -1,7 +1,17 @@
 
 class Rpersistence::Port
 
-  attr_accessor :enabled
+  attr_accessor :name, :enabled, :adapter, :persists_classes
+
+  ################
+  #  initialize  #
+  ################
+
+  def initialize( port_name, adapter_instance, *persists_classes )
+    @name             = port_name
+    @adapter          = adapter_instance
+    @persists_classes = persists_classes
+  end
 
   ############
   #  enable  #
@@ -9,6 +19,7 @@ class Rpersistence::Port
 
 	def enable
 		@enabled = true
+		return self
 	end
 	
   #############
@@ -17,6 +28,7 @@ class Rpersistence::Port
 
 	def disable
 		@enabled  = false
+		return self
 	end
 
   ############################
@@ -24,27 +36,22 @@ class Rpersistence::Port
   ############################
 
 	def set_to_persist_classes( *args )
-	  classes_array = nil
-	  classes_hash  = nil
-	  klass         = nil
-    Rargs.define_and_parse( args ) do
-      parameter_set(   parameter(   match_class(  klass ),
-                                    match_array(  classes_array ),
-                                    match_hash(   classes_hash ) )
-    end
-    do
-      if klass
-        @persists_classes[ this_class ] = :read_write        
-      elsif classes_array
-        classes_hash.each |this_class|
+	  args.each do |this_arg|
+      # array
+      if this_arg.is_a?( Array )
+        classes_hash.each do |this_class|
           @persists_classes[ this_class ] = :read_write
         end
-      elsif classes_hash
-        classes_hash.each |this_class, read_write_status|
+      # hash
+      elsif this_arg.is_a?( Hash )
+        classes_hash.each do |this_class, read_write_status|
           @persists_classes[ this_class ] = read_write_status
         end
+      # klass
+      else
+        @persists_classes[ this_class ] = :read_write        
       end
-    end while Rargs.parse
+    end
 	end
 
   ######################
@@ -84,31 +91,26 @@ class Rpersistence::Port
   #######################
 
 	def persists_classes?( *args )
-	  classes_array = nil
-	  classes_hash  = nil
-	  klass         = nil
-    Rargs.define_and_parse( args ) do
-      parameter_set(   parameter(   match_class(  klass ),
-                                    match_array(  classes_array ),
-                                    match_hash(   classes_hash ) )
-    end
-    do
-      if klass
-        return @persists_classes[ klass ]
-      elsif classes_array
+    args.each do |this_arg|
+      # array
+      if this_arg.is_a?( Array )
         return_array = [ ]
-        classes_hash.each |this_class|
+        classes_hash.each do |this_class|
           return return_array.push( persists_classes?( this_class ) )
         end
         return return_array
-      elsif classes_hash
+      # hash
+      elsif this_arg.is_a?( Hash )
         return_hash = { }
-        classes_hash.each |this_class, read_write_status|
+        classes_hash.each do |this_class, read_write_status|
            return_hash[ this_class ] = persists_classes?( this_class )
         end
         return return_hash
+      # klass
+      else
+        return @persists_classes[ klass ]
       end
-    end while Rargs.parse
+    end
 	end
 
   ######################################
@@ -146,31 +148,26 @@ class Rpersistence::Port
   ####################################
 
 	def internal_persists_classes_for?( read_write_setting, *args )
-	  classes_array = nil
-	  classes_hash  = nil
-	  klass         = nil
-    Rargs.define_and_parse( args ) do
-      parameter_set(   parameter(   match_class(  klass ),
-                                    match_array(  classes_array ),
-                                    match_hash(   classes_hash ) )
-    end
-    do
-      if klass
-        return @persists_classes[ klass ] == read_write_setting
-      elsif classes_array
+    args.each do |this_arg|
+      # array
+      if this_arg.is_a?( Array )
         return_array = [ ]
-        classes_hash.each |this_class|
+        classes_hash.each do |this_class|
           return return_array.push( persists_classes?( this_class ) )
         end
         return return_array
-      elsif classes_hash
+      # hash
+      elsif this_arg.is_a?( Hash )
         return_hash = { }
-        classes_hash.each |this_class, read_write_status|
+        classes_hash.each do |this_class, read_write_status|
            return_hash[ this_class ] = persists_classes?( this_class )
         end
         return return_hash
+      # klass
+      else
+        return @persists_classes[ klass ] == read_write_setting
       end
-    end while Rargs.parse
+    end
 	end
 	
 end
