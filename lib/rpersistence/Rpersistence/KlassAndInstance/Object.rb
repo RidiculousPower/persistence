@@ -1,24 +1,5 @@
 
-module Rpersistence::ObjectClassAndInstance
-
-  ################
-  #  initialize  #
-  ################
-
-	# When object initializes, copy class settings to instance.
-	# Changes to instance after initialize are instance-specific.
-	# Changes to class configuration after initialize have no effect on instance until object is persisted
-	# from storage, in which case it will take on class configuration (unless it has instance configuration
-	# saved).
-	def initialize
-    @persists_everything		 			= self.class.persists_everything?
-    @persists_defaults_atomic 		= self.class.defaults_atomic?
-    @persists_atomic 							= self.class.persists_atomic
-    @persists_non_atomic 					= self.class.persists_non_atomic
-		@persists_attributes					=	self.class.persists_attributes
-    @persists_shared_attributes 	= self.class.persists_shared_attributes
-	end
-	ensure_initialize!
+module Rpersistence::KlassAndInstance::Object
 
   #---------------------------------------------------------------------------------------------------------#
   #-------------------------------------  Shared Object/Instance  ------------------------------------------#
@@ -26,6 +7,7 @@ module Rpersistence::ObjectClassAndInstance
 
 	# The methods in this module extend Object by default and potentially are also included for instances.
 	# Inclusion for instances only occurs if 'rpersistence-modules-instance' is required.
+	# See rpersistence-modules-instance for details.
 
   #####################
   #  self.persist_by  #
@@ -59,7 +41,7 @@ module Rpersistence::ObjectClassAndInstance
   ###################
 
   def store_as( persistence_bucket_class_or_name )
-    @persistence_bucket = persistence_bucket_class_or_name
+    @__rpersistence_bucket__ = persistence_bucket_class_or_name
   end
   alias_method :persistence_bucket_name, :store_as
 
@@ -195,8 +177,8 @@ module Rpersistence::ObjectClassAndInstance
 
   def attr_share( klass, *attributes )
     attributes.each do |this_local_attribute_name, this_remote_attribute_name| 
-      @persists_shared_attributes[ this_local_attribute_name ] = {   :class      => klass, 
-                                                            :attribute  => this_local_attribute_name }
+      @persists_shared_attributes[ this_local_attribute_name ] = {  :class      => klass, 
+                                                                    :attribute  => this_local_attribute_name }
     end
     return self
   end
@@ -290,37 +272,75 @@ module Rpersistence::ObjectClassAndInstance
     with_persistence_port.adapter.delete_object_from_persistence_port_by_bucket_and_key!( with_persistence_key )
 	end
 
-
-
-
-
-
-
-
-  #---------------------------------------------------------------------------------------------------------#
-  #--------------------------------------  Shared Class/Object  --------------------------------------------#
-  #---------------------------------------------------------------------------------------------------------#
-
-	# These methods are defined both on Object and on instances of Object.
-	# When an instance is created it is given the persistence characteristics of its class.
-	# Instance persistence characteristics will only be saved if :persist_by_instance! is called on the 
-	# instance. If instance persistence characteristics are not saved, all saved parameters will be loaded,
-	# but future persistence will behave the same as any other instance of the class as currently configured
-	# at the time of the call to :persist!, or at the calling of any atomic accessors.
-
-
   ###########################################################################################################
   #############################################  Private  ###################################################
   ###########################################################################################################
 
 	private
 	
+	def add_attribute( atomic, attribute, reader_writer_accessor )
+		current_attribute_status = ( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ]
+		case current_attribute_status
+		when :reader
+			case reader_writer_accessor
+			when :writer
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :accessor
+			when nil
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :reader
+			end
+		when :writer
+			case reader_writer_accessor
+			when :reader
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :accessor
+			when nil
+				( atomic ? @persists_atomic : @persists_non_atomic )[ attribute ] = :writer				
+			end
+		end
+		current_declared_status = @persists_attributes[ attribute ]
+	 	case reader_writer_accessor
+		when :accessor
+			@persists_attributes[ attribute ] = :accessor
+		when :reader
+			@persists_attributes[ attribute ] = ( current_declared_status == :writer ? :accessor : :reader )
+		when :writer
+			@persists_attributes[ attribute ] = ( current_declared_status == :reader ? :accessor : :writer )
+		end
+		flip_attribute_if_necessary( atomic, attribute, reader_writer_accessor )
+	end
+
+	def flip_attribute_if_necessary( atomic, attribute, reader_writer_accessor )
+		# making attribute atomic/non-atomic, ensuring it's not listed as non-atomic/atomic
+		current_attribute_status = ( atomic ? @persists_non_atomic : @persists_atomic )[ attribute ]
+		case current_attribute_status
+		when :accessor
+			( atomic ? @persists_non_atomic : @persists_atomic ).delete( attribute )
+		when :reader
+			case reader_writer_accessor
+			when :accessor
+				( atomic ? @persists_non_atomic : @persists_atomic )[ attribute ] = :writer
+			when :reader
+				( atomic ? @persists_non_atomic : @persists_atomic ).delete( attribute )
+			end
+		when :writer
+			case reader_writer_accessor
+			when :accessor
+				( atomic ? @persists_non_atomic : @persists_atomic )[ attribute ] = :reader
+			when :writer
+				( atomic ? @persists_non_atomic : @persists_atomic ).delete( attribute )
+			end
+		end
+	end
+
+	def delete_attribute( attribute )
+		@persists_atomic.delete( attribute )
+		@persists_non_atomic.delete( attribute )
+		@persists_attributes.delete( attribute )
+	end
 	
 end
 
 class Object
-	extend	Rpersistence::ClassAndObject	
-	include	Rpersistence::ClassAndObject	
+	extend	Rpersistence::KlassAndInstance::Object
 end
 
 

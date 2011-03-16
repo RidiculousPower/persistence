@@ -19,6 +19,7 @@ class Rpersistence::Port
 
 	def enable
 		@enabled = true
+		adapter.enable
 		return self
 	end
 	
@@ -28,6 +29,7 @@ class Rpersistence::Port
 
 	def disable
 		@enabled  = false
+		adapter.disable
 		return self
 	end
 
