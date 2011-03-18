@@ -20,9 +20,9 @@ module Rpersistence::Klass::Flat
 	# * :port, :bucket, property_name
   def persist( *args )
 
-		port, bucket, property_name = Rpersistence.parse_persist_args( args )
+		port, bucket, persistence_key = parse_persist_args( args )
 		
-    persistence_value  = port.adapter.get_flat_object_from_persistence_port( bucket, property_name )
+    persistence_value  = port.adapter.get_flat_object_from_persistence_port( bucket, persistence_key )
 
     return persistence_value
 

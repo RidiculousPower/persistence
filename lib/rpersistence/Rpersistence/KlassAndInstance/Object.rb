@@ -14,7 +14,7 @@ module Rpersistence::KlassAndInstance::Object
   #####################
   
   def persist_by( persistence_key_accessor )
-    @persist_key_method = persistence_key_accessor
+    @__rpersistence_key_method__ = persistence_key_accessor
     return self
   end
 
@@ -23,7 +23,7 @@ module Rpersistence::KlassAndInstance::Object
   #################################
 
 	def persistence_key_method
-		return @persist_key_method
+		return @__rpersistence_key_method__
 	end
 
   ######################

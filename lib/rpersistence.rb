@@ -14,6 +14,10 @@ class Rpersistence
 	end
 
 	module KlassAndInstance
+		module Object
+		end
+		module ParsePersistenceArguments
+		end
 	end
 	
 	module Instance
@@ -32,6 +36,7 @@ require_relative 'rpersistence/Rpersistence/Klass/Object.rb'
 require_relative 'rpersistence/Rpersistence/Klass/Flat.rb'
 
 require_relative 'rpersistence/Rpersistence/KlassAndInstance/Object.rb'
+require_relative 'rpersistence/Rpersistence/KlassAndInstance/ParsePersistenceArguments.rb'
 
 require_relative 'rpersistence/Rpersistence/Instance/Array.rb'
 require_relative 'rpersistence/Rpersistence/Instance/Flat.rb'

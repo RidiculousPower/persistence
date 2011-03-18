@@ -1,6 +1,8 @@
 
 module Rpersistence::Klass::Object
 
+	include Rpersistence::KlassAndInstance::ParsePersistenceArguments
+
 	attr_reader		:persists_attributes, :persists_atomic, :persists_non_atomic, :persists_shared_attributes,
 								:persists_everything, :persists_defaults_atomic
 
@@ -44,9 +46,9 @@ module Rpersistence::Klass::Object
 	# * :port, :bucket, property_name
   def persist( *args )
 
-		port, bucket, property_name = Rpersistence.parse_persist_args( args )
+		port, bucket, persistence_key = parse_persist_args( args )
 		
-    persistence_ivar_hash  = persistence_port.adapter.get_from_persistence_port( bucket, property_name )
+    persistence_ivar_hash  = port.adapter.get_object_from_persistence_port( bucket, persistence_key )
 
     return object_from_persistence_hash( persistence_ivar_hash )
 
@@ -64,9 +66,10 @@ module Rpersistence::Klass::Object
   
   def object_from_persistence_hash( persistence_ivar_hash )
     object = self.new
-    persistence_ivar_hash.each do |this_persistence_name, this_persistence_value|
-      instance_variable_set( "@" + this_persistence_name, this_persistence_value )
+    persistence_ivar_hash.each do |this_persistence_key, this_persistence_value|
+      object.instance_variable_set( this_persistence_key, this_persistence_value )
     end
+		return object
   end
 
 end

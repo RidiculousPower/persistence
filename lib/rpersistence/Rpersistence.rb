@@ -74,39 +74,6 @@ class Rpersistence
 		return self
   end
 
-  #############################
-  #  self.parse_persist_args  #
-  #############################
-  
-	def self.parse_persist_args( args )
-
-		# * property_name
-		# * :bucket, property_name
-		# * :port, :bucket, property_name
-		
-		port, bucket, property_name = nil
-		case args.length
-			when 3
-				port, bucket, property_name = *args
-			when 2
-				bucket, property_name = *args
-			when 1
-				key = *args
-			default
-				raise ArgError "Expected property_name; :bucket, property_name; or :port, :bucket, property_name"
-		end
-
-		# if a port was specified explicitly in passed args, use it- otherwise use default port
-		if port
-			port = port_for_name_or_port( persistence_port_or_name )
-		else
-			port = Rpersistence.current_port
-		end
-
-		return port, bucket, property_name
-		
-	end
-	
   ###########################################################################################################
   #############################################  Private  ###################################################
   ###########################################################################################################
