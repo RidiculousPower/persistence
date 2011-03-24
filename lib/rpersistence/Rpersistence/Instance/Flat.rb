@@ -12,14 +12,30 @@ module Rpersistence::Instance::Flat
 	def persist!( *args )
 
 		port, bucket, persistence_key = parse_persist_args( args )
-				
-		port.adapter.put_flat_object_to_persistence_port!( bucket, persistence_key, self )
+		
+		port.adapter.put_object!( self )
 
 		# return the object we're persisting
 		return self
 	
 	end
+
+  ###########################################################################################################
+  #############################################  Private  ###################################################
+  ###########################################################################################################
 	
+	private
+
+  ##############################
+  #  persistence_hash_to_port  #
+  ##############################
+
+	def persistence_hash_to_port
+
+		return { primary_key_for_object_and_property_name => self }
+
+	end
+
 end
 
 class Bignum

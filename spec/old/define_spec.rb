@@ -240,39 +240,6 @@ describe Rpersistence::Define do
     
   end
 
-  ########################
-  #  self.attr_required  #
-  ########################
-
-  # * attr_required   :accessor
-  it "" do
-    
-  end
-
-  #########################
-  #  self.attr_validator  #
-  #########################
-
-  # * attr_validator  :constraint_validation_method
-  it "" do
-    
-  end
-
-  #########################
-  #  self.before_persist  #
-  #########################
-
-  it "" do
-    
-  end
-
-  ########################
-  #  self.after_persist  #
-  ########################
-
-  it "" do
-    
-  end
 
   ##########################
   #  self.before_persist!  #

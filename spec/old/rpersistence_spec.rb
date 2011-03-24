@@ -1,13 +1,4 @@
-require_relative '../lib/rpersist.rb'
-
-require_relative './rpersistence_mocks.rb'
-
-# we have two types of persistence
-# * explicit persistence (object.persist!)
-# * implicit (atomic) persistence
-# additionally, we have two types of atomic persistence
-# * atomic accessors
-# * atomic functions
+require_relative '../lib/rpersistence.rb'
 
 describe Rpersistence do
 
@@ -117,11 +108,11 @@ describe Rpersistence do
     
   end  
   
-  if "can prune all versions - if it has been cease!'d (which are permanently deleted)" do
+  it "can prune all versions - if it has been cease!'d (which are permanently deleted)" do
     
   end
 
-  if "can prune all versions by unique key - if it has been cease!'d (which are permanently deleted)" do
+  it "can prune all versions by unique key - if it has been cease!'d (which are permanently deleted)" do
     
   end
 

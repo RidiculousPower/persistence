@@ -15,7 +15,7 @@ module Rpersistence::KlassAndInstance::ParsePersistenceArguments
 		# * :port, :bucket, persistence_key
 		
 		port, bucket, key							 									= nil
-		port_specified, bucket_specified, key_specified = nil
+		port_specified, bucket_specified, key_specified = false, false, false
 		case args.length
 		when 1
 			key							 	= args[ 0 ]
@@ -23,45 +23,47 @@ module Rpersistence::KlassAndInstance::ParsePersistenceArguments
 		when 2
 			bucket, 
 			key								= args
-			bucket_specified	= true
 			key_specified 		= true
-		else
+		when 3
 			port, 
 			bucket, 
 			key								= args
-			port_specified		= true
-			bucket_specified	= true
 			key_specified 		= true
 		end
 		
-		if ! port_specified			
-			port = Rpersistence.current_port
+		if port			
+			port 	= Rpersistence.port_for_name_or_port( port )
 		else
-			port 							= port_for_name_or_port( persistence_port_or_name )
+			port	= Rpersistence.current_port
 		end
 		
-		#	we always save the port in case the current port changes
-		@__rpersistence_port__		 	= port
+		self.persistence_port  = port
 		
 		# we save the bucket only if it was specified (object's class won't change)
-		if bucket_specified
-			@__rpersistence_bucket__ 	= bucket
-		else
+		unless bucket
 			bucket										=	persistence_bucket
 		end
 		
 		# we save the key only if it was specified (otherwise can arbitrarily change based on method)
 		if key_specified
-			@__rpersistence_key__  	 	= key
+			@__rpersistence__arbitrary_key__  	= key
 		else
-			key												=	persistence_key
+			key									          			=	persistence_key
 		end
-			
+		
 		# if we are over-writing an existing storage key we need to take over its ID or we end up with unwanted duplicates
-		if existing_object_id	=	port.adapter.get_object_id( bucket, persistence_key )
+		if existing_object_id	=	port.adapter.get_object_id_for_bucket_and_key( bucket, key )
 			reset_persistence_id_to( existing_object_id )
 		end
 		
+		unless port
+		  raise "No persistence port specified." 
+	  end
+	  
+	  unless bucket
+	    raise "No persistence bucket specified."
+    end
+    
 		return port, bucket, key
 		
 	end

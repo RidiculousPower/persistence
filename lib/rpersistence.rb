@@ -26,6 +26,10 @@ class Rpersistence
 		module Object
 		end
 	end
+	
+	# for naming specs
+	module Specs
+  end
 
 end
 
@@ -42,3 +46,6 @@ require_relative 'rpersistence/Rpersistence/Instance/Array.rb'
 require_relative 'rpersistence/Rpersistence/Instance/Flat.rb'
 require_relative 'rpersistence/Rpersistence/Instance/Hash.rb'
 require_relative 'rpersistence/Rpersistence/Instance/Object.rb'
+require_relative 'rpersistence/Rpersistence/Instance/==.rb'
+
+require_relative 'rpersistence/String/String.rb'
