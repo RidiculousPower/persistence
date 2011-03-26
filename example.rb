@@ -3,7 +3,7 @@ require 'rpersistence'
 Rpersistence.enable_port( :persistence, Rpersistence::Adapter::Rbdb.new( './ruby-persistence' ) )
 
 class User
-  persist_by    :username
+  persists_by    :username
   attr_atomic   :username, :first_name, :last_name
 	has_index			:first_name, :last_name
 end

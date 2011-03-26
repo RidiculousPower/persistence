@@ -12,6 +12,18 @@ module Rpersistence::KlassAndInstance::Object
   # Changing the value of atomic variables directly _will ! persist atomically_.
   # Only changing the value of atomic variables by way of their accessors will persist atomically. 
 
+  ###################
+  #  self.extended  #
+  ###################
+
+  def self.extended( class_or_module )
+    class << class_or_module
+      alias_method  :object_attr_accessor, :attr_accessor
+      alias_method  :object_attr_reader,   :attr_reader
+      alias_method  :object_attr_writer,   :attr_writer
+    end
+  end
+
   ############################
   #  Klass.persistence_port  #
   #  persistence_port        #
@@ -124,7 +136,7 @@ module Rpersistence::KlassAndInstance::Object
   end
   alias_method :persistence_key_method=,    :persistence_key_source=
   alias_method :persistence_key_variable=,  :persistence_key_source=
-  alias_method :persist_by,                 :persistence_key_source=
+  alias_method :persists_by,                :persistence_key_source=
 
   ##################################
   #  Klass.persistence_key_source  #
@@ -206,10 +218,12 @@ module Rpersistence::KlassAndInstance::Object
   #####################################
 
   def persists_ivars_by_default
-    
+
     include_or_extend_for_persistence_if_necessary
-    
+
     @__rpersistence__persists_ivars_by_default__  = true
+    
+    return self
     
   end
 
@@ -223,6 +237,43 @@ module Rpersistence::KlassAndInstance::Object
     include_or_extend_for_persistence_if_necessary
     
     @__rpersistence__persists_ivars_by_default__  = false
+
+    return self
+
+  end
+
+  #######################################
+  #  Klass.persists_atomic_by_default!  #
+  #  persists_atomic_by_default!        #
+  #######################################
+
+  def persists_atomic_by_default!
+    
+    include_or_extend_for_persistence_if_necessary
+    
+    @__rpersistence__persists_atomic_by_default__  = true
+    
+    extend Rpersistence::KlassAndInstance::Accessors
+    class << self
+      extend Rpersistence::KlassAndInstance::Accessors
+    end
+    
+    return self
+    
+  end
+
+  ###########################################
+  #  Klass.persists_non_atomic_by_default!  #
+  #  persists_non_atomic_by_default!        #
+  ###########################################
+
+  def persists_non_atomic_by_default!
+
+    include_or_extend_for_persistence_if_necessary
+    
+    @__rpersistence__persists_atomic_by_default__  = false
+
+    return self
 
   end
 
@@ -959,26 +1010,49 @@ module Rpersistence::KlassAndInstance::Object
   ######################################
   #  Klass.persists_ivars_by_default?  #
   #  persists_ivars_by_default?        #
-  #####################################
+  ######################################
 
   def persists_ivars_by_default?
     
-    persists_ivars_by_default = false
+    persists_ivars = false
     
-    if  instance_variable_defined?( :@__rpersistence__persists_ivars_by_default__ )
+    if instance_variable_defined?( :@__rpersistence__persists_ivars_by_default__ )
     
-      persists_ivars_by_default = @__rpersistence__persists_ivars_by_default__
+      persists_ivars = @__rpersistence__persists_ivars_by_default__
     
-    else
+    elsif self.class != Class
       
-      persists_ivars_by_default = self.class.persists_ivars_by_default?
+      persists_ivars = self.class.persists_ivars_by_default?
 
     end
 
-    return persists_ivars_by_default
+    return persists_ivars
     
   end
   
+  
+  #######################################
+  #  Klass.persists_atomic_by_default?  #
+  #  persists_atomic_by_default?        #
+  #######################################
+
+  def persists_atomic_by_default?
+    
+    persists_atomic = false
+    if instance_variable_defined?( :@__rpersistence__persists_atomic_by_default__ )
+    
+      persists_atomic = @__rpersistence__persists_atomic_by_default__
+      
+    elsif self.class != Class
+      
+      persists_atomic = self.class.persists_atomic_by_default?
+
+    end
+
+    return persists_atomic
+    
+  end
+
   #########################################  Attribute Status  ##############################################
   
   #############################
@@ -987,7 +1061,7 @@ module Rpersistence::KlassAndInstance::Object
   #############################
   
   def atomic_attribute?( *attributes )
-
+        
     return atomic_non_atomic_persistent_accessor_reader_writer?( atomic_attributes, attributes )
 
   end
@@ -1508,6 +1582,199 @@ module Rpersistence::KlassAndInstance::Object
 	
   end
 
+  ################################
+  #  Klass::add_atomic_accessor  #
+  #  add_atomic_accessor         #
+  ################################
+
+  def add_atomic_accessor( attribute )
+    add_atomic_reader( attribute )
+    add_atomic_writer( attribute )
+    return self
+  end
+
+  ##############################
+  #  Klass::add_atomic_reader  #
+  #  add_atomic_reader         #
+  ##############################
+
+  def add_atomic_reader( attribute )
+
+    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute )
+
+    prior_accessor_name = alias_prior_accessor_method( accessor_method_name, :reader )
+
+    define_atomic_getter( accessor_method_name, property_name, prior_accessor_name )
+
+    return self
+
+  end
+
+  ##############################
+  #  Klass::add_atomic_writer  #
+  #  add_atomic_writer         #
+  ##############################
+
+  def add_atomic_writer( attribute )
+
+    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute, true )
+
+    prior_accessor_name = alias_prior_accessor_method( accessor_method_name, :writer )
+
+    define_atomic_setter( accessor_method_name, property_name, prior_accessor_name )
+
+    return self
+
+  end
+
+  #################################
+  #  Klass::define_atomic_getter  #
+  #  define_atomic_getter         #
+  #################################
+
+  def define_atomic_getter( accessor_method_name, property_name, prior_accessor_name )
+
+    define_method( accessor_method_name ) do
+
+      property_value    = nil
+
+      if prior_accessor_name
+
+        property_value  = __send__( prior_accessor_name, property_value )
+
+      else
+
+        property_value  = instance_variable_get( property_name )
+
+      end
+
+      return property_value
+
+    end
+
+    return self
+
+  end
+
+  #################################
+  #  Klass::define_atomic_setter  #
+  #  define_atomic_setter         #
+  #################################
+
+  def define_atomic_setter( accessor_method_name, property_name, prior_accessor_name )
+
+    define_method( accessor_method_name ) do |property_value|
+
+      if prior_accessor_name
+
+        __send__( prior_accessor_name, property_value )
+
+      else
+
+        instance_variable_set( property_name, property_value )
+
+      end
+
+      return self
+
+    end
+
+    return self
+
+  end
+
+  ###################################
+  #  Klass::remove_atomic_accessor  #
+  #  remove_atomic_accessor         #
+  ###################################
+
+  def remove_atomic_accessor( accessor_method_name, reader_writer_accessor )
+
+    if reader_writer_accessor == :accessor
+
+      remove_atomic_accessor( accessor_method_name, :reader )
+      remove_atomic_accessor( accessor_method_name, :writer )
+
+    else
+
+      prior_accessor_name = name_for_prior_accessor( accessor_method_name, reader_writer_accessor )
+
+      method_to_remove  = ( reader_writer_accessor == :writer ? write_accessor_name_for_accessor( accessor_method_name ) : accessor_method_name )
+
+      remove_method( method_to_remove ) if method_defined?( method_to_remove )
+
+      if method_defined?( prior_accessor_name )
+        # alias our old accessor back to be primary
+        alias_method method_to_remove, prior_accessor_name
+      end
+
+    end
+
+    return self
+
+  end
+
+  ####################################
+  #  Klass::add_non_atomic_accessor  #
+  #  add_non_atomic_accessor         #
+  ####################################
+
+  def add_non_atomic_accessor( attribute )
+    add_non_atomic_reader( attribute )
+    add_non_atomic_writer( attribute )
+    return self
+  end
+
+  ##################################
+  #  Klass::add_non_atomic_reader  #
+  #  add_non_atomic_reader         #
+  ##################################
+
+  def add_non_atomic_reader( attribute )
+
+    # if we have a variable we don't want to add an accessor
+    if attribute.to_s.is_variable_name?
+      return self
+    end
+
+    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute )
+
+    # if we already have an accessor, don't define one
+    if method_defined?( accessor_method_name )
+      return self
+    end
+
+    attr_reader( attribute )
+
+    return self
+
+  end
+
+  ##################################
+  #  Klass::add_non_atomic_writer  #
+  #  add_non_atomic_writer         #
+  ##################################
+
+  def add_non_atomic_writer( attribute )
+
+    # if we have a variable we don't want to add an accessor
+    if attribute.to_s.is_variable_name?
+      return self
+    end
+
+    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute, true )
+
+    # if we already have an accessor, don't define one
+    if method_defined?( accessor_method_name )
+      return self
+    end
+
+    attr_writer( attribute )
+
+    return self
+
+  end
+
   #######################################
   #  Klass::variable_name_for_accessor  #
   #  variable_name_for_accessor         #
@@ -1619,199 +1886,6 @@ module Rpersistence::KlassAndInstance::Object
       has_prior_method = true
     end
     return has_prior_method
-  end
-  
-  ################################
-  #  Klass::add_atomic_accessor  #
-  #  add_atomic_accessor         #
-  ################################
-
-  def add_atomic_accessor( attribute )
-    add_atomic_reader( attribute )
-    add_atomic_writer( attribute )
-    return self
-  end
-
-  ##############################
-  #  Klass::add_atomic_reader  #
-  #  add_atomic_reader         #
-  ##############################
-  
-  def add_atomic_reader( attribute )
-
-    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute )
-
-    prior_accessor_name = alias_prior_accessor_method( accessor_method_name, :reader )
-    
-    define_atomic_getter( accessor_method_name, property_name, prior_accessor_name )
-      
-    return self
-    
-  end
-
-  ##############################
-  #  Klass::add_atomic_writer  #
-  #  add_atomic_writer         #
-  ##############################
-
-  def add_atomic_writer( attribute )
-
-    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute, true )
-      
-    prior_accessor_name = alias_prior_accessor_method( accessor_method_name, :writer )
-
-    define_atomic_setter( accessor_method_name, property_name, prior_accessor_name )
-
-    return self
-    
-  end
-
-  #################################
-  #  Klass::define_atomic_getter  #
-  #  define_atomic_getter         #
-  #################################
-
-  def define_atomic_getter( accessor_method_name, property_name, prior_accessor_name )
-
-    define_method( accessor_method_name ) do
-      
-      property_value    = nil
-
-      if prior_accessor_name
-
-        property_value  = __send__( prior_accessor_name, property_value )
-
-      else
-
-        property_value  = instance_variable_get( property_name )
-
-      end
-
-      return property_value
-
-    end
-    
-    return self
-    
-  end
-
-  #################################
-  #  Klass::define_atomic_setter  #
-  #  define_atomic_setter         #
-  #################################
-
-  def define_atomic_setter( accessor_method_name, property_name, prior_accessor_name )
-
-    define_method( accessor_method_name ) do |property_value|
-
-      if prior_accessor_name
-
-        __send__( prior_accessor_name, property_value )
-
-      else
-
-        instance_variable_set( property_name, property_value )
-
-      end
-
-      return self
-
-    end
-
-    return self
-    
-  end
-  
-  ###################################
-  #  Klass::remove_atomic_accessor  #
-  #  remove_atomic_accessor         #
-  ###################################
-
-  def remove_atomic_accessor( accessor_method_name, reader_writer_accessor )
-
-    if reader_writer_accessor == :accessor
-
-      remove_atomic_accessor( accessor_method_name, :reader )
-      remove_atomic_accessor( accessor_method_name, :writer )
-
-    else
-
-      prior_accessor_name = name_for_prior_accessor( accessor_method_name, reader_writer_accessor )
-
-      method_to_remove  = ( reader_writer_accessor == :writer ? write_accessor_name_for_accessor( accessor_method_name ) : accessor_method_name )
-
-      remove_method( method_to_remove ) if method_defined?( method_to_remove )
-
-      if method_defined?( prior_accessor_name )
-        # alias our old accessor back to be primary
-        alias_method method_to_remove, prior_accessor_name
-      end
-
-    end
-
-    return self
-      
-  end
-
-  ####################################
-  #  Klass::add_non_atomic_accessor  #
-  #  add_non_atomic_accessor         #
-  ####################################
-
-  def add_non_atomic_accessor( attribute )
-    add_non_atomic_reader( attribute )
-    add_non_atomic_writer( attribute )
-    return self
-  end
-  
-  ##################################
-  #  Klass::add_non_atomic_reader  #
-  #  add_non_atomic_reader         #
-  ##################################
-  
-  def add_non_atomic_reader( attribute )
-
-    # if we have a variable we don't want to add an accessor
-    if attribute.to_s.is_variable_name?
-      return self
-    end
-
-    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute )
-
-    # if we already have an accessor, don't define one
-    if method_defined?( accessor_method_name )
-      return self
-    end
-
-    attr_reader( attribute )
-
-    return self
-    
-  end
-
-  ##################################
-  #  Klass::add_non_atomic_writer  #
-  #  add_non_atomic_writer         #
-  ##################################
-
-  def add_non_atomic_writer( attribute )
-
-    # if we have a variable we don't want to add an accessor
-    if attribute.to_s.is_variable_name?
-      return self
-    end
-
-    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute, true )
-      
-    # if we already have an accessor, don't define one
-    if method_defined?( accessor_method_name )
-      return self
-    end
-      
-    attr_writer( attribute )
-
-    return self
-    
   end
   
 end

@@ -2,8 +2,8 @@
 describe Rpersistence::Define do
 
   ##############################
-  #  self.persist_by           #
-  #  self.persist_declared_by  #
+  #  self.persists_by           #
+  #  self.persists_declared_by  #
   ##############################
 
   ########################
@@ -14,7 +14,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor   :unique_id, :atomic_value
-      persist_by      :unique_id
+      persists_by      :unique_id
       attrs_atomic!
     end
     test_instance = TestClass.new
@@ -34,7 +34,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor   :unique_id, :atomic_value
-      persist_by      :unique_id
+      persists_by      :unique_id
       attr_atomic :atomic_value
     end
     test_instance = TestClass.new
@@ -54,7 +54,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor   :unique_id, :atomic_value
-      persist_by      :unique_id
+      persists_by      :unique_id
       attr_atomic_reader   :atomic_value
     end
     test_instance = TestClass.new
@@ -75,7 +75,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor   :unique_id, :atomic_value
-      persist_by      :unique_id
+      persists_by      :unique_id
       attr_atomic_writer   :atomic_value
     end
     test_instance = TestClass.new
@@ -97,7 +97,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor     :unique_id, :atomic_value
-      persist_by        :unique_id
+      persists_by        :unique_id
       attr_atomic   :atomic_value
       attrs_non_atomic!
     end
@@ -119,7 +119,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor         :unique_id, :atomic_value
-      persist_by            :unique_id
+      persists_by            :unique_id
       attr_atomic_reader         :atomic_value
       attr_non_atomic   :atomic_value
     end
@@ -141,7 +141,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor         :unique_id, :atomic_value
-      persist_by            :unique_id
+      persists_by            :unique_id
       attr_atomic_reader         :atomic_value
       attr_non_atomic_reader     :atomic_value
     end
@@ -163,7 +163,7 @@ describe Rpersistence::Define do
 
     class TestClass
       attr_accessor       :unique_id, :atomic_value
-      persist_by          :unique_id
+      persists_by          :unique_id
       attr_atomic_writer       :atomic_value
       attr_non_atomic_writer   :atomic_value
     end

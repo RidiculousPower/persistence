@@ -15,8 +15,8 @@ describe Rpersistence do
   ##############################################  Basics  ###################################################
 
   ##################################
-  #  Klass.persist_by              #
-  #  persist_by                    #
+  #  Klass.persists_by              #
+  #  persists_by                    #
   #  Klass.persistence_key_source  #
   #  persistence_key_source        #
   ##################################
@@ -24,7 +24,7 @@ describe Rpersistence do
   it "can be configured to persist using a key from an arbitrary source (method or ivar)" do
     # test 1: method
     class User1
-      persist_by :username
+      persists_by :username
     end
     # test 1.1: class
     User1.persistence_key_source.should == :username
@@ -32,7 +32,7 @@ describe Rpersistence do
     User1.new.persistence_key_source.should == :username
     # test 2: variable
     class User01
-      persist_by :@username
+      persists_by :@username
     end
     # test 2.1: class
     User01.persistence_key_source.should == :@username
@@ -51,7 +51,7 @@ describe Rpersistence do
     $other_bucket  = 'BucketOtherThanUser'
     class User2
       store_as $other_bucket
-      persist_by :username
+      persists_by :username
     end
     # test 1: class
     User2.persistence_bucket.should == $other_bucket
@@ -77,7 +77,7 @@ describe Rpersistence do
   it "can set one or more attributes to be atomic" do
     # Test 1: method
     class User3
-      persist_by :username
+      persists_by :username
       attr_atomic   :username
       attr_atomic   :@firstname
     end
@@ -116,7 +116,7 @@ describe Rpersistence do
 
   it "can set one or more attributes to read atomically" do
     class User4
-      persist_by :username
+      persists_by :username
       attr_atomic_reader  :username
       attr_atomic_reader  :@firstname
     end
@@ -171,7 +171,7 @@ describe Rpersistence do
 
   it "can set one or more attributes to write atomically" do
     class User5
-      persist_by :username
+      persists_by :username
       attr_atomic_writer  :username
       attr_atomic_writer  :@firstname
     end
@@ -228,7 +228,7 @@ describe Rpersistence do
 
   it "can set one or more attributes to be non-atomic" do
     class User6
-      persist_by :username
+      persists_by :username
       attr_non_atomic   :username
       attr_non_atomic   :@firstname
     end
@@ -267,7 +267,7 @@ describe Rpersistence do
 
   it "can set one or more attributes to read non-atomically" do
     class User7
-      persist_by :username
+      persists_by :username
       attr_non_atomic_reader  :username
       attr_non_atomic_reader  :@firstname
       non_atomic_attribute_writer?( :username ).should == false
@@ -321,7 +321,7 @@ describe Rpersistence do
 
   it "can set one or more attributes to write non-atomically" do
     class User8
-      persist_by :username
+      persists_by :username
       attr_non_atomic_writer  :username
       attr_non_atomic_writer  :@firstname
     end
@@ -374,7 +374,7 @@ describe Rpersistence do
 
   it "can set all attributes to be atomic" do
     class User9
-      persist_by      :username
+      persists_by      :username
       attr_atomic     :firstname
       attr_non_atomic :username
       attrs_atomic!
@@ -408,7 +408,7 @@ describe Rpersistence do
 
   it "can set all attributes to be non-atomic" do
     class User10
-      persist_by    :username
+      persists_by    :username
       attr_accessor :username, :firstname
       attr_atomic   :username, :firstname
       attrs_non_atomic!
@@ -446,7 +446,7 @@ describe Rpersistence do
   it "can set one or more attributes to be non-persistent" do
 
     class User11
-      persist_by            :username
+      persists_by            :username
       attr_atomic           :username, :firstname
       attr_non_persistent   :firstname
       attr_accessor         :firstname
@@ -473,6 +473,38 @@ describe Rpersistence do
     stored_user     = User11.persist( user.username )
     stored_user.should == user
 
+  end
+
+  #######################################
+  #  Klass.persists_atomic_by_default   #
+  #  persists_atomic_by_default!        #
+  #  Klass.persists_atomic_by_default?  #
+  #  persists_atomic_by_default?        #
+  #######################################
+
+  it "can set all attributes to be atomic" do
+
+    class User12
+      persists_atomic_by_default!
+      persists_by                 :username
+      attr_accessor               :firstname, :username
+    end
+    # test 1: class
+    User12.persists_atomic_by_default?.should == true
+    # test 2: instance
+    user = User12.new
+    user.persists_atomic_by_default?.should == true
+
+    user.username   = 'someusername'
+    user.firstname  = 'somename'
+
+    user.persist!
+
+    user.firstname  = 'anothername'
+    
+    stored_user     = User12.persist( user.username )
+    stored_user.should == user
+  
   end
 
   ############################################  Constraints  ################################################

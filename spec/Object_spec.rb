@@ -39,7 +39,7 @@ describe Rpersistence::Specs::Complex do
 
   it "can persist an object to and from a default bucket with an arbitrary key method" do
     class User::Auto < User
-      persist_by  :username
+      persists_by  :username
     end
     user = User::Auto.new
     user.username   = 'user'
@@ -52,7 +52,7 @@ describe Rpersistence::Specs::Complex do
 
   it "can persist an object to and from a default bucket with an arbitrary key variable" do
     class User::Auto < User
-      persist_by  :@username
+      persists_by  :@username
     end
     user = User::Auto.new
     user.username   = 'user'

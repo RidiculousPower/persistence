@@ -36,6 +36,7 @@ end
 require_relative 'rpersistence/Rpersistence.rb'
 require_relative 'rpersistence/Rpersistence/Port.rb'
 
+require_relative 'rpersistence/Rpersistence/KlassAndInstance/Accessors.rb'
 require_relative 'rpersistence/Rpersistence/KlassAndInstance/Object.rb'
 require_relative 'rpersistence/Rpersistence/KlassAndInstance/Flat.rb'
 require_relative 'rpersistence/Rpersistence/KlassAndInstance/ParsePersistenceArguments.rb'

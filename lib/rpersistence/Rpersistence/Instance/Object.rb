@@ -337,8 +337,12 @@ module Rpersistence::Instance::Object
 
     inspect_string = nil
 
-    if self.class == Class
-      inspect_string  = self.class.to_s
+    if self.class == Class or self.is_a?( Class ) or self.class == Module or self.is_a?( Module )
+      inspect_string  = self.to_s
+    elsif self.class == TrueClass
+      inspect_string  = 'true'
+    elsif self.class == FalseClass
+      inspect_string  = 'false'
     else
       inspect_string  = '<' + self.class.to_s + ':' + self.__id__.to_s + instance_variable_string + '>'
     end
