@@ -36,16 +36,17 @@ end
 require_relative 'rpersistence/Rpersistence.rb'
 require_relative 'rpersistence/Rpersistence/Port.rb'
 
+require_relative 'rpersistence/Rpersistence/KlassAndInstance/Object.rb'
+require_relative 'rpersistence/Rpersistence/KlassAndInstance/Flat.rb'
+require_relative 'rpersistence/Rpersistence/KlassAndInstance/ParsePersistenceArguments.rb'
+
 require_relative 'rpersistence/Rpersistence/Klass/Object.rb'
 require_relative 'rpersistence/Rpersistence/Klass/Flat.rb'
-
-require_relative 'rpersistence/Rpersistence/KlassAndInstance/Object.rb'
-require_relative 'rpersistence/Rpersistence/KlassAndInstance/ParsePersistenceArguments.rb'
 
 require_relative 'rpersistence/Rpersistence/Instance/Array.rb'
 require_relative 'rpersistence/Rpersistence/Instance/Flat.rb'
 require_relative 'rpersistence/Rpersistence/Instance/Hash.rb'
 require_relative 'rpersistence/Rpersistence/Instance/Object.rb'
-require_relative 'rpersistence/Rpersistence/Instance/==.rb'
+require_relative 'rpersistence/Rpersistence/Instance/Variables.rb'
 
 require_relative 'rpersistence/String/String.rb'

@@ -8,7 +8,8 @@ class Rpersistence
 		attr_reader	:current_port
 	end
 
-  @ports = { }
+  @ports            = { }
+  @port_for_class  = { }
 
   ################
   #  initialize  #
@@ -57,8 +58,16 @@ class Rpersistence
   #  current_port  #
   ##################
   
-  def self.current_port
-		return @current_port
+  def self.current_port( for_class = nil )
+    current_port = nil
+    if for_class and @port_for_class.has_key?( for_class )
+      # determine which port has been set to persist this class
+      current_port = @current_port[ for_class ]
+      # FIX - change to actually support classes
+    else
+      current_port = @current_port
+    end
+		return current_port
   end
 
   ######################

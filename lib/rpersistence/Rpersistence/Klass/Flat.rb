@@ -20,16 +20,19 @@ module Rpersistence::Klass::Flat
 	# * :port, :bucket, property_name
   def persist( *args )
 
-		port, bucket, persistence_key       = parse_persist_args( args )
+		port, bucket, key                   = parse_persist_args( args )
 		
-		global_id                           = port.adapter.get_object_id_for_bucket_and_key( bucket, persistence_key )
-		
+		global_id                           = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
+
     persistence_value_hash              = port.adapter.get_object( global_id, bucket )
     
     persistence_value                   = nil
     if persistence_value_hash
-      persistence_value                 = persistence_value[ nil ]
+
+      persistence_value                 = persistence_value_hash[ nil ]
+
       persistence_value.persistence_id  = global_id
+
     end
     
     return persistence_value

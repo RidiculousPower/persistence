@@ -14,20 +14,20 @@ module Rpersistence::KlassAndInstance::ParsePersistenceArguments
 		# * :bucket, persistence_key
 		# * :port, :bucket, persistence_key
 		
-		port, bucket, key							 									= nil
-		port_specified, bucket_specified, key_specified = false, false, false
+		port, bucket, key		= nil
+		key_specified       = false
 		case args.length
 		when 1
 			key							 	= args[ 0 ]
 			key_specified 		= true
 		when 2
-			bucket, 
-			key								= args
+			bucket            = args[ 0 ]
+			key								= args[ 1 ]
 			key_specified 		= true
 		when 3
-			port, 
-			bucket, 
-			key								= args
+			port              = args[ 0 ]
+			bucket            = args[ 1 ]
+			key								= args[ 2 ]
 			key_specified 		= true
 		end
 		
@@ -40,8 +40,10 @@ module Rpersistence::KlassAndInstance::ParsePersistenceArguments
 		self.persistence_port  = port
 		
 		# we save the bucket only if it was specified (object's class won't change)
-		unless bucket
-			bucket										=	persistence_bucket
+		if bucket
+		  self.persistence_bucket             = bucket
+		else
+			bucket										          =	self.persistence_bucket
 		end
 		
 		# we save the key only if it was specified (otherwise can arbitrarily change based on method)
@@ -52,8 +54,11 @@ module Rpersistence::KlassAndInstance::ParsePersistenceArguments
 		end
 		
 		# if we are over-writing an existing storage key we need to take over its ID or we end up with unwanted duplicates
+		existing_object_id  = nil
 		if existing_object_id	=	port.adapter.get_object_id_for_bucket_and_key( bucket, key )
 			reset_persistence_id_to( existing_object_id )
+		elsif ! existing_object_id and persistence_id
+			reset_persistence_id_to( nil )
 		end
 		
 		unless port

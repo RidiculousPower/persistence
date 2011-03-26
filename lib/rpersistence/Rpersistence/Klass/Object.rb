@@ -53,13 +53,44 @@ module Rpersistence::Klass::Object
       object.persistence_id         = global_persistence_id
       
       # we know this object needs to be evaluated as a persistence object
-      object.extend( Rpersistence::Instance::Equals )
+      object.extend( Rpersistence::Instance::Variables )
       
     end
     
     return object
 
   end
+
+  ######################
+  #  Klass.persisted?  #
+  ######################
+
+	def persisted?( key )
+
+    is_persisted  = ( Rpersistence.current_port( self ).adapter.persistence_key_exists_for_bucket?( persistence_bucket, key ) ? true : false )      
+	  
+    return is_persisted
+    
+	end
+
+
+  ##############################################  Cease  ####################################################
+
+  ##################
+  #  Klass.cease!  #
+  ##################
+
+	def cease!( *args )
+
+		port, bucket, key = parse_persist_args( args )
+
+    global_id = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
+
+    port.adapter.delete_object!( global_id )
+
+    remove_instance_variable( :@__rpersistence__id__ )
+
+	end
 
   ###########################################################################################################
   #############################################  Private  ###################################################
@@ -89,8 +120,8 @@ end
 #--------------------------------------------  Includes  -------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------#
 
-class Class
+class Object
 
-  include Rpersistence::Klass::Object
+  extend Rpersistence::Klass::Object
 
 end

@@ -24,7 +24,7 @@ module Rpersistence::KlassAndInstance::Object
     if @__rpersistence__port__
       
       port = @__rpersistence__port__
-      
+        		
     elsif self.class != Class
       
       port = self.class.persistence_port
@@ -42,6 +42,7 @@ module Rpersistence::KlassAndInstance::Object
   
   def persistence_port=( port )
 
+    include_or_extend_for_persistence_if_necessary
 
     @__rpersistence__port__ = port
 
@@ -57,6 +58,7 @@ module Rpersistence::KlassAndInstance::Object
 	# declare name of persistence bucket where object will be stored
   def persistence_bucket=( persistence_bucket_class_or_name )
 
+    include_or_extend_for_persistence_if_necessary
 
     @__rpersistence__bucket__ = persistence_bucket_class_or_name.to_s
 
@@ -101,6 +103,7 @@ module Rpersistence::KlassAndInstance::Object
   # declares method or ivar that provides key for persisting to port 
   def persistence_key_source=( persistence_key_accessor )
 
+    include_or_extend_for_persistence_if_necessary
 
     @__rpersistence__key_source__ = persistence_key_accessor
 
@@ -119,7 +122,9 @@ module Rpersistence::KlassAndInstance::Object
     return self
 
   end
-  alias_method :persist_by, :persistence_key_source=
+  alias_method :persistence_key_method=,    :persistence_key_source=
+  alias_method :persistence_key_variable=,  :persistence_key_source=
+  alias_method :persist_by,                 :persistence_key_source=
 
   ##################################
   #  Klass.persistence_key_source  #
@@ -195,6 +200,32 @@ module Rpersistence::KlassAndInstance::Object
 
   end
 
+  #####################################
+  #  Klass.persists_ivars_by_default  #
+  #  persists_ivars_by_default        #
+  #####################################
+
+  def persists_ivars_by_default
+    
+    include_or_extend_for_persistence_if_necessary
+    
+    @__rpersistence__persists_ivars_by_default__  = true
+    
+  end
+
+  ########################################
+  #  Klass.persists_no_ivars_by_default  #
+  #  persists_no_ivars_by_default        #
+  ########################################
+
+  def persists_no_ivars_by_default
+
+    include_or_extend_for_persistence_if_necessary
+    
+    @__rpersistence__persists_ivars_by_default__  = false
+
+  end
+
   #######################
   #  Klass.attr_atomic  #
   #  attr_atomic        #
@@ -202,6 +233,8 @@ module Rpersistence::KlassAndInstance::Object
 
 	# declare one or more attributes to persist atomically
   def attr_atomic( *attributes )
+
+    include_or_extend_for_persistence_if_necessary
 
     # use internal function to add each attribute as atomic accessor
 		attributes.each do |this_attribute|
@@ -230,6 +263,8 @@ module Rpersistence::KlassAndInstance::Object
 	# declare one or more attributes to persist from the database atomically (but ! write atomically)
   def attr_atomic_reader( *attributes )
 
+    include_or_extend_for_persistence_if_necessary
+
 		attributes.each do |this_attribute|
 
   	  if this_attribute.is_a?( Hash )
@@ -255,6 +290,8 @@ module Rpersistence::KlassAndInstance::Object
 
 	# declare one or more attributes to persist to the database atomically (but ! read atomically)
   def attr_atomic_writer( *attributes )
+
+    include_or_extend_for_persistence_if_necessary
 
 		attributes.each do |this_attribute|
 
@@ -282,6 +319,8 @@ module Rpersistence::KlassAndInstance::Object
   # declare one or more attributes to persist only non-atomically
   def attr_non_atomic( *attributes )
     
+    include_or_extend_for_persistence_if_necessary
+    
 		attributes.each do |this_attribute|
 
   	  if this_attribute.is_a?( Hash )
@@ -307,6 +346,8 @@ module Rpersistence::KlassAndInstance::Object
   ##################################
 
   def attr_non_atomic_reader( *attributes )
+
+    include_or_extend_for_persistence_if_necessary
 
 		attributes.each do |this_attribute|
 
@@ -335,6 +376,8 @@ module Rpersistence::KlassAndInstance::Object
 
   def attr_non_atomic_writer( *attributes )
 
+    include_or_extend_for_persistence_if_necessary
+
 		attributes.each do |this_attribute|
 
   	  if this_attribute.is_a?( Hash )
@@ -362,11 +405,12 @@ module Rpersistence::KlassAndInstance::Object
 	#	declare all attributes persist atomically
   def attrs_atomic!
 
-		# set persists_atomically_by_default true
-    @__rpersistence__default_atomic__ = true
-				
+    include_or_extend_for_persistence_if_necessary
+
+    persists_no_ivars_by_default
+
 		# move all explicitly declared non-atomic elements into atomic
-    attr_atomic( @__rpersistence__include_as_non_atomic__ )
+    attr_atomic( *@__rpersistence__include_as_non_atomic__.keys )
 
     return self
 
@@ -380,11 +424,12 @@ module Rpersistence::KlassAndInstance::Object
 	# declare all attributes persist non-atomically
   def attrs_non_atomic!
 
-		# set persists_atomically_by_default false
-    @__rpersistence__default_atomic__ = false
+    include_or_extend_for_persistence_if_necessary
+
+    persists_no_ivars_by_default
 
 		# move all declared elements from atomic into non-atomic
-    attr_non_atomic( @__rpersistence__include_as_atomic__ )
+    attr_non_atomic( *@__rpersistence__include_as_atomic__.keys )
 
     return self
 
@@ -397,6 +442,8 @@ module Rpersistence::KlassAndInstance::Object
 
 	def attr_non_persistent( *attributes )
 
+    include_or_extend_for_persistence_if_necessary
+
 		attributes.each do |this_attribute|
 
   	  if this_attribute.is_a?( Hash )
@@ -406,7 +453,7 @@ module Rpersistence::KlassAndInstance::Object
       else
         
   			add_attribute( false, false, this_attribute, :accessor )
-			  #remove_atomic_accessor( this_attribute, :accessor )
+			  remove_atomic_accessor( this_attribute, :accessor )
 
   	  end
 
@@ -415,12 +462,32 @@ module Rpersistence::KlassAndInstance::Object
 	end
   alias_method :attr_exclude, :attr_non_persistent
 
+  ################################
+  #  Klass.attr_non_persistent!  #
+  #  attr_non_persistent!        #
+  ################################
+
+	def attr_non_persistent!
+
+    include_or_extend_for_persistence_if_necessary
+
+    persists_no_ivars_by_default
+
+		# move all declared elements from atomic into non-atomic
+    attr_non_persistent!( @__rpersistence__include__.keys )
+
+    return self
+
+  end
+  
   ######################################
   #  Klass.attr_non_persistent_reader  #
   #  attr_non_persistent_reader        #
   ######################################
 
 	def attr_non_persistent_reader( *attributes )
+
+    include_or_extend_for_persistence_if_necessary
 
 		attributes.each do |this_attribute|
 
@@ -446,6 +513,8 @@ module Rpersistence::KlassAndInstance::Object
   ######################################
 
 	def attr_non_persistent_writer( *attributes )
+
+    include_or_extend_for_persistence_if_necessary
 
 		attributes.each do |this_attribute|
 
@@ -486,28 +555,358 @@ module Rpersistence::KlassAndInstance::Object
 
   end
 
-  #######################################  Configuration Status  ############################################
-
   ######################
-  #  Klass.persisted?  #
-  #  persisted?        #
+  #  Klass.attr_clear  #
+  #  attr_clear        #
   ######################
 
-	def persisted?( *args )
-	  
-	  object, bucket, key = Rpersistence::KlassAndInstance::Object.object_or_bucket_key_for_args( args )
-	  
-	  is_persisted  = false
-	  
-	  if object
-	    is_persisted  = persistence_port.adapter.persisted?( object )
-    else
-	    is_persisted  = persistence_port.adapter.persistence_key_exists_for_bucket?( bucket, key )      
-    end
-	  
-    return is_persisted
+  # clear accessors for one or more attributes
+  def attr_clear!
+
+    attr_clear( @__rpersistence__include__ )
+    attr_clear( @__rpersistence__exclude__ )
+
+    return self
     
-	end
+  end
+
+  ####################################  Atomicity Configurations  ###########################################
+  
+  #############################
+  #  Klass.atomic_attributes  #
+  #  atomic_attributes        #
+  #############################
+
+	def atomic_attributes
+    
+    return atomic_non_atomic_readers_writers_accessors( true, nil )
+    
+  end
+
+  ######################################
+  #  Klass.atomic_attribute_accessors  #
+  #  atomic_attribute_accessors        #
+  ######################################
+
+	def atomic_attribute_accessors
+    
+    return atomic_non_atomic_readers_writers_accessors( true, :accessor )
+
+  end
+
+  ####################################
+  #  Klass.atomic_attribute_readers  #
+  #  atomic_attribute_readers        #
+  ####################################
+
+	def atomic_attribute_readers
+    
+    return atomic_non_atomic_readers_writers_accessors( true, :reader )
+
+  end
+
+  ####################################
+  #  Klass.atomic_attribute_writers  #
+  #  atomic_attribute_writers        #
+  ####################################
+
+	def atomic_attribute_writers
+    
+    return atomic_non_atomic_readers_writers_accessors( true, :writer )
+    
+  end
+
+  #################################
+  #  Klass.non_atomic_attributes  #
+  #  non_atomic_attributes        #
+  #################################
+
+	def non_atomic_attributes
+    
+    return atomic_non_atomic_readers_writers_accessors( false, nil )
+    
+  end
+
+  ##########################################
+  #  Klass.non_atomic_attribute_accessors  #
+  #  non_atomic_attribute_accessors        #
+  ##########################################
+
+	def non_atomic_attribute_accessors
+    
+    return atomic_non_atomic_readers_writers_accessors( false, :accessor )
+
+  end
+
+  ########################################
+  #  Klass.non_atomic_attribute_readers  #
+  #  non_atomic_attribute_readers        #
+  ########################################
+
+	def non_atomic_attribute_readers
+    
+    return atomic_non_atomic_readers_writers_accessors( false, :reader )
+
+  end
+
+  ########################################
+  #  Klass.non_atomic_attribute_writers  #
+  #  non_atomic_attribute_writers        #
+  ########################################
+
+	def non_atomic_attribute_writers
+    
+    return atomic_non_atomic_readers_writers_accessors( false, :writer )
+    
+  end
+
+  ####################################  Persistence Configuration  ##########################################
+
+  #################################
+  #  Klass.persistent_attributes  #
+  #  persistent_attributes        #
+  #################################
+
+	def persistent_attributes
+    
+    persistent_attributes = nil
+
+    if persists_ivars_by_default?
+      # if we persist all by default then non-persist are the ones we've excluded
+      persistent_attributes = ( instance_variables_as_accessors + included_attributes - excluded_attributes ).uniq
+    else
+      # otherwise the ones we've included
+      persistent_attributes = included_attributes - excluded_attributes
+    end
+
+    return persistent_attributes
+    
+  end
+
+  ########################################
+  #  Klass.persistent_attribute_readers  #
+  #  persistent_attribute_readers        #
+  ########################################
+
+	def persistent_attribute_readers
+    
+    persistent_attributes = nil
+
+    if persists_ivars_by_default?
+      # if we persist all by default then non-persist are the ones we've excluded
+      persistent_attributes = ( instance_variables_as_accessors + included_attribute_readers - excluded_attribute_readers ).uniq
+    else
+      # otherwise the ones we've included
+      persistent_attributes = included_attribute_readers - excluded_attribute_readers
+    end
+
+    return persistent_attributes
+    
+  end
+
+  ########################################
+  #  Klass.persistent_attribute_writers  #
+  #  persistent_attribute_writers        #
+  ########################################
+
+	def persistent_attribute_writers
+
+    persistent_attributes = nil
+
+    if persists_ivars_by_default?
+      # if we persist all by default then non-persist are the ones we've excluded
+      persistent_attributes = ( instance_variables_as_accessors + included_attribute_writers - excluded_attribute_writers ).uniq
+    else
+      # otherwise the ones we've included
+      persistent_attributes = included_attribute_writers - excluded_attribute_writers
+    end
+
+    return persistent_attributes
+    
+  end
+  
+  #####################################
+  #  Klass.non_persistent_attributes  #
+  #  non_persistent_attributes        #
+  #####################################
+
+	def non_persistent_attributes
+
+    non_persistent_attributes = nil
+
+    if persists_ivars_by_default?
+      # if we persist all by default then non-persist are the ones we've excluded
+      non_persistent_attributes = excluded_attributes
+    else
+      # otherwise the ones we haven't included or have excluded
+      non_persistent_attributes = ( instance_variables_as_accessors + excluded_attributes - included_attributes ).uniq
+    end
+
+    return non_persistent_attributes
+    
+  end
+
+  ############################################
+  #  Klass.non_persistent_attribute_readers  #
+  #  non_persistent_attribute_readers        #
+  ############################################
+
+	def non_persistent_attribute_readers
+
+    non_persistent_attribute_readers = nil
+
+    if persists_ivars_by_default?
+      # if we persist all by default then non-persist are the ones we've excluded
+      non_persistent_attribute_readers = ( instance_variables_as_accessors + included_attribute_readers - excluded_attribute_readers ).uniq
+    else
+      # otherwise the ones we've included
+      non_persistent_attribute_readers = included_attribute_readers
+    end
+
+    return non_persistent_attribute_readers
+
+  end
+
+  ############################################
+  #  Klass.non_persistent_attribute_writers  #
+  #  non_persistent_attribute_writers        #
+  ############################################
+
+	def non_persistent_attribute_writers
+
+    non_persistent_attribute_writers = nil
+
+    if persists_ivars_by_default?
+      # if we persist all by default then non-persist are the ones we've excluded
+      non_persistent_attribute_writers = ( instance_variables_as_accessors + included_attribute_writers - excluded_attribute_writers ).uniq
+    else
+      # otherwise the ones we've included
+      non_persistent_attribute_writers = included_attribute_writers
+    end
+
+    return non_persistent_attribute_writers
+
+  end
+  
+  ###############################
+  #  Klass.included_attributes  #
+  #  included_attributes        #
+  ###############################
+
+	def included_attributes
+    
+    included_attributes = nil
+    
+    if self.class != Class
+
+      included_attributes = self.class.included_attributes
+
+    else
+    
+      included_attributes = @__rpersistence__includes__.keys
+          
+    end
+      
+    included_attributes = included_attributes + @__rpersistence__includes__.keys if @__rpersistence__includes__
+    included_attributes = included_attributes - @__rpersistence__excludes__.keys if @__rpersistence__excludes__
+    
+    return included_attributes.uniq
+    
+  end
+
+  ########################################
+  #  Klass.included_attribute_accessors  #
+  #  included_attribute_accessors        #
+  ########################################
+
+	def included_attribute_accessors
+    
+    included_attribute_accessors  = included_or_excluded_attribute_accessor_reader_writers( true, :accessor )
+    
+  end
+
+  ######################################
+  #  Klass.included_attribute_readers  #
+  #  included_attribute_readers        #
+  ######################################
+
+	def included_attribute_readers
+    
+    included_attribute_readers    = included_or_excluded_attribute_accessor_reader_writers( true, :reader )
+    
+  end
+  
+  ######################################
+  #  Klass.included_attribute_writers  #
+  #  included_attribute_writers        #
+  ######################################
+
+	def included_attribute_writers
+
+    included_attribute_writers    = included_or_excluded_attribute_accessor_reader_writers( true, :writer )
+
+  end
+  
+  ###############################
+  #  Klass.excluded_attributes  #
+  #  excluded_attributes        #
+  ###############################
+
+	def excluded_attributes
+
+    excluded_attributes = nil
+    
+    if self.class != Class
+
+      excluded_attributes = self.class.excluded_attributes
+
+    else
+    
+      excluded_attributes = @__rpersistence__excludes__.keys
+          
+    end
+      
+    excluded_attributes = excluded_attributes + @__rpersistence__excludes__.keys if @__rpersistence__excludes__
+    excluded_attributes = excluded_attributes - @__rpersistence__includes__.keys if @__rpersistence__includes__
+    
+    return excluded_attributes.uniq
+    
+  end
+
+  ########################################
+  #  Klass.excluded_attribute_accessors  #
+  #  excluded_attribute_accessors        #
+  ########################################
+
+	def excluded_attribute_accessors
+
+    excluded_attribute_accessors  = included_or_excluded_attribute_accessor_reader_writers( false, :accessor )
+    
+  end
+  
+  ######################################
+  #  Klass.excluded_attribute_readers  #
+  #  excluded_attribute_readers        #
+  ######################################
+
+	def excluded_attribute_readers
+    
+    excluded_attribute_readers    = included_or_excluded_attribute_accessor_reader_writers( false, :reader )
+
+  end
+
+  ######################################
+  #  Klass.excluded_attribute_writers  #
+  #  excluded_attribute_writers        #
+  ######################################
+
+	def excluded_attribute_writers
+    
+    excluded_attribute_writers    = included_or_excluded_attribute_accessor_reader_writers( false, :writer )
+    
+  end
+
+  #######################################  Configuration Status  ############################################
 
   #############################################
   #  Klass.persistence_key_source_is_method?  #
@@ -557,6 +956,31 @@ module Rpersistence::KlassAndInstance::Object
 
   end
   
+  ######################################
+  #  Klass.persists_ivars_by_default?  #
+  #  persists_ivars_by_default?        #
+  #####################################
+
+  def persists_ivars_by_default?
+    
+    persists_ivars_by_default = false
+    
+    if  instance_variable_defined?( :@__rpersistence__persists_ivars_by_default__ )
+    
+      persists_ivars_by_default = @__rpersistence__persists_ivars_by_default__
+    
+    else
+      
+      persists_ivars_by_default = self.class.persists_ivars_by_default?
+
+    end
+
+    return persists_ivars_by_default
+    
+  end
+  
+  #########################################  Attribute Status  ##############################################
+  
   #############################
   #  Klass.atomic_attribute?  #
   #  atomic_attribute?        #
@@ -564,24 +988,18 @@ module Rpersistence::KlassAndInstance::Object
   
   def atomic_attribute?( *attributes )
 
-    # if everything is atomic we don't need to look up anything - return true
-    return true if persists_all_ivars_atomically?
+    return atomic_non_atomic_persistent_accessor_reader_writer?( atomic_attributes, attributes )
 
-    is_atomic = false
-    
-    atomic_vars = atomic_attributes
-    
-    if atomic_vars
+  end
 
-      attributes.each do |this_attribute|
-        attribute = atomic_vars.select { |attribute_name, status| attribute_name == this_attribute }
-        is_atomic = ( attribute.empty? ? false : true )
-        break unless is_atomic
-      end
+  ######################################
+  #  Klass.atomic_attribute_accessor?  #
+  #  atomic_attribute_accessor?        #
+  ######################################
+  
+  def atomic_attribute_accessor?( *attributes )
 
-    end
-    
-    return is_atomic    
+    return atomic_non_atomic_persistent_accessor_reader_writer?( atomic_attribute_accessors, attributes )
 
   end
 
@@ -592,24 +1010,7 @@ module Rpersistence::KlassAndInstance::Object
   
   def atomic_attribute_reader?( *attributes )
 
-    # if everything is atomic we don't need to look up anything - return true
-    return true if persists_all_ivars_atomically?
-
-    is_atomic_reader = false
-
-    atomic_vars = atomic_attributes
-
-    if atomic_vars
-
-      attributes.each do |this_attribute|
-        attribute = atomic_vars.select { |attribute_name, status| attribute_name == this_attribute and status == :reader }
-        is_atomic_reader = ( attribute.empty? ? false : true )
-        break unless is_atomic_reader
-      end
-
-    end
-    
-    return is_atomic_reader
+    return atomic_non_atomic_persistent_accessor_reader_writer?( atomic_attribute_readers, attributes )
 
   end
 
@@ -620,24 +1021,7 @@ module Rpersistence::KlassAndInstance::Object
   
   def atomic_attribute_writer?( *attributes )
 
-    # if everything is atomic we don't need to look up anything - return true
-    return true if persists_all_ivars_atomically?
-
-    atomic_vars = atomic_attributes
-
-    is_atomic_writer = false
-
-    if atomic_vars
-
-      attributes.each do |this_attribute|
-        attribute = atomic_vars.select { |attribute_name, status| attribute_name == this_attribute and status == :writer }
-        is_atomic_writer = ( attribute.empty? ? false : true )
-        break unless is_atomic_writer
-      end
-
-    end
-    
-    return is_atomic_writer
+    return atomic_non_atomic_persistent_accessor_reader_writer?( atomic_attribute_writers, attributes )
 
   end
   
@@ -648,21 +1032,40 @@ module Rpersistence::KlassAndInstance::Object
   
   def non_atomic_attribute?( *attributes )
 
-    is_non_atomic = false
+    return atomic_non_atomic_persistent_accessor_reader_writer?( non_atomic_attributes, attributes )
 
-    non_atomic_vars = non_atomic_attributes
+  end
 
-    if non_atomic_vars
+  ##########################################
+  #  Klass.non_atomic_attribute_accessor?  #
+  #  non_atomic_attribute_accessor?        #
+  ##########################################
+  
+  def non_atomic_attribute_accessor?( *attributes )
 
-      attributes.each do |this_attribute|
-        attribute     = non_atomic_vars.select { |attribute_name| attribute_name == this_attribute }
-        is_non_atomic = ( attribute.empty? ? false : true )
-        break unless is_non_atomic
-      end
+    return atomic_non_atomic_persistent_accessor_reader_writer?( non_atomic_attribute_accessors, attributes )
 
-    end
-    
-    return is_non_atomic    
+  end
+
+  ########################################
+  #  Klass.non_atomic_attribute_reader?  #
+  #  non_atomic_attribute_reader?        #
+  ########################################
+  
+  def non_atomic_attribute_reader?( *attributes )
+
+    return atomic_non_atomic_persistent_accessor_reader_writer?( non_atomic_attribute_readers, attributes )
+
+  end
+
+  ########################################
+  #  Klass.non_atomic_attribute_writer?  #
+  #  non_atomic_attribute_writer?        #
+  ########################################
+  
+  def non_atomic_attribute_writer?( *attributes )
+
+    return atomic_non_atomic_persistent_accessor_reader_writer?( non_atomic_attribute_writers, attributes )
 
   end
   
@@ -673,31 +1076,7 @@ module Rpersistence::KlassAndInstance::Object
   
   def persistent_attribute?( *attributes )
 
-    is_persistent = false
-
-    persistent_vars = persistent_attributes
-
-    if persistent_vars
-
-      attributes.each do |this_attribute|
-
-        is_persistent = persistent_vars.any? do |variable|
-
-          accessor_method_name, property_name  = accessor_name_for_var_or_method( this_attribute, true )
-
-          if property_name == variable
-            return true
-          end
-
-        end
-
-        break unless is_persistent
-
-      end
-    
-    end
-    
-    return is_persistent    
+    return atomic_non_atomic_persistent_accessor_reader_writer?( persistent_attributes, attributes )
 
   end
 
@@ -708,7 +1087,7 @@ module Rpersistence::KlassAndInstance::Object
   
   def non_persistent_attribute?( *attributes )
 
-    return ! persistent_attribute?( *attributes )    
+    return atomic_non_atomic_persistent_accessor_reader_writer?( non_persistent_attributes, attributes )
 
   end
 
@@ -721,12 +1100,10 @@ module Rpersistence::KlassAndInstance::Object
 
     is_persistent_reader = false
 
-    persistent_vars = persistent_attributes
-
-    if persistent_vars
+    if persistent_vars = persistent_readers
   
       attributes.each do |this_attribute|
-        is_persistent_reader = persistent_vars[ this_attribute ] if persistent_vars.include?( this_attribute )
+        is_persistent_reader = persistent_vars.include?( this_attribute )
         break unless is_persistent_reader
       end
   
@@ -745,12 +1122,10 @@ module Rpersistence::KlassAndInstance::Object
 
     is_persistent_writer = false
 
-    persistent_vars = persistent_attributes
-
-    if persistent_vars
+    if persistent_vars = persistent_writers
 
       attributes.each do |this_attribute|
-        is_persistent_writer = persistent_vars[ this_attribute ] if persistent_vars.include?( this_attribute )
+        is_persistent_writer = persistent_vars.include?( this_attribute )
         break unless is_persistent_writer
       end
 
@@ -760,329 +1135,9 @@ module Rpersistence::KlassAndInstance::Object
 
   end
 
-  ###############################
-  #  Klass.persists_all_ivars?  #
-  #  persists_all_ivars?        #
-  ###############################
-
-	def persists_all_ivars?
-    
-    persists_all_ivars  = false
-    
-    if instance_variable_defined?( :@__rpersistence__persists_all_ivars____ )
-      persists_all_ivars = @__rpersistence__persists_all_ivars____
-    elsif self.class != Class
-      persists_all_ivars = self.class.persists_all_ivars?
-    end
-    
-    return persists_all_ivars
-    
-  end
-
-  ##########################################
-  #  Klass.persists_all_ivars_atomically?  #
-  #  persists_all_ivars_atomically?        #
-  ##########################################
-
-	def persists_all_ivars_atomically?
-    
-    persists_all_ivars  = false
-    
-    if instance_variable_defined?( :@__rpersistence__persists_all_ivars____ )
-      persists_all_ivars = @__rpersistence__default_atomic__
-    elsif self.class != Class
-      persists_all_ivars = self.class.persists_all_ivars?
-    end
-    
-    return persists_all_ivars
-    
-  end
-
-  #############################
-  #  Klass.atomic_attributes  #
-  #  atomic_attributes        #
-  #############################
-
-	def atomic_attributes
-    
-    atomic_attributes = nil
-
-    if  instance_variable_defined?( :@__rpersistence__persists_all_ivars__ ) and 
-        @__rpersistence__persists_all_ivars__                               and
-        @__rpersistence__default_atomic__
-
-      # if we persist all and default atomic then atomic are ones we've not included as non-atomic or excluded
-      atomic_attributes = instance_variables - @__rpersistence__include_as_non_atomic__ - @__rpersistence__exclude_from_all__
-
-    elsif instance_variable_defined?( :@__rpersistence__include_as_non_atomic__ )
-
-      # if we do not persist by default then atomic are ones we've explicitly included
-      atomic_attributes = @__rpersistence__include_as_atomic__
-
-    elsif self.class != Class
-
-      atomic_attributes = self.class.atomic_attributes
-
-    end
-    
-    return atomic_attributes
-    
-  end
-
-  ##########################
-  #  Klass.atomic_readers  #
-  #  atomic_readers        #
-  ##########################
-
-	def atomic_readers
-    
-    atomic_attributes = nil
-
-    if instance_variable_defined?( :@__rpersistence__includes__ )
-
-      atomic_accessors = self.class.atomic_attributes
-      
-      atomic_attributes = atomic_accessors.select { |accessor, status| status == :reader }
-      
-    elsif self.class != Class
-
-      atomic_attributes = self.class.atomic_readers
-
-    end
-
-    return atomic_attributes
-    
-  end
-
-  ##########################
-  #  Klass.atomic_writers  #
-  #  atomic_writers        #
-  ##########################
-
-	def atomic_writers
-    
-    atomic_attributes = nil
-
-    if instance_variable_defined?( :@__rpersistence__includes__ )
-
-      atomic_accessors = self.class.atomic_attributes
-      
-      atomic_attributes = atomic_accessors.select { |accessor, status| status == :writer }
-      
-    elsif self.class != Class
-
-      atomic_attributes = self.class.atomic_writers
-
-    end
-
-    return atomic_attributes
-    
-  end
-
-  #################################
-  #  Klass.non_atomic_attributes  #
-  #  non_atomic_attributes        #
-  #################################
-
-	def non_atomic_attributes
-    
-    non_atomic_attributes = nil
-    
-    if  instance_variable_defined?( :@__rpersistence__persists_all_ivars__ ) and 
-        @__rpersistence__persists_all_ivars__
-
-      if @__rpersistence__default_atomic__
-        # if we persist all and default atomic then non-atomic are ones we've included as non-atomic (ones we've excluded are neither)
-        non_atomic_attributes = @__rpersistence__include_as_non_atomic__ + @__rpersistence__exclude_from_atomic__
-      else
-        # if we persist all and default non-atomic then non-atomic are ones we haven't included as atomic or excluded from all
-        non_atomic_attributes = instance_variables - @__rpersistence__include_as_atomic__ - @__rpersistence__exclude_from_all__
-      end
-
-    elsif instance_variable_defined?( :@__rpersistence__include_as_non_atomic__ )
-
-      # if we do not persist by default then non-atomic are ones we've explicitly included
-      non_atomic_attributes = @__rpersistence__include_as_non_atomic__
-
-    elsif self.class != Class
-
-      non_atomic_attributes = self.class.non_atomic_attributes
-
-    end
-
-    return non_atomic_attributes
-    
-  end
-
-  ##############################
-  #  Klass.non_atomic_readers  #
-  #  non_atomic_readers        #
-  ##############################
-
-	def non_atomic_readers
-    
-    non_atomic_attributes = nil
-
-    if instance_variable_defined?( :@__rpersistence__includes__ )
-
-      non_atomic_accessors = self.class.non_atomic_attributes
-      
-      non_atomic_attributes = non_atomic_accessors.select { |accessor, status| status == :reader }
-      
-    elsif self.class != Class
-
-      non_atomic_attributes = self.class.non_atomic_readers
-
-    end
-
-    return non_atomic_attributes
-    
-  end
-
-  ##############################
-  #  Klass.non_atomic_writers  #
-  #  non_atomic_writers        #
-  ##############################
-
-	def non_atomic_writers
-    
-    non_atomic_attributes = nil
-
-    if instance_variable_defined?( :@__rpersistence__includes__ )
-
-      non_atomic_accessors = self.class.non_atomic_attributes
-      
-      non_atomic_attributes = non_atomic_accessors.select { |accessor, status| status == :writer }
-      
-    elsif self.class != Class
-
-      non_atomic_attributes = self.class.non_atomic_writers
-
-    end
-
-    return non_atomic_attributes
-    
-  end
-
-  #################################
-  #  Klass.persistent_attributes  #
-  #  persistent_attributes        #
-  #################################
-
-	def persistent_attributes
-    
-    persistent_attributes = nil
-    
-    if  instance_variable_defined?( :@__rpersistence__persists_all_ivars__ )
-
-      if @__rpersistence__persists_all_ivars__
-        # if we persist all by default then non-persist are the ones we've excluded
-        persistent_attributes = instance_variables - @__rpersistence__exclude_from_all__.keys
-      else
-        # otherwise the ones we've included
-        persistent_attributes = @__rpersistence__includes__.keys
-      end
-
-    elsif self.class != Class
-
-      non_atomic_attributes = self.class.persistent_attributes
-
-    end
-    
-    return persistent_attributes
-    
-  end
-
-  #####################################
-  #  Klass.non_persistent_attributes  #
-  #  non_persistent_attributes        #
-  #####################################
-
-	def non_persistent_attributes
-    
-    non_persistent_attributes = nil
-    if  instance_variable_defined?( :@__rpersistence__persists_all_ivars__ )
-
-      if @__rpersistence__persists_all_ivars__
-        # if we persist all by default then non-persist are the ones we've excluded
-        non_persistent_attributes = @__rpersistence__exclude_from_all__
-      else
-        # otherwise the ones we've included
-        non_persistent_attributes = instance_variables - @__rpersistence__includes__.keys
-      end
-
-    elsif self.class != Class
-
-      non_atomic_attributes = self.class.persistent_attributes
-
-    end
-    
-    return non_persistent_attributes
-    
-  end
-
-  ##############################################  Cease  ####################################################
-
-  ##################
-  #  Klass.cease!  #
-  #  cease!        #
-  ##################
-
-	def cease!( *args )
-
-		port, bucket, persistence_key = parse_persist_args( args )
-
-    port.adapter.delete_object!( self )
-
-	end
-
   ###########################################################################################################
   #############################################  Private  ###################################################
   ###########################################################################################################
-
-  ######################################
-  #  ivars_minus_persistence_internal  #
-  ######################################
-
-  def ivars_minus_persistence_internal
-    
-    ivar_hash	=	Hash.new
-		
-		instance_variables.each do |property_name|
-
-			unless  property_name.to_s.slice( 0, 17 ) == "@__rpersistence__"
-
-			  ivar_hash[ property_name ] = instance_variable_get( property_name )
-
-      end
-      
-		end
-		
-		return ivar_hash
-		
-  end
-
-  ########################################
-  #  persistence_hash_for_current_state  #
-  ########################################
-
-  def persistence_hash_for_current_state
-
-    persistence_hash_from_port  = persistence_hash_from_port( persistence_id )
-    
-    atomic_vars = atomic_attributes
-
-    # any non-atomic values set in instance_variables need to override values persisted in our port
-    non_atomic_instance_var_hash  = ivars_minus_persistence_internal.select do |variable_name, value| 
-      accessor_method_name, property_name  = accessor_name_for_var_or_method( variable_name, false )
-      ! atomic_vars.has_key?( accessor_method_name )
-    end
-
-    persistence_hash_for_current_state  = persistence_hash_from_port.merge( non_atomic_instance_var_hash )
-
-    return persistence_hash_for_current_state
-
-  end
   
   ################################
   #  persistence_hash_from_port  #
@@ -1102,7 +1157,85 @@ module Rpersistence::KlassAndInstance::Object
 		
   end
 
+  ##################################################################
+  #  Klass.included_or_excluded_attribute_accessor_reader_writers  #
+  #  included_or_excluded_attribute_accessor_reader_writers        #
+  ##################################################################
+
+  def included_or_excluded_attribute_accessor_reader_writers( included_not_excluded, reader_writer_accessor )
+  
+    included_excluded_variable  = ( included_not_excluded ?   @__rpersistence__includes__
+                                                          :   @__rpersistence__excludes__ )
+
+    attribute_accessor_reader_writers         = included_excluded_variable.select { |accessor, status| status == reader_writer_accessor }
+  
+    if self.class != Class
+      
+      class_attribute_accessor_reader_writers = self.class.included_or_excluded_attribute_accessor_reader_writers( included_or_excluded, reader_writer_accessor )
+      attribute_accessor_reader_writers       = self_attribute_accessor_reader_writers.merge( class_attribute_accessor_reader_writers )
+      
+    end
+
+    return attribute_accessor_reader_writers.uniq
+  
+  end
+  
+  #######################################################
+  #  Klass.atomic_non_atomic_readers_writers_accessors  #
+  #  atomic_non_atomic_readers_writers_accessors        #
+  #######################################################
+
+	def atomic_non_atomic_readers_writers_accessors( atomic, reader_writer_accessor )
+    
+    atomic_reader_writer_accessors = nil
+
+    if instance_variable_defined?( :@__rpersistence__includes__ )
+      
+      atomic_non_atomic_attributes  = ( atomic  ? @__rpersistence__include_as_atomic__ 
+                                                : @__rpersistence__include_as_non_atomic__ )
+      
+      if reader_writer_accessor
+
+        atomic_reader_writer_accessors  = atomic_non_atomic_attributes.select { |accessor, status| status == reader_writer_accessor }
+
+      else
+
+        atomic_reader_writer_accessors  = atomic_non_atomic_attributes
+          
+      end
+      
+      atomic_reader_writer_accessors  = atomic_reader_writer_accessors.keys
+      
+    elsif self.class != Class
+
+      atomic_reader_writer_accessors = self.class.atomic_non_atomic_readers_writers_accessors( atomic, reader_writer_accessor )
+
+    end
+
+    return atomic_reader_writer_accessors
+    
+  end
+  
+  ########################################  Actually Private  ###############################################
+
 	private
+
+  ##########################################################
+  #  Klass.include_or_extend_for_persistence_if_necessary  #
+  #  include_or_extend_for_persistence_if_necessary        #
+  ##########################################################
+
+  def include_or_extend_for_persistence_if_necessary
+
+    # we know this object needs to be evaluated as a persistence object
+    # for now we are not allowing classes to become enhanced this way
+    if self.class == Class
+      include( Rpersistence::Instance::Variables )
+    else
+      self.extend( Rpersistence::Instance::Variables )
+    end
+    
+  end
 
   #################################################
   #  Klass::persistence_object_has_configuration  #
@@ -1149,30 +1282,51 @@ module Rpersistence::KlassAndInstance::Object
 	
 	def add_attribute( atomic, include_not_exclude, attribute, reader_writer_accessor )
     
+    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute, false )
     
     # if we are an instance setting attributes we have to copy over class settings first
     copy_class_settings_if_necessary( atomic, include_not_exclude )
     
-    # if we are declaring attributes then we are ! persisting all ivars (only declared)
-    @__rpersistence__persists_all_ivars__       = false
-
     # mark attribute as explicitly included
     if include_not_exclude
-      @__rpersistence__includes__[ attribute ]  = true
-      @__rpersistence__excludes__[ attribute ]  = false
+      @__rpersistence__includes__[ accessor_method_name ]  = true
+      @__rpersistence__excludes__.delete( accessor_method_name )
     else
-      @__rpersistence__excludes__[ attribute ]  = true
-      @__rpersistence__includes__[ attribute ]  = false
+      @__rpersistence__excludes__[ accessor_method_name ]  = true
+      @__rpersistence__includes__.delete( accessor_method_name )
     end
 
     # add status (:reader, :writer, :accessor) to currently declared status
     # ie. :reader (existing) + :writer (new) = :accessor (resulting attribute status)
-    add_attribute_status( atomic, include_not_exclude, attribute, reader_writer_accessor )
+    add_attribute_status( atomic, include_not_exclude, accessor_method_name, reader_writer_accessor )
     
     # subtract status from complementary atomicity/include var
-    subtract_attribute_status( ! atomic, include_not_exclude, attribute, reader_writer_accessor )
+    subtract_attribute_status( ! atomic, include_not_exclude, accessor_method_name, reader_writer_accessor )
 
 	end
+
+  ################################################################
+  #  Klass.atomic_non_atomic_persistent_accessor_reader_writer?  #
+  #  atomic_non_atomic_persistent_accessor_reader_writer?        #
+  ################################################################
+  
+  def atomic_non_atomic_persistent_accessor_reader_writer?( accessors_readers_writers, attributes )
+  
+    is_atomic_non_atomic_persistent_accessor_reader_writer = false
+
+    if accessors_readers_writers
+
+      attributes.each do |this_attribute|
+        accessor_method_name, property_name                     = accessor_name_for_var_or_method( this_attribute, false )
+        is_atomic_non_atomic_persistent_accessor_reader_writer  = accessors_readers_writers.include?( accessor_method_name )
+        break unless is_atomic_non_atomic_persistent_accessor_reader_writer
+      end
+
+    end
+
+    return is_atomic_non_atomic_persistent_accessor_reader_writer
+    
+  end
 
   #############################################
   #  Klass::copy_class_settings_if_necessary  #
@@ -1353,6 +1507,34 @@ module Rpersistence::KlassAndInstance::Object
     end
 	
   end
+
+  #######################################
+  #  Klass::variable_name_for_accessor  #
+  #  variable_name_for_accessor         #
+  #######################################
+  
+  def variable_name_for_accessor( accessor )
+    return ( '@' + accessor.to_s ).to_sym
+  end
+
+  #######################################
+  #  Klass::accessor_name_for_variable  #
+  #  accessor_name_for_variable         #
+  #######################################
+  
+  def accessor_name_for_variable( accessor )
+    accessor_string = accessor.to_s
+    return accessor_string.slice( 1, accessor_string.length ).to_sym
+  end
+
+  #############################################
+  #  Klass::write_accessor_name_for_accessor  #
+  #  write_accessor_name_for_accessor         #
+  #############################################
+  
+  def write_accessor_name_for_accessor( accessor )
+    return ( accessor.to_s + '=' ).to_sym
+  end
   
   ############################################
   #  Klass::accessor_name_for_var_or_method  #
@@ -1363,19 +1545,18 @@ module Rpersistence::KlassAndInstance::Object
 
     property_name         = nil
     accessor_method_name  = nil
-    
+
     if attribute.to_s.chars.first == '@'
       
       property_name         = attribute
-      attribute_name        = attribute.to_s
-      accessor_method_name  = attribute_name.slice( 1, attribute_name.length - 1 ).to_sym
+      accessor_method_name  = accessor_name_for_variable( attribute )
       
     else
       
-      property_name           = ( '@' + attribute.to_s ).to_sym
+      property_name           = variable_name_for_accessor( attribute )
 
       if writer_not_reader
-        accessor_method_name  = ( attribute.to_s + '=' ).to_sym
+        accessor_method_name  = write_accessor_name_for_accessor( attribute )
       else
         accessor_method_name  = attribute
       end
@@ -1404,7 +1585,7 @@ module Rpersistence::KlassAndInstance::Object
 
     if reader_writer_accessor == :writer
       
-      new_name_for_prior_accessor = ( new_name_for_prior_accessor.to_s + '=' ).to_sym
+      new_name_for_prior_accessor = write_accessor_name_for_accessor( new_name_for_prior_accessor )
 
     end
 
@@ -1492,30 +1673,20 @@ module Rpersistence::KlassAndInstance::Object
 
   def define_atomic_getter( accessor_method_name, property_name, prior_accessor_name )
 
-    define_method accessor_method_name do
-
+    define_method( accessor_method_name ) do
+      
       property_value    = nil
 
-      # if we have an id and this is not the first persist, put atomically
-      if @__rpersistence__id__ and ! instance_variable_defined?( :@__rpersistence__first_persist__ )
+      if prior_accessor_name
 
-        property_value      = persistence_port.adapter.get_property( self, property_name )
+        property_value  = __send__( prior_accessor_name, property_value )
 
       else
 
-        if prior_accessor_name
-
-          property_value  = __send__( prior_accessor_name, property_value )
-
-        else
-
-          instance_variable_get( property_name )
-
-        end
+        property_value  = instance_variable_get( property_name )
 
       end
 
-      # we need to retrieve by var name for consistency with non-atomic persistence
       return property_value
 
     end
@@ -1533,19 +1704,14 @@ module Rpersistence::KlassAndInstance::Object
 
     define_method( accessor_method_name ) do |property_value|
 
-      # if we have an id and this is not the first persist, put atomically
-      if  @__rpersistence__id__ and ! instance_variable_defined?( :@__rpersistence__first_persist__ )
-        # we need to retrieve by var name for consistency with non-atomic persistence
-        persistence_port.adapter.put_property!( self, property_name, property_value )
+      if prior_accessor_name
+
+        __send__( prior_accessor_name, property_value )
+
       else
 
-        # set value in object
-        if prior_accessor_name
-          __send__( prior_accessor_name, property_value )
-        else
-          instance_variable_set( property_name, property_value )
-        end
-        
+        instance_variable_set( property_name, property_value )
+
       end
 
       return self
@@ -1572,7 +1738,7 @@ module Rpersistence::KlassAndInstance::Object
 
       prior_accessor_name = name_for_prior_accessor( accessor_method_name, reader_writer_accessor )
 
-      method_to_remove  = ( reader_writer_accessor == :writer ? ( accessor_method_name.to_s + '=' ).to_sym : accessor_method_name )
+      method_to_remove  = ( reader_writer_accessor == :writer ? write_accessor_name_for_accessor( accessor_method_name ) : accessor_method_name )
 
       remove_method( method_to_remove ) if method_defined?( method_to_remove )
 
@@ -1668,9 +1834,9 @@ class Object
     class_or_module.instance_eval do
       
   		# if true all ivars are persisted
-      @__rpersistence__persists_all_ivars__		 		    = true
+      @__rpersistence__persists_ivars_by_default__		 		    = true
   		# enable or disable atomic persistence if no explicit include/exclude is specified
-  		# if @__rpersistence__persists_all_ivars__ is true and a var is ! explicitly included/excluded, var will be atomic
+  		# if @__rpersistence__persists_ivars_by_default__ is true and a var is ! explicitly included/excluded, var will be atomic
       @__rpersistence__default_atomic__ 		          = true
 
       # explicitly include vars as atomic/non-atomic
@@ -1695,26 +1861,6 @@ class Object
     
   end
 
-  ########################################
-  #  self.object_or_bucket_key_for_args  #
-  ########################################
-	
-	def self.object_or_bucket_key_for_args( args )
-
-    object, bucket, key = nil
-    case args.length
-      when 1
-        object = args[ 0 ]
-      when 2
-        bucket, key = args[ 0 ], args[ 1 ]
-      else
-        raise "Expected <object> or <bucket>, <key>."
-    end
-	  
-	  return object, bucket, key
-	  
-  end
-  
 end
 
 

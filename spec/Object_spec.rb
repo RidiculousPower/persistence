@@ -22,7 +22,10 @@ describe Rpersistence::Specs::Complex do
     user.first_name = 'first'
     user.last_name  = 'last'
     user.persist!( 'Misc Objects', 'object storage key' )
-    User.persist( 'Misc Objects', 'object storage key' ).should == user
+    
+    persisted_user = User.persist( 'Misc Objects', 'object storage key' )
+    persisted_user.should == user
+    
   end
 
   it "can persist an object to and from a default bucket with an arbitrary key" do
@@ -73,6 +76,17 @@ describe Rpersistence::Specs::Complex do
   end
 
   it "can persist and cascade an object with other persistent objects as members" do
+    
+  end
+
+  ##############################################  Cease  ####################################################
+
+  ##################
+  #  Klass.cease!  #
+  #  cease!        #
+  ##################
+
+  it "can cease persisting a persisted object" do
     
   end
 

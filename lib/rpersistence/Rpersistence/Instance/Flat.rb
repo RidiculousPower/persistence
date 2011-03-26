@@ -11,7 +11,7 @@ module Rpersistence::Instance::Flat
 	# * :port, :bucket, property_name
 	def persist!( *args )
 
-		port, bucket, persistence_key = parse_persist_args( args )
+		port, bucket, key = parse_persist_args( args )
 		
 		port.adapter.put_object!( self )
 
@@ -24,8 +24,6 @@ module Rpersistence::Instance::Flat
   #############################################  Private  ###################################################
   ###########################################################################################################
 	
-	private
-
   ##############################
   #  persistence_hash_to_port  #
   ##############################
@@ -35,6 +33,8 @@ module Rpersistence::Instance::Flat
 		return { primary_key_for_object_and_property_name => self }
 
 	end
+
+	private
 
 end
 

@@ -15,6 +15,8 @@ describe Rpersistence::Specs::Flat do
   ###################
   #  persist!       #
   #  Klass.persist  #
+  #  Klass.cease!  #
+  #  cease!        #
   ###################
 
   it "can put a string object to a persistence port and get it back" do
@@ -23,9 +25,14 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     string_object.persist!( storage_key )
     String.persist( storage_key ).should == string_object
+    String.cease!( storage_key )
+    String.persist( storage_key ).should == nil
     # test 2: specifying bucket
+    string_object = "some string"
     string_object.persist!( 'Other Bucket', storage_key )
     String.persist( 'Other Bucket', storage_key ).should == string_object
+    string_object.cease!( 'Other Bucket', storage_key )
+    String.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a symbol object to a persistence port and get it back" do
@@ -34,9 +41,14 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     symbol_object.persist!( storage_key )
     Symbol.persist( storage_key ).should == symbol_object
+    Symbol.cease!( storage_key )
+    Symbol.persist( storage_key ).should == nil
     # test 2: specifying bucket
     symbol_object.persist!( 'Other Bucket', storage_key )
-    Symbol.persist( storage_key ).should == symbol_object
+    persisted_object = Symbol.persist( 'Other Bucket', storage_key )
+    persisted_object.should == symbol_object
+    symbol_object.cease!( 'Other Bucket', storage_key )
+    Symbol.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a regexp object to a persistence port and get it back" do
@@ -45,9 +57,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     regexp_object.persist!( storage_key )
     Regexp.persist( storage_key ).should == regexp_object
+    Regexp.cease!( storage_key )
+    Regexp.persist( storage_key ).should == nil
     # test 2: specifying bucket
     regexp_object.persist!( 'Other Bucket', storage_key )
     Regexp.persist( 'Other Bucket', storage_key ).should == regexp_object
+    regexp_object.cease!( 'Other Bucket', storage_key )
+    Regexp.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a fixnum number object to a persistence port and get it back" do
@@ -56,9 +72,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     fixnum_object.persist!( storage_key )
     Fixnum.persist( storage_key ).should == fixnum_object
+    Fixnum.cease!( storage_key )
+    Fixnum.persist( storage_key ).should == nil
     # test 2: specifying bucket
     fixnum_object.persist!( 'Other Bucket', storage_key )
     Fixnum.persist( 'Other Bucket', storage_key ).should == fixnum_object
+    fixnum_object.cease!( 'Other Bucket', storage_key )
+    Fixnum.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a bignum number object to a persistence port and get it back" do
@@ -67,9 +87,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     bignum_object.persist!( storage_key )
     Bignum.persist( storage_key ).should == bignum_object
+    Bignum.cease!( storage_key )
+    Bignum.persist( storage_key ).should == nil
     # test 2: specifying bucket
     bignum_object.persist!( 'Other Bucket', storage_key )
     Bignum.persist( 'Other Bucket', storage_key ).should == bignum_object
+    bignum_object.cease!( 'Other Bucket', storage_key )
+    Bignum.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a float number object to a persistence port and get it back" do
@@ -78,9 +102,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     float_object.persist!( storage_key )
     Float.persist( storage_key ).should == float_object
+    Float.cease!( storage_key )
+    Float.persist( storage_key ).should == nil
     # test 2: specifying bucket
     float_object.persist!( 'Other Bucket', storage_key )
     Float.persist( 'Other Bucket', storage_key ).should == float_object
+    float_object.cease!( 'Other Bucket', storage_key )
+    Float.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a complex number object to a persistence port and get it back" do
@@ -89,9 +117,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     complex_object.persist!( storage_key )
     Complex.persist( storage_key ).should == complex_object
+    Complex.cease!( storage_key )
+    Complex.persist( storage_key ).should == nil
     # test 2: specifying bucket
     complex_object.persist!( 'Other Bucket', storage_key )
     Complex.persist( 'Other Bucket', storage_key ).should == complex_object
+    complex_object.cease!( 'Other Bucket', storage_key )
+    Complex.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a rational number object to a persistence port and get it back" do
@@ -100,9 +132,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     rational_object.persist!( storage_key )
     Rational.persist( storage_key ).should == rational_object
+    Rational.cease!( storage_key )
+    Rational.persist( storage_key ).should == nil
     # test 2: specifying bucket
     rational_object.persist!( 'Other Bucket', storage_key )
     Rational.persist( 'Other Bucket', storage_key ).should == rational_object
+    Rational.cease!( 'Other Bucket', storage_key )
+    Rational.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a file object to a persistence port and get it back" do
@@ -112,10 +148,15 @@ describe Rpersistence::Specs::Flat do
     storage_key = File.open( key_path )
     # test 1: default bucket
     file_object.persist!( storage_key )
-    File.persist( storage_key ).should == File.open( file_object_path ).readlines.join( "\n" )
+    persisted_file = File.persist( storage_key )
+    persisted_file.should == File.open( file_object_path ).readlines.join( "\n" )
+    File.cease!( storage_key )
+    File.persist( storage_key ).should == nil
     # test 2: specifying bucket
     file_object.persist!( 'Other Bucket', storage_key )
     File.persist( 'Other Bucket', storage_key ).should == File.open( file_object_path ).readlines.join( "\n" )
+    file_object_path.cease!( 'Other Bucket', storage_key )
+    File.persist( storage_key ).should == nil
   end
 
   it "can put a true object to a persistence port and get it back" do
@@ -124,9 +165,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     true_object.persist!( storage_key )
     TrueClass.persist( storage_key ).should == true_object
+    TrueClass.cease!( storage_key )
+    TrueClass.persist( storage_key ).should == nil
     # test 2: specifying bucket
     true_object.persist!( 'Other Bucket', storage_key )
     TrueClass.persist( 'Other Bucket', storage_key ).should == true_object
+    true_object.cease!( 'Other Bucket', storage_key )
+    TrueClass.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   it "can put a false object to a persistence port and get it back" do
@@ -135,9 +180,13 @@ describe Rpersistence::Specs::Flat do
     # test 1: default bucket
     false_object.persist!( storage_key )
     FalseClass.persist( storage_key ).should == false_object
+    FalseClass.cease!( storage_key )
+    FalseClass.persist( storage_key ).should == nil
     # test 2: specifying bucket
     false_object.persist!( 'Other Bucket', storage_key )
     FalseClass.persist( 'Other Bucket', storage_key ).should == false_object
+    false_object.cease!( 'Other Bucket', storage_key )
+    FalseClass.persist( 'Other Bucket', storage_key ).should == nil
   end
 
   # FIX - struct not yet supported
