@@ -1,9 +1,10 @@
 
+#-----------------------------------------------------------------------------------------------------------#
+#--------------------------------------  Rpersistence Singleton  -------------------------------------------#
+#-----------------------------------------------------------------------------------------------------------#
+
 class Rpersistence
 	
-	VersionDelimiter		=	'.'
-	BucketKeyDelimiter	=	'#'
-
 	class << self
 		attr_reader	:current_port
 	end
@@ -35,7 +36,8 @@ class Rpersistence
 	def self.enable_port( port_name, adapter_instance, *persists_classes )
 		port	=	Rpersistence::Port.new(	port_name, 
 																		adapter_instance, 
-																		*persists_classes ).enable
+																		*persists_classes )
+		port.enable
 		@ports[ port_name.to_sym ] = port
 		set_current_port( port ) unless current_port
 		return port
@@ -82,22 +84,5 @@ class Rpersistence
 		end
 		return self
   end
-
-  ###########################################################################################################
-  #############################################  Private  ###################################################
-  ###########################################################################################################
-
-	private
-	
-	def self.port_for_name_or_port( persistence_port_or_name )
-		persistence_port = nil
-		if persistence_port_or_name.is_a?( String ) or persistence_port_or_name.is_a?( Symbol )
-			persistence_port = port( persistence_port_or_name )
-			persistence_port.name = persistence_port_or_name
-		else
-			persistence_port = persistence_port_or_name
-		end
-		return persistence_port
-	end
 
 end

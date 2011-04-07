@@ -1,5 +1,5 @@
 
-module Rpersistence::Instance::Variables
+module Rpersistence::ObjectInstance::Equality
 
   #########
   #   ==  # 
@@ -30,7 +30,7 @@ module Rpersistence::Instance::Variables
     elsif respond_to?( :instance_variables ) and other_object.respond_to?( :instance_variables ) and other_object.respond_to?( :instance_variables_hash )
 
       objects_are_equal = ( instance_variables_hash == other_object.instance_variables_hash )
-      
+
     # if we don't have ivars then we use super's result, true or false
     else
       

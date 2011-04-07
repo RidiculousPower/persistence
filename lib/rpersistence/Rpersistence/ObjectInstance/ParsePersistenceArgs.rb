@@ -1,5 +1,5 @@
 
-module Rpersistence::KlassAndInstance::ParsePersistenceArguments
+module Rpersistence::ObjectInstance::ParsePersistenceArgs
 
   ########################
   #  parse_persist_args  #
@@ -49,16 +49,20 @@ module Rpersistence::KlassAndInstance::ParsePersistenceArguments
 		# we save the key only if it was specified (otherwise can arbitrarily change based on method)
 		if key_specified
 			@__rpersistence__arbitrary_key__  	= key
+			has_persistence_key!
 		else
 			key									          			=	persistence_key
 		end
 		
 		# if we are over-writing an existing storage key we need to take over its ID or we end up with unwanted duplicates
 		existing_object_id  = nil
-		if existing_object_id	=	port.adapter.get_object_id_for_bucket_and_key( bucket, key )
-			reset_persistence_id_to( existing_object_id )
-		elsif ! existing_object_id and persistence_id
-			reset_persistence_id_to( nil )
+		if has_persistence_key?
+  		# if we have a persistence key we are looking for bucket, key
+  		if existing_object_id =	port.adapter.get_object_id_for_bucket_and_key( bucket, key )
+  			reset_persistence_id_to( existing_object_id )
+  		elsif ! existing_object_id and persistence_id
+  			reset_persistence_id_to( nil )
+  		end
 		end
 		
 		unless port

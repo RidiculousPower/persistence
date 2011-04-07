@@ -1,14 +1,14 @@
 
-#---------------------------------------------------------------------------------------------------------#
-#-----------------------------------------  Object Instance  ---------------------------------------------#
-#---------------------------------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------------------------------#
+#---------------------------------------- Object Persistence  ----------------------------------------------#
+#-----------------------------------------------------------------------------------------------------------#
 
-module Rpersistence::Instance::Object
+module Rpersistence::ObjectInstance::Persistence
 
-	include Rpersistence::KlassAndInstance::ParsePersistenceArguments
+	include Rpersistence::ObjectInstance::ParsePersistenceArgs
 
   # this gets used to distinguish object instance variables and atomic instance variables
-  # not utilized until Rpersistence::Instance::Variables is included (after persist! or persist)
+  # not utilized until Rpersistence::ObjectInstance::Equality is included (after persist! or persist)
   alias_method :object_instance_variables,    :instance_variables
   alias_method :object_instance_variable_get, :instance_variable_get
   alias_method :object_instance_variable_set, :instance_variable_set
@@ -111,6 +111,35 @@ module Rpersistence::Instance::Object
     return nil
   end
 
+  ##########################
+  #  has_persistence_key!  #
+  ##########################
+  
+  def has_persistence_key!
+    @__rpersistence__has_persistence_key__ = true
+  end
+
+  ##########################
+  #  has_persistence_key?  #
+  ##########################
+  
+  def has_persistence_key?
+    
+    has_key = false
+    
+    if instance_variable_defined?( :@__rpersistence__has_persistence_key__ )
+      
+      has_key = @__rpersistence__has_persistence_key__
+      
+    elsif self.class != Class
+      
+      has_key = self.class.has_persistence_key?
+    
+    end
+    
+    return has_key
+  end  
+
   ##############
   #  persist!  #
   ##############
@@ -124,12 +153,13 @@ module Rpersistence::Instance::Object
     @__rpersistence__first_persist__  = true unless @__rpersistence__id__
 
 		port, bucket, key = parse_persist_args( args )
-		
 		port.adapter.put_object!( self )
     remove_atomic_instance_vars
 
     # if this was the first persist, unmark (we have ID now)
     remove_instance_variable( :@__rpersistence__first_persist__ ) if instance_variable_defined?( :@__rpersistence__first_persist__ )
+    # if we were forcing new id, remove setting now (we have our new ID)
+    remove_instance_variable( :@__rpersistence__force_new_id__ ) if instance_variable_defined?( :@__rpersistence__force_new_id__ )
 
     include_or_extend_for_persistence_if_necessary
     
@@ -138,6 +168,34 @@ module Rpersistence::Instance::Object
 
 	end
 
+  #############
+  #  persist  #
+  #############
+  
+	# * property_name
+	# * :bucket, property_name
+	# * :port, :bucket, property_name
+  def persist( *args )
+
+		port, bucket, key = parse_persist_args( args )
+
+    persistence_id    = persistence_port.adapter.get_object_id_for_bucket_and_key( bucket, key ) unless persistence_id
+
+		if persistence_id
+      
+      load_persistence_hash( port, persistence_hash_from_port( port, persistence_id ) )
+        
+    else
+      
+      # signify that we did not find an existing self
+      return nil
+      
+    end
+    
+    return self
+
+  end
+  
   ################
   #  persisted?  #
   ################
@@ -187,7 +245,9 @@ module Rpersistence::Instance::Object
     @__rpersistence__suspended__  	= false
     @__rpersistence__stopped__  		= false
   end
-  
+
+  ##############################################  Cease  ####################################################
+
   ############
   #  cease!  #
   ############
@@ -197,35 +257,20 @@ module Rpersistence::Instance::Object
 
 		port, bucket, key = parse_persist_args( args )
 
-    global_id = persistence_id
-    unless global_id
-      global_id = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
-    end
+		# if we have a key but no persistence ID and we are told to cease! then we assume an object with this key exists
+		# we need its ID
+		if ! persistence_id and has_persistence_key?
+			persistence_id	=	port.adapter.get_object_id_for_bucket_and_key( bucket, key )
+		end
 
-		port.adapter.delete_object!( global_id )
-		
-    remove_instance_variable( :@__rpersistence__id__ )
-
+		port.adapter.delete_object!( persistence_id, bucket )
+    
+    return self
+    
 	end
 
   ############################################  Variables  ##################################################
 
-  #####################################
-  #  instance_variables_as_accessors  #
-  #####################################
-
-  def instance_variables_as_accessors
-
-    instance_vars_as_accessors  = Array.new
-    
-    instance_variables.each do |this_var|
-      instance_vars_as_accessors.push( accessor_name_for_variable( this_var ) )
-    end
-
-    return instance_vars_as_accessors
-
-  end
-  
   #############################
   #  instance_variables_hash  #
   #############################
@@ -244,6 +289,19 @@ module Rpersistence::Instance::Object
 		
   end
 
+  ####################################################
+  #  instance_variables_minus_persistence_variables  #
+  ####################################################
+
+  def instance_variables_minus_persistence_variables
+    
+    # first - anything we've stored in object
+		instance_vars = object_instance_variables.select { |property_name| ( property_name.to_s.slice( 0, 17 ) == "@__rpersistence__" ? false : true ) }
+
+		return instance_vars
+		
+  end
+
   ########################
   #  instance_variables  #
   ########################
@@ -253,7 +311,7 @@ module Rpersistence::Instance::Object
     ivar_array	=	Array.new
 		
 		# first - anything we've stored in object
-		object_instance_variables.each do |property_name|
+		instance_variables_minus_persistence_variables.each do |property_name|
 
 			unless  property_name.to_s.slice( 0, 17 ) == "@__rpersistence__"
 
@@ -275,7 +333,7 @@ module Rpersistence::Instance::Object
 		return ivar_array.sort.uniq
 		
   end
-
+  
   ###########################
   #  instance_variable_get  #
   ###########################
@@ -287,8 +345,39 @@ module Rpersistence::Instance::Object
     # if we're atomic and have an ID, get from persistence port (call accessor read method)
     if persistence_id and ! instance_variable_defined?( :@__rpersistence__first_persist__ ) and atomic_attribute?( variable_name )
 
-      instance_variable = persistence_port.adapter.get_property( self, variable_name )
-    
+      # we need to know if we are loading a flat or complex object
+      # a complex object is any object that has multiple properties (like the one we are currently in)
+      # if we have a complex object then we store its ID
+      # the first time we load the property we load the object corresponding to the ID
+      # at this point, persistence activity at the level of this object is defined by configuration specific to the object
+      # once our object has been loaded we don't need to get it again
+      # so we can check to see if the variable is already set to a value, in which case we do not load it from the persistence port
+      
+      complex = complex_property?( persistence_port, variable_name )
+      if complex
+        
+        instance_variable = object_instance_variable_get( variable_name )        
+        
+      end
+
+      # if we already have our object (a complex object we already loaded) we can return it
+      # otherwise we need to get our object/value
+      unless instance_variable
+
+        instance_variable = persistence_port.adapter.get_property( self, variable_name )
+        
+        # if complex we have an ID
+        if complex
+          
+          klass             = persistence_port.adapter.class_for_persistence_id( this_persistence_value )
+          klass.instance_eval do
+            instance_variable = object_for_persistence_id( persistence_port, instance_variable )
+          end
+          
+        end
+        
+      end
+      
     # otherwise get from object
     else
 
@@ -305,12 +394,15 @@ module Rpersistence::Instance::Object
   ###########################
 
   def instance_variable_set( variable_name, value )
-    
-    # if we're atomic and have an ID, get from persistence port (call accessor write method)
+
+    # if we're atomic and have an ID, put to persistence port
     if persistence_id and atomic_attribute?( variable_name )
-    
+
+      value = persist_value_as_sub_object_if_necessary_and_return_id_or_value( variable_name, value )
+            
+      # we're always putting our property, whether the value is a flat object or an ID for a complex object
       persistence_port.adapter.put_property!( self, variable_name, value )
-    
+      
     # otherwise get from object
     else
       
@@ -318,132 +410,9 @@ module Rpersistence::Instance::Object
       
     end
     
-    return self
-    
-  end
-  
-  #############
-  #  inspect  #
-  #############
-
-  def inspect
-
-    require 'pp'
-    
-    load_atomic_state
-    value_string_array              = instance_variables_hash.collect{ |property_name, property_value| property_name.to_s + '=' + property_value.pretty_inspect.chomp.to_s }
-    instance_variable_names_values  = value_string_array.join( ' ' )
-    instance_variable_string        = ( instance_variables_hash.empty?  ? '' : ' ' + instance_variable_names_values )
-
-    inspect_string = nil
-
-    if self.class == Class or self.is_a?( Class ) or self.class == Module or self.is_a?( Module )
-      inspect_string  = self.to_s
-    elsif self.class == TrueClass
-      inspect_string  = 'true'
-    elsif self.class == FalseClass
-      inspect_string  = 'false'
-    else
-      inspect_string  = '<' + self.class.to_s + ':' + self.__id__.to_s + instance_variable_string + '>'
-    end
-    
-    return inspect_string
-        
-  end
-
-  ###########################################################################################################
-  #############################################  Private  ###################################################
-  ###########################################################################################################
-
-  #######################
-  #  load_atomic_state  #
-  #######################
-  
-  def load_atomic_state
-    
-    attributes  = atomic_attributes
-    
-    if attributes
-      attributes.each do |this_attribute|
-        instance_variable_set( variable_name_for_accessor( this_attribute ) , __send__( this_attribute ) )
-      end
-    end
     
     return self
     
   end
-  
-  ##############################
-  #  persistence_hash_to_port  #
-  ##############################
-
-  # returns persistence hash unique key => storage data
-  # unique key is an array
-  # adapter responsible for constructing actual storage schema for unique identifier described by key
-	def persistence_hash_to_port
-
-		persistence_hash_to_port	=	Hash.new
-		object_instance_variables.each do |property_name|
-
-			#	we don't want to store rpersistence variables, atomic attributes, or non-persistent attributes
-			if persistent_attribute?( property_name )
-
-        primary_key = primary_key_for_object_and_property_name( property_name )
-				persistence_hash_to_port[ primary_key ] = instance_variable_get( property_name )
-        
-			end
-
-		end
-		
-
-    # if this is the first time persisting we are likely to have instance variables that are intended to function atomically
-    # if this is the case, we want to remove them from instance_vars as we add them to the hash
-    if instance_variable_defined?( :@__rpersistence__first_persist__ )
-      
-      remove_atomic_instance_vars
-      
-    end
-
-		return persistence_hash_to_port
-
-	end
-
-  ##############################################
-  #  primary_key_for_object_and_property_name  #
-  ##############################################
-
-  def primary_key_for_object_and_property_name( property_name = nil )
-
-		return [ persistence_id, persistence_locale, persistence_version, property_name ]
-
-  end
-
-  private
-
-  #################################
-  #  remove_atomic_instance_vars  #
-  #################################
-  
-  def remove_atomic_instance_vars
-        
-    atomic_attributes.each do |atomic_property_name|
-      
-      atomic_property_variable_name = variable_name_for_accessor( atomic_property_name )
-      
-      if object_instance_variables.include?( atomic_property_variable_name )
-        remove_instance_variable( atomic_property_variable_name )
-      end
-      
-    end
     
-  end
-
-end
-
-#---------------------------------------------------------------------------------------------------------#
-#--------------------------------------------  Includes  -------------------------------------------------#
-#---------------------------------------------------------------------------------------------------------#
-
-class Object
-	include Rpersistence::Instance::Object
 end
