@@ -6,6 +6,84 @@
 module Rpersistence::ObjectInstance::Attributes
 
   ####################################  Atomicity Configurations  ###########################################
+
+  ###############################
+  #  Klass.included_attributes  #
+  #  included_attributes        #
+  ###############################
+
+	def included_attributes
+    
+		attributes = included_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
+    
+  end
+
+  ######################################
+  #  Klass.included_atomic_attributes  #
+  #  included_atomic_attributes        #
+  ######################################
+
+	def included_atomic_attributes
+    
+		attributes = included_atomic_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
+    
+  end
+
+  ##########################################
+  #  Klass.included_non_atomic_attributes  #
+  #  included_non_atomic_attributes        #
+  ##########################################
+
+	def included_non_atomic_attributes
+    
+		attributes = included_non_atomic_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
+    
+  end
+
+  ###############################
+  #  Klass.excluded_attributes  #
+  #  excluded_attributes        #
+  ###############################
+
+	def excluded_attributes
+    
+		attributes = excluded_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
+    
+  end
+
+  ###########################################
+  #  Klass.excluded_from_atomic_attributes  #
+  #  excluded_from_atomic_attributes        #
+  ###########################################
+
+	def excluded_from_atomic_attributes
+    
+		attributes = excluded_from_atomic_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
+    
+  end
+
+  ########################################
+  #  Klass.excluded_from_all_attributes  #
+  #  excluded_from_all_attributes        #
+  ########################################
+
+	def excluded_from_all_attributes
+    
+		attributes = excluded_from_all_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
+    
+  end
   
   #############################
   #  Klass.atomic_attributes  #
@@ -14,7 +92,9 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def atomic_attributes
     
-    return atomic_non_atomic_readers_writers_accessors( true, nil )
+		attributes = atomic_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
     
   end
 
@@ -24,8 +104,8 @@ module Rpersistence::ObjectInstance::Attributes
   ######################################
 
 	def atomic_attribute_accessors
-    
-    return atomic_non_atomic_readers_writers_accessors( true, :accessor )
+
+    return atomic_attributes_hash.select { |accessor, status| status == :accessor }.keys
 
   end
 
@@ -36,7 +116,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def atomic_attribute_readers
     
-    return atomic_non_atomic_readers_writers_accessors( true, :reader )
+    return atomic_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
 
   end
 
@@ -47,7 +127,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def atomic_attribute_writers
     
-    return atomic_non_atomic_readers_writers_accessors( true, :writer )
+    return atomic_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
     
   end
 
@@ -58,7 +138,9 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def non_atomic_attributes
     
-    return atomic_non_atomic_readers_writers_accessors( false, nil )
+		attributes = non_atomic_attributes_hash.delete_if { |key, value| value == nil }
+
+    return attributes.keys
     
   end
 
@@ -69,7 +151,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def non_atomic_attribute_accessors
     
-    return atomic_non_atomic_readers_writers_accessors( false, :accessor )
+    return non_atomic_attributes_hash.select { |accessor, status| status == :accessor }.keys
 
   end
 
@@ -80,7 +162,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def non_atomic_attribute_readers
     
-    return atomic_non_atomic_readers_writers_accessors( false, :reader )
+    return non_atomic_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
 
   end
 
@@ -91,7 +173,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def non_atomic_attribute_writers
     
-    return atomic_non_atomic_readers_writers_accessors( false, :writer )
+    return non_atomic_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
     
   end
 
@@ -104,18 +186,21 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def persistent_attributes
     
-    persistent_attributes = nil
+		attributes = persistent_attributes_hash.delete_if { |key, value| value == nil }
 
-    if persists_ivars_by_default?
-      # if we persist all by default then non-persist are the ones we've excluded
-      persistent_attributes = ( instance_variables_as_accessors + included_attributes - excluded_attributes ).uniq
-    else
-      # otherwise the ones we've included
-      persistent_attributes = included_attributes - excluded_attributes
-    end
-
-    return persistent_attributes
+		return attributes.keys
     
+  end
+
+  ##########################################
+  #  Klass.persistent_attribute_accessors  #
+  #  persistent_attribute_accessors        #
+  ##########################################
+
+	def persistent_attribute_accessors
+    
+    return persistent_attributes_hash.select { |accessor, status| status == :accessor }.keys
+
   end
 
   ########################################
@@ -125,17 +210,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def persistent_attribute_readers
     
-    persistent_attributes = nil
-
-    if persists_ivars_by_default?
-      # if we persist all by default then non-persist are the ones we've excluded
-      persistent_attributes = ( instance_variables_as_accessors + included_attribute_readers - excluded_attribute_readers ).uniq
-    else
-      # otherwise the ones we've included
-      persistent_attributes = included_attribute_readers - excluded_attribute_readers
-    end
-
-    return persistent_attributes
+    return persistent_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
     
   end
 
@@ -146,17 +221,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def persistent_attribute_writers
 
-    persistent_attributes = nil
-
-    if persists_ivars_by_default?
-      # if we persist all by default then non-persist are the ones we've excluded
-      persistent_attributes = ( instance_variables_as_accessors + included_attribute_writers - excluded_attribute_writers ).uniq
-    else
-      # otherwise the ones we've included
-      persistent_attributes = included_attribute_writers - excluded_attribute_writers
-    end
-
-    return persistent_attributes
+    return persistent_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
     
   end
   
@@ -167,18 +232,21 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def non_persistent_attributes
 
-    non_persistent_attributes = nil
+		attributes = non_persistent_attributes_hash.delete_if { |key, value| value == nil }
 
-    if persists_ivars_by_default?
-      # if we persist all by default then non-persist are the ones we've excluded
-      non_persistent_attributes = excluded_attributes
-    else
-      # otherwise the ones we haven't included or have excluded
-      non_persistent_attributes = ( instance_variables_as_accessors + excluded_attributes - included_attributes ).uniq
-    end
+		return attributes.keys
+		
+  end
 
-    return non_persistent_attributes
-    
+  ##############################################
+  #  Klass.non_persistent_attribute_accessors  #
+  #  non_persistent_attribute_accessors        #
+  ##############################################
+
+	def non_persistent_attribute_accessors
+
+    return non_persistent_attributes_hash.select { |accessor, status| status == :accessor }.keys
+
   end
 
   ############################################
@@ -188,17 +256,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def non_persistent_attribute_readers
 
-    non_persistent_attribute_readers = nil
-
-    if persists_ivars_by_default?
-      # if we persist all by default then non-persist are the ones we've excluded
-      non_persistent_attribute_readers = ( instance_variables_as_accessors + included_attribute_readers - excluded_attribute_readers ).uniq
-    else
-      # otherwise the ones we've included
-      non_persistent_attribute_readers = included_attribute_readers
-    end
-
-    return non_persistent_attribute_readers
+    return non_persistent_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
 
   end
 
@@ -209,46 +267,10 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def non_persistent_attribute_writers
 
-    non_persistent_attribute_writers = nil
-
-    if persists_ivars_by_default?
-      # if we persist all by default then non-persist are the ones we've excluded
-      non_persistent_attribute_writers = ( instance_variables_as_accessors + included_attribute_writers - excluded_attribute_writers ).uniq
-    else
-      # otherwise the ones we've included
-      non_persistent_attribute_writers = included_attribute_writers
-    end
-
-    return non_persistent_attribute_writers
+    return non_persistent_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
 
   end
   
-  ###############################
-  #  Klass.included_attributes  #
-  #  included_attributes        #
-  ###############################
-
-	def included_attributes
-    
-    included_attributes = nil
-    
-    if self.class != Class
-
-      included_attributes = self.class.included_attributes
-
-    else
-    
-      included_attributes = ( @__rpersistence__includes__ || {} ).keys
-          
-    end
-      
-    included_attributes = included_attributes + @__rpersistence__includes__.keys if @__rpersistence__includes__
-    included_attributes = included_attributes - @__rpersistence__excludes__.keys if @__rpersistence__excludes__
-    
-    return included_attributes.uniq
-    
-  end
-
   ########################################
   #  Klass.included_attribute_accessors  #
   #  included_attribute_accessors        #
@@ -256,8 +278,8 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def included_attribute_accessors
     
-    included_attribute_accessors  = included_or_excluded_attribute_accessor_reader_writers( true, :accessor )
-    
+    return included_attributes_hash.select { |accessor, status| status == :accessor }.keys    
+
   end
 
   ######################################
@@ -267,47 +289,21 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def included_attribute_readers
     
-    included_attribute_readers    = included_or_excluded_attribute_accessor_reader_writers( true, :reader )
+    return included_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys    
     
   end
-  
+
   ######################################
   #  Klass.included_attribute_writers  #
   #  included_attribute_writers        #
   ######################################
 
 	def included_attribute_writers
-
-    included_attribute_writers    = included_or_excluded_attribute_accessor_reader_writers( true, :writer )
-
+    
+    return included_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys    
+    
   end
   
-  ###############################
-  #  Klass.excluded_attributes  #
-  #  excluded_attributes        #
-  ###############################
-
-	def excluded_attributes
-
-    excluded_attributes = nil
-    
-    if self.class != Class
-
-      excluded_attributes = self.class.excluded_attributes
-
-    else
-    
-      excluded_attributes = ( @__rpersistence__excludes__ || {} ).keys
-          
-    end
-      
-    excluded_attributes = excluded_attributes + @__rpersistence__excludes__.keys if @__rpersistence__excludes__
-    excluded_attributes = excluded_attributes - @__rpersistence__includes__.keys if @__rpersistence__includes__
-    
-    return excluded_attributes.uniq
-    
-  end
-
   ########################################
   #  Klass.excluded_attribute_accessors  #
   #  excluded_attribute_accessors        #
@@ -315,7 +311,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def excluded_attribute_accessors
 
-    excluded_attribute_accessors  = included_or_excluded_attribute_accessor_reader_writers( false, :accessor )
+    return excluded_attributes_hash.select { |accessor, status| status == :accessor }.keys    
     
   end
   
@@ -326,7 +322,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def excluded_attribute_readers
     
-    excluded_attribute_readers    = included_or_excluded_attribute_accessor_reader_writers( false, :reader )
+    return excluded_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys    
 
   end
 
@@ -337,7 +333,7 @@ module Rpersistence::ObjectInstance::Attributes
 
 	def excluded_attribute_writers
     
-    excluded_attribute_writers    = included_or_excluded_attribute_accessor_reader_writers( false, :writer )
+    return excluded_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys    
     
   end
 

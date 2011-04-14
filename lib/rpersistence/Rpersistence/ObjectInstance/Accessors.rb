@@ -11,14 +11,19 @@ module Rpersistence::ObjectInstance::Accessors
   #########################
   
   def attr_accessor( *attributes )
+
     persist_atomic = persists_atomic_by_default?
     
-    if persist_atomic
-      attr_atomic( *attributes )
-    else
-      super
-    end
+		attributes.each do |this_attribute|
+	    if persist_atomic and ! non_persistent_attribute_accessor?( this_attribute ) and ! non_atomic_attribute_accessor?( this_attribute )
+	      attr_atomic( this_attribute )
+	    else
+	      super
+	    end
+		end
+	
     return self
+
   end
 
   #######################
@@ -27,12 +32,19 @@ module Rpersistence::ObjectInstance::Accessors
   #######################
 
   def attr_reader( *attributes )
-    if persists_atomic_by_default?
-      attr_atomic_reader( *attributes )
-    else
-      super
-    end
+	
+    persist_atomic = persists_atomic_by_default?
+    
+		attributes.each do |this_attribute|
+	    if persist_atomic and ! non_persistent_attribute_reader?( this_attribute ) and ! non_atomic_attribute_reader?( this_attribute )
+	      attr_atomic_reader( this_attribute )
+	    else
+	      super
+	    end
+		end
+	
     return self
+
   end
 
   #######################
@@ -41,12 +53,19 @@ module Rpersistence::ObjectInstance::Accessors
   #######################
 
   def attr_writer( *attributes )
-    if persists_atomic_by_default?
-      attr_atomic_writer( *attributes )
-    else
-      super
-    end
+
+    persist_atomic = persists_atomic_by_default?
+    
+		attributes.each do |this_attribute|
+	    if persist_atomic and ! non_persistent_attribute_writer?( this_attribute ) and ! non_atomic_attribute_writer?( this_attribute )
+	      attr_atomic_writer( this_attribute )
+	    else
+	      super
+	    end
+		end
+	
     return self
+
   end
   
 end

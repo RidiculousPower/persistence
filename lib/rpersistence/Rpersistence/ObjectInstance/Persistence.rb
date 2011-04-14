@@ -158,8 +158,6 @@ module Rpersistence::ObjectInstance::Persistence
 
     # if this was the first persist, unmark (we have ID now)
     remove_instance_variable( :@__rpersistence__first_persist__ ) if instance_variable_defined?( :@__rpersistence__first_persist__ )
-    # if we were forcing new id, remove setting now (we have our new ID)
-    remove_instance_variable( :@__rpersistence__force_new_id__ ) if instance_variable_defined?( :@__rpersistence__force_new_id__ )
 
     include_or_extend_for_persistence_if_necessary
     

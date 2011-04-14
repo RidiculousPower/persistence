@@ -61,15 +61,14 @@ module Rpersistence::ObjectInstance::Configuration
     @__rpersistence__bucket__ = persistence_bucket_class_or_name.to_s
 
   end
-  alias_method :store_as, :persistence_bucket=
 
   ##############################
   #  Klass.persistence_bucket  #
   #  persistence_bucket        #
   ##############################
   
-  def persistence_bucket
-    
+  def persistence_bucket( persistence_bucket_class_or_name = nil )
+
 		bucket = nil
 		
 		# if specified at instance level, use specified value
@@ -80,15 +79,7 @@ module Rpersistence::ObjectInstance::Configuration
     
     else
       
-      if @__rpersistence__persisting_from_port__
-        
-        bucket = self.to_s
-        
-      else
-        
-        bucket = self.class.instance_variable_get( :@__rpersistence__bucket__ ) || self.class.to_s
-      
-      end
+      bucket = self.class.instance_persistence_bucket || self.class.to_s
       
   	end
 
@@ -119,25 +110,54 @@ module Rpersistence::ObjectInstance::Configuration
   alias_method :persistence_key_variable=,  :persistence_key_source=
   alias_method :persists_by,                :persistence_key_source=
 
-  ###########################################
-  #  Klass.set_persistence_key_source_type  #
-  #  set_persistence_key_source_type        #
-  ###########################################
+  ##################################
+  #  Klass.persistence_key_source  #
+  #  persistence_key_source        #
+  ##################################
 
-  def set_persistence_key_source_type( persistence_key_accessor )
+  # returns declared method or ivar that provides key for persisting to port
+	def persistence_key_source
+
+		return get_configuration_searching_upward_from_self( :key_source )
+
+	end
+
+  ##################################
+  #  Klass.persistence_key_method  #
+  #  persistence_key_method        #
+  ##################################
+
+  def persistence_key_method
+
+    key_source = nil
+
+    if persistence_key_source_is_method?
+
+      key_source  = persistence_key_source
+
+    end
     
-    if @__rpersistence__key_source__.to_s.is_variable_name?
-	    @__rpersistence__key_source_is_variable__ = true
-	    @__rpersistence__key_source_is_method__   = false
-    elsif persistence_key_accessor
-	    @__rpersistence__key_source_is_method__   = true
-	    @__rpersistence__key_source_is_variable__ = false
-	  # nil case
-    else
-	    @__rpersistence__key_source_is_method__   = false
-	    @__rpersistence__key_source_is_variable__ = false
-	  end
-    
+    return key_source
+
+  end
+
+  ####################################
+  #  Klass.persistence_key_variable  #
+  #  persistence_key_variable        #
+  ####################################
+
+  def persistence_key_variable
+
+    key_source = nil
+
+		if persistence_key_source_is_variable?
+
+      key_source  = persistence_key_source
+			
+		end
+
+    return key_source
+
   end
 
   ###############################
@@ -155,90 +175,16 @@ module Rpersistence::ObjectInstance::Configuration
     
   end
 
-  ##################################
-  #  Klass.persistence_key_source  #
-  #  persistence_key_source        #
-  ##################################
+  ###################################################
+  #  Klass.persists_instance_variables_by_default!  #
+  #  persists_instance_variables_by_default!        #
+  ###################################################
 
-  # returns declared method or ivar that provides key for persisting to port
-	def persistence_key_source
-
-    key_source = nil
-
-		if  instance_variable_defined?( :@__rpersistence__key_source__ )
-
-			key_source = @__rpersistence__key_source__
-
-		elsif self.class != Class
-
-			key_source = self.class.persistence_key_source
-  
-		end
-
-		return key_source
-
-	end
-
-  ##################################
-  #  Klass.persistence_key_method  #
-  #  persistence_key_method        #
-  ##################################
-
-  def persistence_key_method
-
-    key_source = nil
-
-    if instance_variable_defined?( :@__rpersistence__key_source__ )
-
-      if persistence_key_source_is_method?
-
-        key_source  = @__rpersistence__key_source__
-
-      end
-
-    elsif persistence_key_source_is_method?
-
-      key_source  = self.class.persistence_key_method
-
-    end
-    
-    return key_source
-
-  end
-
-  ####################################
-  #  Klass.persistence_key_variable  #
-  #  persistence_key_variable        #
-  ####################################
-
-  def persistence_key_variable
-
-    key_source = nil
-
-    if instance_variable_defined?( :@__rpersistence__key_source__ ) and persistence_key_source_is_variable?
-
-      key_source  = @__rpersistence__key_source__
-
-    elsif persistence_key_source_is_variable?
-
-      key_source  = self.class.persistence_key_variable
-
-    end
-
-    return key_source
-
-  end
-
-  ######################################
-  #  Klass.persists_ivars_by_default!  #
-  #  persists_ivars_by_default!        #
-  ######################################
-
-  def persists_ivars_by_default!
+  def persists_instance_variables_by_default!
 
     include_or_extend_for_persistence_if_necessary
 
-    @__rpersistence__persists_ivars_by_default__  = true
+    @__rpersistence__persists_instance_variables_by_default__  = true
     
     return self
     
@@ -253,7 +199,7 @@ module Rpersistence::ObjectInstance::Configuration
 
     include_or_extend_for_persistence_if_necessary
     
-    @__rpersistence__persists_ivars_by_default__  = false
+    @__rpersistence__persists_instance_variables_by_default__  = false
 
     return self
 
@@ -474,11 +420,11 @@ module Rpersistence::ObjectInstance::Configuration
 
     include_or_extend_for_persistence_if_necessary
 
-    persists_ivars_by_default!
+    persists_instance_variables_by_default!
     persists_atomic_by_default!
 
 		# move all explicitly declared non-atomic elements into atomic
-    attr_atomic( *@__rpersistence__include_as_non_atomic__.keys )
+    attr_atomic( *non_atomic_attributes )
 
     return self
 
@@ -498,7 +444,7 @@ module Rpersistence::ObjectInstance::Configuration
     persists_non_atomic_by_default!
 
 		# move all declared elements from atomic into non-atomic
-    attr_non_atomic( *@__rpersistence__include_as_atomic__.keys )
+    attr_non_atomic( *atomic_attributes )
 
     return self
 
@@ -531,24 +477,6 @@ module Rpersistence::ObjectInstance::Configuration
 	end
   alias_method :attr_exclude, :attr_non_persistent
 
-  ################################
-  #  Klass.attr_non_persistent!  #
-  #  attr_non_persistent!        #
-  ################################
-
-	def attr_non_persistent!
-
-    include_or_extend_for_persistence_if_necessary
-
-    persists_no_ivars_by_default
-
-		# move all declared elements from atomic into non-atomic
-    attr_non_persistent!( @__rpersistence__include__.keys )
-
-    return self
-
-  end
-  
   ######################################
   #  Klass.attr_non_persistent_reader  #
   #  attr_non_persistent_reader        #
@@ -603,40 +531,37 @@ module Rpersistence::ObjectInstance::Configuration
 	end
   alias_method :attr_exclude_writer, :attr_non_persistent_writer
 
-  ######################
-  #  Klass.attr_clear  #
-  #  attr_clear        #
-  ######################
+  #################################
+  #  Klass.attrs_non_persistent!  #
+  #  attrs_non_persistent!        #
+  #################################
 
-  # clear accessors for one or more attributes
-  def attr_clear( *attributes )
+	def attrs_non_persistent!
 
-    # use internal function to add each attribute as atomic accessor
-		attributes.each do |this_attribute|
-			add_attribute( true,    true,   this_attribute,   nil )
-			add_attribute( false,   true,   this_attribute,   nil )
-			add_attribute( true,    false,  this_attribute,   nil )
-			add_attribute( false,   false,  this_attribute,   nil )
-			remove_atomic_accessor( this_attribute, :reader )
-		end
+    include_or_extend_for_persistence_if_necessary
+
+		# move all declared elements from atomic into non-atomic
+    attr_non_persistent( *persistent_attributes )
+
+    persists_no_ivars_by_default!
 
     return self
 
   end
 
-  ######################
-  #  Klass.attr_clear  #
-  #  attr_clear        #
-  ######################
+  #####################
+  #  Klass.attr_flat  #
+  #  attr_flat        #
+  #####################
 
-  # clear accessors for one or more attributes
-  def attr_clear!
-
-    attr_clear( @__rpersistence__include__ )
-    attr_clear( @__rpersistence__exclude__ )
-
-    return self
+  def attr_flat( *attributes )
     
+		attributes.each do |this_attribute|
+			@__rpersistence__persists_flat__[ this_attribute ] = true
+		end
+		
+		return self
+		
   end
 
 end

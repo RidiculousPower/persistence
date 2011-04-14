@@ -1,6 +1,6 @@
 
 #---------------------------------------------------------------------------------------------------------#
-#--------------------------------  Includes, Extends, and Inherits  --------------------------------------#
+#-------------------------  Includes, Extends, Inherits, Default Settings  -------------------------------#
 #---------------------------------------------------------------------------------------------------------#
 
 ###########################################################################################################
@@ -9,8 +9,6 @@
 
 class Object
 
-  extend 	Rpersistence::ClassInstance::Persistence
-
 	include Rpersistence::ObjectInstance::Attributes
 	include Rpersistence::ObjectInstance::Configuration
 	include Rpersistence::ObjectInstance::Inspect
@@ -18,48 +16,15 @@ class Object
 	include Rpersistence::ObjectInstance::Persistence
 	include Rpersistence::ObjectInstance::Status
 
-  ###############
-  #  inherited  #
-  ###############
+  extend 	Rpersistence::ClassInstance::Persistence
 
-  def self.inherited( class_or_module )
+  ######################
+  #  Default Settings  #
+  ######################
 
-    super
-    
-    class_or_module.instance_eval do
-      
-  		# if true all ivars are persisted
-      @__rpersistence__persists_ivars_by_default__		= true
-  		# enable or disable atomic persistence if no explicit include/exclude is specified
-  		# if @__rpersistence__persists_ivars_by_default__ is true and a var is ! explicitly included/excluded, var will be atomic
-      @__rpersistence__default_atomic__ 		          = true
+ 	persists_instance_variables_by_default!
 
-      # explicitly include vars as atomic/non-atomic
-      @__rpersistence__includes__                     = Hash.new
-      # explicitly exclude vars from being atomic/non-atomic
-      @__rpersistence__excludes__                     = Hash.new
-
-      # explicitly declare atomic/non-atomic attributes
-      # anything included here is also in @__rpersistence__includes__
-      @__rpersistence__include_as_atomic__            = Hash.new
-      @__rpersistence__include_as_non_atomic__        = Hash.new
-
-      # explicitly exclude atomic/non-atomic attributes
-      # anything excluded here is also in @__rpersistence__excludes__
-      @__rpersistence__exclude_from_atomic__          = Hash.new
-      @__rpersistence__exclude_from_all__             = Hash.new
-    
-      # attributes shared between two or more classes
-      @__rpersistence__shared_attributes__            = Hash.new
-
-    	@__rpersistence__complex_property__ 						= Hash.new
-    	@__rpersistence__delete_cascades__ 							= Hash.new
-
-    end
-    
-    return self
-    
-  end
+	persists_non_atomic_by_default!
 
 end
 
@@ -70,9 +35,11 @@ end
 class Class
 
   extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
 
 	include Rpersistence::ObjectInstance::Persistence::Flat
+
+	include Rpersistence::ClassInstance::Configuration
+	include Rpersistence::ClassInstance::Persistence::Flat
 
 end
 

@@ -1,9 +1,9 @@
 
 module Rpersistence::ObjectInstance::Equality
 
-  #########
-  #   ==  # 
-  #########
+  ########
+  #  ==  # 
+  ########
 
   # we overload :== so that we can compare users after load to before load
   # if we don't do this then we have rpersistence internal vars in one and not the other

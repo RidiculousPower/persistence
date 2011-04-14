@@ -10,8 +10,6 @@ module Rpersistence::ClassInstance::Persistence::Flat
 	# * :port, :bucket, property_name
   def persist( *args )
 
-    @__rpersistence__persisting_from_port__ = true
-
 		port, bucket, key                     = parse_persist_args( args )
 		
 		global_id                             = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
@@ -31,8 +29,6 @@ module Rpersistence::ClassInstance::Persistence::Flat
       
     end
     
-    remove_instance_variable( :@__rpersistence__persisting_from_port__ )
-
     return persistence_value
 
   end

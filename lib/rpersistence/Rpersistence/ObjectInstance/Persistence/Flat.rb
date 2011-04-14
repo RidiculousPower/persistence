@@ -25,7 +25,9 @@ module Rpersistence::ObjectInstance::Persistence::Flat
 
 	# declare name of persistence bucket where object will be stored
   def persistence_bucket=( persistence_bucket_class_or_name )
-
+		
+		# we don't ever need to include/extend anything for flat classes like we do for complex objects
+		
     @__rpersistence__bucket__ = persistence_bucket_class_or_name.to_s
 
   end
