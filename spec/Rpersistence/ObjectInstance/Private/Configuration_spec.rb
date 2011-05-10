@@ -31,22 +31,22 @@ describe Rpersistence::ObjectInstance::Configuration do
   #  Klass::add_attribute  #
   #  add_attribute         #
   ##########################
-	
+  
   #########################################################
   #  Klass::status_for_existing_status_plus_other_status  #
   #  status_for_existing_status_plus_other_status         #
   #########################################################
-	
+  
   ##########################################################
   #  Klass::status_for_existing_status_minus_other_status  #
   #  status_for_existing_status_minus_other_status         #
   ##########################################################
-	
+  
   #################################
   #  Klass::add_attribute_status  #
   #  add_attribute_status         #
   #################################
-	
+  
   #############################################################################
   #  Klass::flip_attribute_status_for_complementary_include_exclude_variable  #
   #  flip_attribute_status_for_complementary_include_exclude_variable         #

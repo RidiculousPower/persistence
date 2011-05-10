@@ -4,7 +4,7 @@
 #---------------------------------------------------------------------------------------------------------#
 
 module Rpersistence::ObjectInstance::Persistence::Flat
-		
+    
   #############################
   #  Klass.persistence_port=  #
   #  persistence_port=        #
@@ -23,11 +23,11 @@ module Rpersistence::ObjectInstance::Persistence::Flat
   #  persistence_bucket=        #
   ###############################
 
-	# declare name of persistence bucket where object will be stored
+  # declare name of persistence bucket where object will be stored
   def persistence_bucket=( persistence_bucket_class_or_name )
-		
-		# we don't ever need to include/extend anything for flat classes like we do for complex objects
-		
+    
+    # we don't ever need to include/extend anything for flat classes like we do for complex objects
+    
     @__rpersistence__bucket__ = persistence_bucket_class_or_name.to_s
 
   end
@@ -38,19 +38,19 @@ module Rpersistence::ObjectInstance::Persistence::Flat
   #  persist!        #
   ####################
 
-	# * property_name
-	# * :bucket, property_name
-	# * :port, :bucket, property_name
-	def persist!( *args )
+  # * property_name
+  # * :bucket, property_name
+  # * :port, :bucket, property_name
+  def persist!( *args )
 
-		port, bucket, key = parse_persist_args( args )
+    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :persistence_bucket )
 
-		port.adapter.put_object!( self )
+    port.adapter.put_object!( self )
 
-		# return the object we're persisting
-		return self
-	
-	end
+    # return the object we're persisting
+    return self
+  
+  end
 
 end
 

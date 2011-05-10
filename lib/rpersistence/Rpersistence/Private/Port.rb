@@ -9,7 +9,7 @@ class Rpersistence::Port
   #  internal_persists_classes_for?  #
   ####################################
 
-	def internal_persists_classes_for?( read_write_setting, *args )
+  def internal_persists_classes_for?( read_write_setting, *args )
     args.each do |this_arg|
       # array
       if this_arg.is_a?( Array )
@@ -30,6 +30,6 @@ class Rpersistence::Port
         return @persists_classes[ klass ] == read_write_setting
       end
     end
-	end
+  end
   
 end

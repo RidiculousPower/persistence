@@ -21,28 +21,28 @@ class Rpersistence::Port
   #  enable  #
   ############
 
-	def enable
-		@enabled = true
-		adapter.enable
-		return self
-	end
-	
+  def enable
+    @enabled = true
+    @adapter.enable
+    return self
+  end
+  
   #############
   #  disable  #
   #############
 
-	def disable
-		@enabled  = false
-		adapter.disable
-		return self
-	end
+  def disable
+    @enabled  = false
+    adapter.disable
+    return self
+  end
 
   ############################
   #  set_to_persist_classes  #
   ############################
 
-	def set_to_persist_classes( *args )
-	  args.each do |this_arg|
+  def set_to_persist_classes( *args )
+    args.each do |this_arg|
       # array
       if this_arg.is_a?( Array )
         classes_hash.each do |this_class|
@@ -58,45 +58,45 @@ class Rpersistence::Port
         @persists_classes[ this_class ] = :read_write        
       end
     end
-	end
+  end
 
   ######################
   #  persists_classes  #
   ######################
 
-	def persists_classes
-		return @persists_classes
-	end
+  def persists_classes
+    return @persists_classes
+  end
 
   #####################################
   #  persists_read_write_for_classes  #
   #####################################
 
-	def persists_write_for_classes
-		return @persists_classes.select { |this_class, read_write_status| read_write_status == :read_write }
-	end
+  def persists_write_for_classes
+    return @persists_classes.select { |this_class, read_write_status| read_write_status == :read_write }
+  end
 
   ###############################
   #  persists_read_for_classes  #
   ###############################
 
-	def persists_read_for_classes
-		return @persists_classes.select { |this_class, read_write_status| read_write_status == :read }
-	end
+  def persists_read_for_classes
+    return @persists_classes.select { |this_class, read_write_status| read_write_status == :read }
+  end
 
   ################################
   #  persists_write_for_classes  #
   ################################
 
-	def persists_write_for_classes
-		return @persists_classes.select { |this_class, read_write_status| read_write_status == :write }
-	end
+  def persists_write_for_classes
+    return @persists_classes.select { |this_class, read_write_status| read_write_status == :write }
+  end
 
   #######################
   #  persists_classes?  #
   #######################
 
-	def persists_classes?( *args )
+  def persists_classes?( *args )
     args.each do |this_arg|
       # array
       if this_arg.is_a?( Array )
@@ -117,13 +117,13 @@ class Rpersistence::Port
         return @persists_classes[ klass ]
       end
     end
-	end
+  end
 
   ######################################
   #  persists_classes_for_read_write?  #
   ######################################
 
-	def persists_classes_for_read_write?( *args )
+  def persists_classes_for_read_write?( *args )
     return internal_persists_classes_for( :read_write, *args )
   end
 
@@ -131,7 +131,7 @@ class Rpersistence::Port
   #  persists_classes_for_read?  #
   ################################
 
-	def persists_classes_for_read?( *args )
+  def persists_classes_for_read?( *args )
     return internal_persists_classes_for( :read, *args )
   end
 
@@ -139,9 +139,35 @@ class Rpersistence::Port
   #  persists_classes_for_write?  #
   #################################
 
-	def persists_classes_for_write?( *args )
+  def persists_classes_for_write?( *args )
     return internal_persists_classes_for( :write, *args)
   end
-	
+
+  ##########################
+  #  persist_file_by_path  #
+  ##########################
+
+  def persist_file_by_path
+    @__rpersistence__persists_file_by_path__ =  true
+    return self
+  end
+
+  ###########################
+  #  persist_file_contents  #
+  ###########################
+
+  def persist_file_contents
+    @__rpersistence__persists_file_by_path__ =  false
+    return self
+  end
+
+  ############################
+  #  persists_file_by_path?  #
+  ############################
+
+  def persists_file_by_path?
+    return @__rpersistence__persists_file_by_path__
+  end
+  
 end
 

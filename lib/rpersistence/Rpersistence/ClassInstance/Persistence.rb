@@ -33,18 +33,18 @@ module Rpersistence::ClassInstance::Persistence
   #  Klass.persist  #
   ###################
   
-	# * property_name
-	# * :bucket, property_name
-	# * :port, :bucket, property_name
+  # * property_name
+  # * :bucket, property_name
+  # * :port, :bucket, property_name
   def persist( *args )
 
-		port, bucket, key               = parse_persist_args( args )
+    port, bucket, key               = parse_persist_args_with_bucket_accessor( args, :instance_persistence_bucket )
 
-		global_persistence_id           = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
-		
-		object                          = nil
-		
-		if ( global_persistence_id )
+    global_persistence_id           = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
+    
+    object                          = nil
+    
+    if ( global_persistence_id )
 
       object                        = object_for_persistence_id( port, global_persistence_id )
       
@@ -58,15 +58,15 @@ module Rpersistence::ClassInstance::Persistence
   #  Klass.persisted?  #
   ######################
 
-	def persisted?( *args )
+  def persisted?( *args )
 
-		port, bucket, key   = parse_persist_args( args )
+    port, bucket, key   = parse_persist_args_with_bucket_accessor( args, :instance_persistence_bucket )
 
     is_persisted  = ( persistence_port.adapter.persistence_key_exists_for_bucket?( persistence_bucket, key ) ? true : false )      
-	  
+    
     return is_persisted
     
-	end
+  end
 
   ##############################################  Cease  ####################################################
 
@@ -74,18 +74,18 @@ module Rpersistence::ClassInstance::Persistence
   #  Klass.cease!  #
   ##################
 
-	# deletes from storage (archives if appropriate)
-	def cease!( *args )
+  # deletes from storage (archives if appropriate)
+  def cease!( *args )
 
-		port, bucket, key = parse_persist_args( args )
+    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :instance_persistence_bucket )
 
     # if we have Class then we are 
     global_persistence_id = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
   
-		port.adapter.delete_object!( global_persistence_id, bucket )
+    port.adapter.delete_object!( global_persistence_id, bucket )
     
     return self
     
-	end
+  end
 
 end

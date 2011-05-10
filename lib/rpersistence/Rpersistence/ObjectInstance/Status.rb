@@ -13,12 +13,12 @@ module Rpersistence::ObjectInstance::Status
     key_source_is_method = nil
 
     if  instance_variable_defined?( :@__rpersistence__key_source_is_method__ )  and
-       	@__rpersistence__key_source_is_method__
+         @__rpersistence__key_source_is_method__
         
       key_source_is_method  = true
 
-		elsif 	instance_variable_defined?( :@__rpersistence__key_source_is_variable__ )  and
-				    @__rpersistence__key_source_is_variable__
+    elsif   instance_variable_defined?( :@__rpersistence__key_source_is_variable__ )  and
+            @__rpersistence__key_source_is_variable__
 
       key_source_is_method  = false
 
@@ -47,7 +47,7 @@ module Rpersistence::ObjectInstance::Status
       key_source_is_variable  = true
 
     elsif  instance_variable_defined?( :@__rpersistence__key_source_is_method__ )  and
-       	@__rpersistence__key_source_is_method__
+         @__rpersistence__key_source_is_method__
 
       key_source_is_variable  = false
 
@@ -197,7 +197,7 @@ module Rpersistence::ObjectInstance::Status
     if persistent_vars = persistent_readers
   
       attributes.each do |this_attribute|
-		    accessor_method_name, property_name  = accessor_name_for_var_or_method( this_attribute, false )
+        accessor_method_name, property_name  = accessor_name_for_var_or_method( this_attribute, false )
         is_persistent_reader = persistent_vars.include?( accessor_method_name )
         break unless is_persistent_reader
       end
@@ -220,7 +220,7 @@ module Rpersistence::ObjectInstance::Status
     if persistent_vars = persistent_writers
 
       attributes.each do |this_attribute|
-		    accessor_method_name, property_name  = accessor_name_for_var_or_method( this_attribute, false )
+        accessor_method_name, property_name  = accessor_name_for_var_or_method( this_attribute, false )
         is_persistent_writer = persistent_vars.include?( accessor_method_name )
         break unless is_persistent_writer
       end
@@ -322,15 +322,19 @@ module Rpersistence::ObjectInstance::Status
 
   end
 
-  ##################################
-  #  Klass.persists_as_flat_file?  #
-  #  persists_as_flat_file?        #
-  ##################################
+  ##########################
+  #  Klass.persists_flat?  #
+  #  persists_flat?        #
+  ##########################
 
   def persists_flat?( attribute )
+
+    accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute )
+
+    persists_flat = get_cascading_hash_configuration_from_Object( :cache__persists_flat )[ accessor_method_name ]
     
-		return get_cascading_hash_configuration_from_Object( :persists_flat )[ attribute ]
-		
+    return persists_flat
+    
   end
 
 end

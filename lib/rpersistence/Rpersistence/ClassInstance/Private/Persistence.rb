@@ -37,7 +37,7 @@ module Rpersistence::ClassInstance::Persistence
       load_persistence_hash( port, persistence_ivar_hash )
     end
     
-		return object
+    return object
 
   end
 

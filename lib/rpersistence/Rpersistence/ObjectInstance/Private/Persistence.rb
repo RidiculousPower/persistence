@@ -13,65 +13,49 @@ module Rpersistence::ObjectInstance::Persistence
   # returns persistence hash unique key => storage data
   # unique key is an array
   # adapter responsible for constructing actual storage schema for unique identifier described by key
-	def persistence_hash_to_port
+  def persistence_hash_to_port
 
-		persistence_hash_to_port	=	Hash.new
+    persistence_hash_to_port  =  Hash.new
 
     if self.class == Array
 
-  		self.each_with_index do |property_value, index|
+      self.each_with_index do |property_value, index|
 
-        property_value                            = persist_value_as_sub_object_if_necessary_and_return_id_or_value( index, property_value )
-        primary_key                               = primary_key_for_property_name( index )
-				persistence_hash_to_port[ primary_key ]   = property_value
+        property_value_to_port                    = persist_value_as_sub_object_if_necessary_and_return_id_or_value( index, property_value )
+        primary_key                               = persistence_port.adapter.primary_key_for_property_name( self, index )
+        persistence_hash_to_port[ primary_key ]   = property_value_to_port
 
-  		end
+      end
 
     elsif self.class == Hash
 
-  		self.each do |property_name, property_value|
+      self.each do |property_name, property_value|
 
-        property_value                            = persist_value_as_sub_object_if_necessary_and_return_id_or_value( property_name, property_value )
-        primary_key                               = primary_key_for_property_name( property_name )
-				persistence_hash_to_port[ primary_key ]   = property_value
+        property_value_to_port                    = persist_value_as_sub_object_if_necessary_and_return_id_or_value( property_name, property_value )
+        primary_key                               = persistence_port.adapter.primary_key_for_property_name( self, property_name )
+        persistence_hash_to_port[ primary_key ]   = property_value_to_port
 
-  		end
+      end
       
     else
 
-  		instance_variables_minus_persistence_variables.each do |property_name|
+      instance_variables_minus_persistence_variables.each do |property_name|
 
-  			#	we don't want to store rpersistence variables, atomic attributes, or non-persistent attributes
-  			if persistent_attribute?( property_name )
+        #  we don't want to store rpersistence variables, atomic attributes, or non-persistent attributes
+        if persistent_attribute?( property_name )
 
           property_value                          = object_instance_variable_get( property_name )
-          property_value                          = persist_value_as_sub_object_if_necessary_and_return_id_or_value( property_name, property_value )
-          primary_key                             = primary_key_for_property_name( property_name )
-  				persistence_hash_to_port[ primary_key ] = property_value
+          property_value_to_port                  = persist_value_as_sub_object_if_necessary_and_return_id_or_value( property_name, property_value )
+          primary_key                             = persistence_port.adapter.primary_key_for_property_name( self, property_name )
+          persistence_hash_to_port[ primary_key ] = property_value_to_port
 
-  			end
+        end
 
-  		end
+      end
       
     end
 
-		return persistence_hash_to_port
-
-	end
-
-  #########################################
-  #  Klass.primary_key_for_property_name  #
-  #  primary_key_for_property_name        #
-  #########################################
-
-  def primary_key_for_property_name( property_name )
-
-		return [ 	persistence_id, 
-							persistence_locale, 
-							persistence_version, 
-							property_name, 
-							( complex_property?( persistence_port, property_name ) ? true : false ),
-							( delete_cascades?( persistence_port, property_name ) ? true : false ) ]
+    return persistence_hash_to_port
 
   end
 
@@ -80,52 +64,87 @@ module Rpersistence::ObjectInstance::Persistence
   #  persistence_id_required?         #
   #####################################
 
-	def persistence_id_required?
-		
-		persistence_id_required = false
-		
-		if  ! persistence_id  and
+  def persistence_id_required?
+    
+    persistence_id_required = false
+    
+    if  ! persistence_id  and
         ( ! has_persistence_key?  or
           ! ( persistence_id = persistence_port.adapter.get_object_id_for_bucket_and_key( persistence_bucket, persistence_key ) ) )
-    	
-			persistence_id_required = true
-			
-		end
+      
+      persistence_id_required = true
+      
+    end
 
-		return persistence_id_required
-		
-	end
+    return persistence_id_required
+    
+  end
 
-	###############################
+  ###############################
   #  Klass::is_complex_object?  #
   #  is_complex_object?         #
   ###############################
   
-	def is_complex_object?( object )
-		
-		is_complex = true
-		
-    if  object.is_a?( Bignum )       		or
-        object.is_a?( Fixnum )       		or
-        object.is_a?( Complex )      		or
-        object.is_a?( Rational )     		or
-        object.is_a?( TrueClass )    		or
-        object.is_a?( FalseClass )   		or
-        object.is_a?( String )       		or
-        object.is_a?( Symbol )       		or
-        object.is_a?( Regexp )       		or
-        object.is_a?( File )         		or
-        object.is_a?( File::Contents ) 	or
+  def is_complex_object?( object )
+    
+    is_complex = true
+    
+    if  object.is_a?( Bignum )           or
+        object.is_a?( Fixnum )           or
+        object.is_a?( Complex )          or
+        object.is_a?( Rational )         or
+        object.is_a?( TrueClass )        or
+        object.is_a?( FalseClass )       or
+        object.is_a?( String )           or
+        object.is_a?( Symbol )           or
+        object.is_a?( Regexp )           or
+        object.is_a?( File )             or
+        object.is_a?( File::Contents )   or
         object.is_a?( NilClass )
-    	
-			is_complex = false
+      
+      is_complex = false
 
-		end
+    end
 
-		return is_complex
-		
-	end
-	
+    return is_complex
+    
+  end
+
+  #############################
+  #  Klass::delete_cascades?  #
+  #  delete_cascades?         #
+  #############################
+
+  def delete_cascades?( port, variable_name )
+
+    delete_cascades = false
+
+    # only complex properties can cascade (meaningless for flat property)
+    if complex_property?( port, variable_name )
+
+      accessor_name = accessor_name_for_var_or_method( variable_name )
+
+      delete_cascades = get_cascading_hash_configuration_from_Object( :delete_cascades )[ accessor_name ]
+
+      if delete_cascades == nil
+
+        @__rpersistence__delete_cascades__  ||=  Hash.new
+
+        @__rpersistence__delete_cascades__[ accessor_name ] = port.adapter.delete_cascades?( self, variable_name )
+
+      end
+
+      if delete_cascades == nil
+        delete_cascades = true
+      end
+
+    end
+
+
+    return delete_cascades
+
+  end
+    
   ###########################################################################################################
       private ###############################################################################################
   ###########################################################################################################
@@ -140,12 +159,12 @@ module Rpersistence::ObjectInstance::Persistence
     object_hash = nil
 
     if global_persistence_id
-  		object_hash   = port.adapter.get_object( global_persistence_id, persistence_bucket )
-	    object_hash[ :@__rpersistence__id__ ] = global_persistence_id
+      object_hash   = port.adapter.get_object( global_persistence_id, ( respond_to?( :instance_persistence_bucket ) ? instance_persistence_bucket : persistence_bucket ) )
+      object_hash[ :@__rpersistence__id__ ] = global_persistence_id
     end
 
-		return object_hash
-		
+    return object_hash
+    
   end
 
   ##################################
@@ -164,17 +183,15 @@ module Rpersistence::ObjectInstance::Persistence
       self.extend( Rpersistence::ObjectInstance::Equality )
       
     end
-      
+    
     persistence_ivar_hash.each do |property_name, property_value|
 
-      # if we have an array it is a complex object: [ klass, { sub_object_values } ]
-      if property_value.is_a?( Array )
-        complex_sub_object_klass      = property_value[ 0 ]
-        complex_sub_object_value_hash = property_value[ 1 ]
-        property_value                = object_from_persistence_hash( port, complex_sub_object_klass, complex_sub_object_value_hash )
-        property_value.instance_eval do
-          declare_complex_property( property_name )
-        end
+      # if we have an array it is a complex object: [ :__rpersistence__complex_object__, klass, { sub_object_values } ]
+      if property_value.is_a?( Array ) and property_value[ 0 ] == :__rpersistence__complex_object__
+        complex_sub_object_klass      = property_value[ 1 ]
+        complex_sub_object_value_hash = property_value[ 2 ]
+        property_value                 = object_from_persistence_hash( port, complex_sub_object_klass, complex_sub_object_value_hash )
+        declare_complex_property( property_name )
       else
         declare_flat_object( property_name )
       end
@@ -200,9 +217,9 @@ module Rpersistence::ObjectInstance::Persistence
   #####################################
 
   def declare_complex_property( variable_name )
-		
-		# we store locally because it's really just a cache for information in the storage port
-    @__rpersistence__cache__complex_property__	||=	Hash.new
+    
+    # we store locally because it's really just a cache for information in the storage port
+    @__rpersistence__cache__complex_property__  ||=  Hash.new
 
     @__rpersistence__cache__complex_property__[ variable_name ]  = true
 
@@ -215,8 +232,8 @@ module Rpersistence::ObjectInstance::Persistence
 
   def declare_flat_object( variable_name )
 
-		# we store locally because it's really just a cache for information in the storage port
-    @__rpersistence__cache__complex_property__	||=	Hash.new
+    # we store locally because it's really just a cache for information in the storage port
+    @__rpersistence__cache__complex_property__  ||=  Hash.new
 
     @__rpersistence__cache__complex_property__[ variable_name ]  = false
 
@@ -229,13 +246,14 @@ module Rpersistence::ObjectInstance::Persistence
 
   def complex_property?( port, variable_name )
     
-		# we store locally because it's really just a cache for information in the storage port
-    @__rpersistence__cache__complex_property__	||=	Hash.new
+    # we store locally because it's really just a cache for information in the storage port
+    @__rpersistence__cache__complex_property__  ||=  Hash.new
 
     # a complex object is an object with more than one property
     
     complex_property = @__rpersistence__cache__complex_property__[ variable_name ]
     
+    # we expect true/false, so we have to test for nil to detect absence
     if complex_property == nil
 
       complex_property  = port.adapter.complex_property?( self, variable_name )
@@ -248,27 +266,6 @@ module Rpersistence::ObjectInstance::Persistence
     
   end
 
-  #############################
-  #  Klass::delete_cascades?  #
-  #  delete_cascades?         #
-  #############################
-
-  def delete_cascades?( port, variable_name )
-
-		accessor_name = accessor_name_for_var_or_method( variable_name )
-
-    delete_cascades = get_cascading_hash_configuration_from_Object( :delete_cascades )[ accessor_name ]
-    
-    if delete_cascades == nil
-
-      @__rpersistence__delete_cascades__[ accessor_name ] = port.adapter.delete_cascades?( self, variable_name )
-    
-    end
-
-    return delete_cascades
-
-	end
-	
   ############################################################################
   #  Klass::persist_value_as_sub_object_if_necessary_and_return_id_or_value  #
   #  persist_value_as_sub_object_if_necessary_and_return_id_or_value         #
@@ -279,8 +276,8 @@ module Rpersistence::ObjectInstance::Persistence
     sub_object_id_or_value = nil
   
     klass = value.class
-		accessor_name = accessor_name_for_variable( variable_name )
-    if is_complex_object?( value ) and ! object.persists_flat?( accessor_name )
+    accessor_name = accessor_name_for_variable( variable_name )
+    if persists_flat?( accessor_name ) or ! is_complex_object?( value )
 
       declare_flat_object( variable_name )
       sub_object_id_or_value  = value
@@ -301,7 +298,11 @@ module Rpersistence::ObjectInstance::Persistence
       # we can set the id without checking because we don't have an ID yet so will get the existing ID or nil
       value.persistence_id  = persistence_port.adapter.get_property( self, variable_name )
       
-      value.persist!
+      # if we don't have a key for our sub-object, create an arbitrary key
+      # since it's a sub-object, we will make the key objectID.property_name
+      value.persistence_key = persistence_id.to_s + '.' + variable_name.to_s unless value.persistence_key != nil
+
+      value.persist!( persistence_port, value.persistence_bucket, value.persistence_key )
 
       sub_object_id_or_value = value.persistence_id
 
@@ -361,12 +362,12 @@ module Rpersistence::ObjectInstance::Persistence
   def object_from_persistence_hash( port, klass, persistence_ivar_hash )
 
     object = klass.new
-    
+
     object.instance_eval do
-      load_persistence_hash( port, persistence_ivar_hash )
+      object = load_persistence_hash( port, persistence_ivar_hash )
     end
-    
-		return object
+
+    return object
 
   end
   

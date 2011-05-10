@@ -22,11 +22,16 @@ module Rpersistence::ObjectInstance::Configuration
     if @__rpersistence__port__
       
       port = @__rpersistence__port__
-        		
+            
     elsif self.class != Class
       
       port = self.class.persistence_port
       
+    end
+
+    # if we don't have a port, get our current default port
+    unless port
+      port = persistence_port = Rpersistence.current_port
     end
 
     return port
@@ -53,7 +58,7 @@ module Rpersistence::ObjectInstance::Configuration
   #  persistence_bucket=        #
   ###############################
 
-	# declare name of persistence bucket where object will be stored
+  # declare name of persistence bucket where object will be stored
   def persistence_bucket=( persistence_bucket_class_or_name )
 
     include_or_extend_for_persistence_if_necessary
@@ -69,21 +74,21 @@ module Rpersistence::ObjectInstance::Configuration
   
   def persistence_bucket( persistence_bucket_class_or_name = nil )
 
-		bucket = nil
-		
-		# if specified at instance level, use specified value
-		# otherwise, use value stored in class		
+    bucket = nil
+    
+    # if specified at instance level, use specified value
+    # otherwise, use value stored in class    
     if @__rpersistence__bucket__
-    	
-    	bucket = @__rpersistence__bucket__
+      
+      bucket = @__rpersistence__bucket__
     
     else
-      
-      bucket = self.class.instance_persistence_bucket || self.class.to_s
-      
-  	end
 
-		return bucket
+      bucket = self.class.instance_persistence_bucket
+      
+    end
+
+    return bucket
 
   end
 
@@ -101,7 +106,7 @@ module Rpersistence::ObjectInstance::Configuration
     
     set_persistence_key_source_type( persistence_key_accessor )
 
-		has_persistence_key!
+    has_persistence_key!
 
     return self
 
@@ -116,11 +121,11 @@ module Rpersistence::ObjectInstance::Configuration
   ##################################
 
   # returns declared method or ivar that provides key for persisting to port
-	def persistence_key_source
+  def persistence_key_source
 
-		return get_configuration_searching_upward_from_self( :key_source )
+    return get_configuration_searching_upward_from_self( :key_source )
 
-	end
+  end
 
   ##################################
   #  Klass.persistence_key_method  #
@@ -150,26 +155,26 @@ module Rpersistence::ObjectInstance::Configuration
 
     key_source = nil
 
-		if persistence_key_source_is_variable?
+    if persistence_key_source_is_variable?
 
       key_source  = persistence_key_source
-			
-		end
+      
+    end
 
     return key_source
 
   end
 
-  ###############################
-  #  Klass.persist_declared_by  #
-  #  persist_declared_by        #
-  ###############################
+  ################################
+  #  Klass.persists_declared_by  #
+  #  persists_declared_by        #
+  ################################
 
-  def persist_declared_by( persistence_key_accessor )
+  def persists_declared_by( persistence_key_accessor )
     
     persists_no_ivars_by_default!
     
-    persistence_key_source  = persistence_key_accessor
+    self.persistence_key_source  = persistence_key_accessor
     
     return self
     
@@ -244,25 +249,25 @@ module Rpersistence::ObjectInstance::Configuration
   #  attr_atomic        #
   #######################
 
-	# declare one or more attributes to persist atomically
+  # declare one or more attributes to persist atomically
   def attr_atomic( *attributes )
 
     include_or_extend_for_persistence_if_necessary
 
     # use internal function to add each attribute as atomic accessor
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-		  if this_attribute.is_a?( Hash )
-		    
+      if this_attribute.is_a?( Hash )
+        
         attr_atomic( *this_attribute.keys )
-		    
-	    else
-	      
-			  add_attribute( true, true, this_attribute, :accessor )
-			  
-		  end
-		  
-		end
+        
+      else
+        
+        add_attribute( true, true, this_attribute, :accessor )
+        
+      end
+      
+    end
 
     return self
 
@@ -273,24 +278,24 @@ module Rpersistence::ObjectInstance::Configuration
   #  attr_atomic_reader        #
   ##############################
 
-	# declare one or more attributes to persist from the database atomically (but ! write atomically)
+  # declare one or more attributes to persist from the database atomically (but ! write atomically)
   def attr_atomic_reader( *attributes )
 
     include_or_extend_for_persistence_if_necessary
 
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_atomic_reader( *this_attribute.keys )
 
       else
 
-  			add_attribute( true, true, this_attribute, :reader )
+        add_attribute( true, true, this_attribute, :reader )
 
-  	  end
+      end
 
-		end
+    end
 
     return self
 
@@ -301,24 +306,24 @@ module Rpersistence::ObjectInstance::Configuration
   #  attr_atomic_writer        #
   ##############################
 
-	# declare one or more attributes to persist to the database atomically (but ! read atomically)
+  # declare one or more attributes to persist to the database atomically (but ! read atomically)
   def attr_atomic_writer( *attributes )
 
     include_or_extend_for_persistence_if_necessary
 
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_atomic_writer( *this_attribute.keys )
 
       else
 
-  			add_attribute( true, true, this_attribute, :writer )
+        add_attribute( true, true, this_attribute, :writer )
 
-  	  end
+      end
 
-		end
+    end
 
     return self
 
@@ -334,9 +339,9 @@ module Rpersistence::ObjectInstance::Configuration
     
     include_or_extend_for_persistence_if_necessary
     
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_non_atomic( *this_attribute.keys )
 
@@ -344,10 +349,10 @@ module Rpersistence::ObjectInstance::Configuration
         
         add_attribute( false, true, this_attribute, :accessor )
         remove_atomic_accessor( this_attribute, :accessor )
-  			
+        
       end
 
-		end
+    end
 
     return self
 
@@ -362,21 +367,21 @@ module Rpersistence::ObjectInstance::Configuration
 
     include_or_extend_for_persistence_if_necessary
 
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_non_atomic_reader( *this_attribute.keys )
       
       else
         
         add_attribute( false, true, this_attribute, :reader )
-  			remove_atomic_accessor( this_attribute, :reader )
-  			
+        remove_atomic_accessor( this_attribute, :reader )
+        
       end
 
 
-		end
+    end
 
     return self
 
@@ -391,20 +396,20 @@ module Rpersistence::ObjectInstance::Configuration
 
     include_or_extend_for_persistence_if_necessary
 
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_non_atomic_writer( *this_attribute.keys )
       
       else
 
-  			add_attribute( false, true, this_attribute, :writer )
-  			remove_atomic_accessor( this_attribute, :writer )
+        add_attribute( false, true, this_attribute, :writer )
+        remove_atomic_accessor( this_attribute, :writer )
 
       end
 
-		end
+    end
 
     return self
 
@@ -415,7 +420,7 @@ module Rpersistence::ObjectInstance::Configuration
   #  attrs_atomic!        #
   #########################
 
-	#	declare all attributes persist atomically
+  #  declare all attributes persist atomically
   def attrs_atomic!
 
     include_or_extend_for_persistence_if_necessary
@@ -423,7 +428,7 @@ module Rpersistence::ObjectInstance::Configuration
     persists_instance_variables_by_default!
     persists_atomic_by_default!
 
-		# move all explicitly declared non-atomic elements into atomic
+    # move all explicitly declared non-atomic elements into atomic
     attr_atomic( *non_atomic_attributes )
 
     return self
@@ -435,7 +440,7 @@ module Rpersistence::ObjectInstance::Configuration
   #  attrs_non_atomic!        #
   #############################
 
-	# declare all attributes persist non-atomically
+  # declare all attributes persist non-atomically
   def attrs_non_atomic!
 
     include_or_extend_for_persistence_if_necessary
@@ -443,7 +448,7 @@ module Rpersistence::ObjectInstance::Configuration
     persists_no_ivars_by_default!
     persists_non_atomic_by_default!
 
-		# move all declared elements from atomic into non-atomic
+    # move all declared elements from atomic into non-atomic
     attr_non_atomic( *atomic_attributes )
 
     return self
@@ -455,26 +460,26 @@ module Rpersistence::ObjectInstance::Configuration
   #  attr_non_persistent        #
   ###############################
 
-	def attr_non_persistent( *attributes )
+  def attr_non_persistent( *attributes )
 
     include_or_extend_for_persistence_if_necessary
 
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_non_persistent( *this_attribute.keys )
 
       else
         
-  			add_attribute( false, false, this_attribute, :accessor )
-			  remove_atomic_accessor( this_attribute, :accessor )
+        add_attribute( false, false, this_attribute, :accessor )
+        remove_atomic_accessor( this_attribute, :accessor )
 
-  	  end
+      end
 
-		end
+    end
 
-	end
+  end
   alias_method :attr_exclude, :attr_non_persistent
 
   ######################################
@@ -482,26 +487,26 @@ module Rpersistence::ObjectInstance::Configuration
   #  attr_non_persistent_reader        #
   ######################################
 
-	def attr_non_persistent_reader( *attributes )
+  def attr_non_persistent_reader( *attributes )
 
     include_or_extend_for_persistence_if_necessary
 
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_non_persistent_reader( *this_attribute.keys )
 
       else
 
-  			add_attribute( false, false, this_attribute, :reader )
-			  remove_atomic_accessor( this_attribute, :reader )
+        add_attribute( false, false, this_attribute, :reader )
+        remove_atomic_accessor( this_attribute, :reader )
 
-  	  end
+      end
 
-		end
+    end
 
-	end
+  end
   alias_method :attr_exclude_reader, :attr_non_persistent_reader
 
   ######################################
@@ -509,26 +514,26 @@ module Rpersistence::ObjectInstance::Configuration
   #  attr_non_persistent_writer        #
   ######################################
 
-	def attr_non_persistent_writer( *attributes )
+  def attr_non_persistent_writer( *attributes )
 
     include_or_extend_for_persistence_if_necessary
 
-		attributes.each do |this_attribute|
+    attributes.each do |this_attribute|
 
-  	  if this_attribute.is_a?( Hash )
+      if this_attribute.is_a?( Hash )
 
         attr_non_persistent_writer( *this_attribute.keys )
 
       else
 
-  			add_attribute( false, false, this_attribute, :writer )
-			  remove_atomic_accessor( this_attribute, :writer )
+        add_attribute( false, false, this_attribute, :writer )
+        remove_atomic_accessor( this_attribute, :writer )
 
-  	  end
+      end
 
-		end
+    end
 
-	end
+  end
   alias_method :attr_exclude_writer, :attr_non_persistent_writer
 
   #################################
@@ -536,11 +541,11 @@ module Rpersistence::ObjectInstance::Configuration
   #  attrs_non_persistent!        #
   #################################
 
-	def attrs_non_persistent!
+  def attrs_non_persistent!
 
     include_or_extend_for_persistence_if_necessary
 
-		# move all declared elements from atomic into non-atomic
+    # move all declared elements from atomic into non-atomic
     attr_non_persistent( *persistent_attributes )
 
     persists_no_ivars_by_default!
@@ -556,12 +561,28 @@ module Rpersistence::ObjectInstance::Configuration
 
   def attr_flat( *attributes )
     
-		attributes.each do |this_attribute|
-			@__rpersistence__persists_flat__[ this_attribute ] = true
-		end
-		
-		return self
-		
+    @__rpersistence__cache__persists_flat__ ||= Hash.new
+
+    attributes.each do |this_attribute|
+      accessor_method_name, property_name  = accessor_name_for_var_or_method( this_attribute )
+      @__rpersistence__cache__persists_flat__[ accessor_method_name ] = true
+    end
+    
+    return self
+    
+  end
+
+  ######################
+  #  Klass.attr_flat!  #
+  #  attr_flat!        #
+  ######################
+
+  def attr_flat!
+    
+    attr_flat( *persistent_attributes )
+
+    return self
+    
   end
 
 end

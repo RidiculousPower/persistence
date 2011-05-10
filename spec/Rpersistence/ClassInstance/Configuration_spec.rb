@@ -2,7 +2,7 @@ require_relative '../../../lib/rpersistence.rb'
 
 describe Rpersistence::ClassInstance::Configuration do
 
-	##############################
+  ##############################
   #  Klass.persistence_bucket  #
   #  persistence_bucket        #
   ##############################

@@ -25,6 +25,7 @@ describe Rpersistence::ClassInstance::Persistence::Flat do
     
   end
   
+  
   ######################
   #  Klass.persisted?  #
   ######################

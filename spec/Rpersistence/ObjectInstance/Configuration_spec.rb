@@ -123,8 +123,8 @@ describe Rpersistence::ObjectInstance::Configuration do
   ###############################
   #  Klass.persists_by          #
   #  persists_by                #
-  #  Klass.persist_declared_by  #
-  #  persist_declared_by        #
+  #  Klass.persists_declared_by  #
+  #  persists_declared_by        #
   ###############################
 
   it "can set the key source as well as setting the key source while also forcing only declared properties to persist" do
@@ -148,9 +148,9 @@ describe Rpersistence::ObjectInstance::Configuration do
     instance.persistence_key_variable.should == nil
     instance.persistence_key_method.should == :method
     instance.persists_instance_variables_by_default?.should == true
-    instance.persist_declared_by( :method )
+    instance.persists_declared_by( :method )
     instance.persists_instance_variables_by_default?.should == false
-    Rpersistence::ObjectInstance::Configuration::Mock06.persist_declared_by( :method )
+    Rpersistence::ObjectInstance::Configuration::Mock06.persists_declared_by( :method )
     Rpersistence::ObjectInstance::Configuration::Mock06.persists_instance_variables_by_default?.should == false
   end
 
@@ -396,6 +396,22 @@ describe Rpersistence::ObjectInstance::Configuration do
     instance.non_persistent_attribute_writer?( :@variable ).should == true
     instance.non_persistent_attribute_writer?( :other_attribute ).should == false
     instance.non_persistent_attribute_writer?( :other_variable ).should == false    
+  end
+
+  #####################
+  #  Klass.attr_flat  #
+  #  attr_flat        #
+  #####################
+
+  it "can declare that complex attributes should be stored as flat attributes" do
+    class Rpersistence::ObjectInstance::Configuration::Mock18
+      attr_flat :attribute, :@variable
+    end
+    Rpersistence::ObjectInstance::Configuration::Mock18.persists_flat?( :attribute ).should == true
+    Rpersistence::ObjectInstance::Configuration::Mock18.persists_flat?( :@variable ).should == true
+    instance = Rpersistence::ObjectInstance::Configuration::Mock18.new
+    instance.persists_flat?( :attribute ).should == true
+    instance.persists_flat?( :@variable ).should == true
   end
   
 end

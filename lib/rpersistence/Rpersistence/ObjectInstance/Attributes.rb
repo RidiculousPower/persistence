@@ -12,9 +12,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_attributes        #
   ###############################
 
-	def included_attributes
+  def included_attributes
     
-		attributes = included_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = included_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -25,9 +25,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_atomic_attributes        #
   ######################################
 
-	def included_atomic_attributes
+  def included_atomic_attributes
     
-		attributes = included_atomic_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = included_atomic_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -38,9 +38,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_non_atomic_attributes        #
   ##########################################
 
-	def included_non_atomic_attributes
+  def included_non_atomic_attributes
     
-		attributes = included_non_atomic_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = included_non_atomic_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -51,9 +51,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_attributes        #
   ###############################
 
-	def excluded_attributes
+  def excluded_attributes
     
-		attributes = excluded_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = excluded_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -64,9 +64,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_from_atomic_attributes        #
   ###########################################
 
-	def excluded_from_atomic_attributes
+  def excluded_from_atomic_attributes
     
-		attributes = excluded_from_atomic_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = excluded_from_atomic_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -77,9 +77,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_from_all_attributes        #
   ########################################
 
-	def excluded_from_all_attributes
+  def excluded_from_all_attributes
     
-		attributes = excluded_from_all_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = excluded_from_all_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -90,9 +90,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  atomic_attributes        #
   #############################
 
-	def atomic_attributes
+  def atomic_attributes
     
-		attributes = atomic_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = atomic_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -103,7 +103,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  atomic_attribute_accessors        #
   ######################################
 
-	def atomic_attribute_accessors
+  def atomic_attribute_accessors
 
     return atomic_attributes_hash.select { |accessor, status| status == :accessor }.keys
 
@@ -114,7 +114,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  atomic_attribute_readers        #
   ####################################
 
-	def atomic_attribute_readers
+  def atomic_attribute_readers
     
     return atomic_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
 
@@ -125,7 +125,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  atomic_attribute_writers        #
   ####################################
 
-	def atomic_attribute_writers
+  def atomic_attribute_writers
     
     return atomic_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
     
@@ -136,9 +136,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_atomic_attributes        #
   #################################
 
-	def non_atomic_attributes
+  def non_atomic_attributes
     
-		attributes = non_atomic_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = non_atomic_attributes_hash.delete_if { |key, value| value == nil }
 
     return attributes.keys
     
@@ -149,7 +149,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_atomic_attribute_accessors        #
   ##########################################
 
-	def non_atomic_attribute_accessors
+  def non_atomic_attribute_accessors
     
     return non_atomic_attributes_hash.select { |accessor, status| status == :accessor }.keys
 
@@ -160,7 +160,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_atomic_attribute_readers        #
   ########################################
 
-	def non_atomic_attribute_readers
+  def non_atomic_attribute_readers
     
     return non_atomic_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
 
@@ -171,7 +171,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_atomic_attribute_writers        #
   ########################################
 
-	def non_atomic_attribute_writers
+  def non_atomic_attribute_writers
     
     return non_atomic_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
     
@@ -184,11 +184,11 @@ module Rpersistence::ObjectInstance::Attributes
   #  persistent_attributes        #
   #################################
 
-	def persistent_attributes
+  def persistent_attributes
     
-		attributes = persistent_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = persistent_attributes_hash.delete_if { |key, value| value == nil }
 
-		return attributes.keys
+    return attributes.keys
     
   end
 
@@ -197,7 +197,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  persistent_attribute_accessors        #
   ##########################################
 
-	def persistent_attribute_accessors
+  def persistent_attribute_accessors
     
     return persistent_attributes_hash.select { |accessor, status| status == :accessor }.keys
 
@@ -208,7 +208,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  persistent_attribute_readers        #
   ########################################
 
-	def persistent_attribute_readers
+  def persistent_attribute_readers
     
     return persistent_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
     
@@ -219,7 +219,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  persistent_attribute_writers        #
   ########################################
 
-	def persistent_attribute_writers
+  def persistent_attribute_writers
 
     return persistent_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
     
@@ -230,12 +230,12 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_persistent_attributes        #
   #####################################
 
-	def non_persistent_attributes
+  def non_persistent_attributes
 
-		attributes = non_persistent_attributes_hash.delete_if { |key, value| value == nil }
+    attributes = non_persistent_attributes_hash.delete_if { |key, value| value == nil }
 
-		return attributes.keys
-		
+    return attributes.keys
+    
   end
 
   ##############################################
@@ -243,7 +243,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_persistent_attribute_accessors        #
   ##############################################
 
-	def non_persistent_attribute_accessors
+  def non_persistent_attribute_accessors
 
     return non_persistent_attributes_hash.select { |accessor, status| status == :accessor }.keys
 
@@ -254,7 +254,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_persistent_attribute_readers        #
   ############################################
 
-	def non_persistent_attribute_readers
+  def non_persistent_attribute_readers
 
     return non_persistent_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys
 
@@ -265,7 +265,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_persistent_attribute_writers        #
   ############################################
 
-	def non_persistent_attribute_writers
+  def non_persistent_attribute_writers
 
     return non_persistent_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys
 
@@ -276,7 +276,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_attribute_accessors        #
   ########################################
 
-	def included_attribute_accessors
+  def included_attribute_accessors
     
     return included_attributes_hash.select { |accessor, status| status == :accessor }.keys    
 
@@ -287,7 +287,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_attribute_readers        #
   ######################################
 
-	def included_attribute_readers
+  def included_attribute_readers
     
     return included_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys    
     
@@ -298,7 +298,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_attribute_writers        #
   ######################################
 
-	def included_attribute_writers
+  def included_attribute_writers
     
     return included_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys    
     
@@ -309,7 +309,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_attribute_accessors        #
   ########################################
 
-	def excluded_attribute_accessors
+  def excluded_attribute_accessors
 
     return excluded_attributes_hash.select { |accessor, status| status == :accessor }.keys    
     
@@ -320,7 +320,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_attribute_readers        #
   ######################################
 
-	def excluded_attribute_readers
+  def excluded_attribute_readers
     
     return excluded_attributes_hash.select { |accessor, status| ( status == :reader || status == :accessor ) }.keys    
 
@@ -331,7 +331,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_attribute_writers        #
   ######################################
 
-	def excluded_attribute_writers
+  def excluded_attribute_writers
     
     return excluded_attributes_hash.select { |accessor, status| ( status == :writer || status == :accessor ) }.keys    
     

@@ -4,42 +4,42 @@
 #---------------------------------------------------------------------------------------------------------#
 
 ###########################################################################################################
-#############################################  Object  ####################################################
-###########################################################################################################
-
-class Object
-
-	include Rpersistence::ObjectInstance::Attributes
-	include Rpersistence::ObjectInstance::Configuration
-	include Rpersistence::ObjectInstance::Inspect
-	include Rpersistence::ObjectInstance::ParsePersistenceArgs
-	include Rpersistence::ObjectInstance::Persistence
-	include Rpersistence::ObjectInstance::Status
-
-  extend 	Rpersistence::ClassInstance::Persistence
-
-  ######################
-  #  Default Settings  #
-  ######################
-
- 	persists_instance_variables_by_default!
-
-	persists_non_atomic_by_default!
-
-end
-
-###########################################################################################################
 ##############################################  Class  ####################################################
 ###########################################################################################################
 
 class Class
 
-  extend 	Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ClassInstance::Configuration
 
-	include Rpersistence::ClassInstance::Configuration
-	include Rpersistence::ClassInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+
+end
+
+###########################################################################################################
+#############################################  Object  ####################################################
+###########################################################################################################
+
+class Object
+
+  include Rpersistence::ObjectInstance::Attributes
+  include Rpersistence::ObjectInstance::Configuration
+  include Rpersistence::ObjectInstance::Inspect
+  include Rpersistence::ObjectInstance::ParsePersistenceArgs
+  include Rpersistence::ObjectInstance::Persistence
+  include Rpersistence::ObjectInstance::Status
+
+  extend   Rpersistence::ClassInstance::Persistence
+
+  ######################
+  #  Default Settings  #
+  ######################
+
+   persists_instance_variables_by_default!
+
+  persists_non_atomic_by_default!
 
 end
 
@@ -49,11 +49,12 @@ end
 
 class Bignum
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
-
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
+  
 end
 
 ###########################################################################################################
@@ -62,10 +63,11 @@ end
 
 class Fixnum
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -75,10 +77,11 @@ end
 
 class Complex
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -88,10 +91,11 @@ end
 
 class Rational
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -101,11 +105,12 @@ end
 
 class Float
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
-
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
+  
 end
 
 ###########################################################################################################
@@ -114,10 +119,11 @@ end
 
 class TrueClass
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -127,10 +133,11 @@ end
 
 class FalseClass
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -140,10 +147,11 @@ end
 
 class String
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -153,10 +161,11 @@ end
 
 class Symbol
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -166,10 +175,11 @@ end
 
 class Regexp
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -179,10 +189,13 @@ end
 
 class File
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence::Flat::FileClassInstance
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat::FileInstance
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end
 
@@ -192,9 +205,10 @@ end
 
 class NilClass
 
-  extend 	Rpersistence::ClassInstance::Persistence
-	extend 	Rpersistence::ClassInstance::Persistence::Flat
+  extend   Rpersistence::ClassInstance::Persistence
+  extend   Rpersistence::ClassInstance::Persistence::Flat
 
-	include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Persistence::Flat
+  include Rpersistence::ObjectInstance::Flat::Configuration
 
 end

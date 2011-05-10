@@ -10,7 +10,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  complex_properties        #
   ##############################
 
-	def complex_properties
+  def complex_properties
     
     return @__rpersistence__cache__complex_property__
     
@@ -25,7 +25,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_attributes_hash        #
   ####################################
 
-	def included_attributes_hash
+  def included_attributes_hash
     
     return get_cascading_hash_configuration_from_Object( :include )
     
@@ -36,7 +36,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_attributes_hash        #
   ####################################
 
-	def excluded_attributes_hash
+  def excluded_attributes_hash
     
     return get_cascading_hash_configuration_from_Object( :exclude )
     
@@ -44,10 +44,10 @@ module Rpersistence::ObjectInstance::Attributes
 
   ###########################################
   #  Klass.included_atomic_attributes_hash  #
-  #  included_atomic_attributes_hash      	#
+  #  included_atomic_attributes_hash        #
   ###########################################
 
-	def included_atomic_attributes_hash
+  def included_atomic_attributes_hash
     
     return get_cascading_hash_configuration_from_Object( :include_as_atomic )
     
@@ -58,7 +58,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  included_non_atomic_attributes_hash        #
   ###############################################
 
-	def included_non_atomic_attributes_hash
+  def included_non_atomic_attributes_hash
     
     return get_cascading_hash_configuration_from_Object( :include_as_non_atomic )
     
@@ -69,7 +69,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_from_atomic_attributes_hash        #
   ################################################
 
-	def excluded_from_atomic_attributes_hash
+  def excluded_from_atomic_attributes_hash
     
     return get_cascading_hash_configuration_from_Object( :exclude_from_atomic )
     
@@ -80,7 +80,7 @@ module Rpersistence::ObjectInstance::Attributes
   #  excluded_from_all_attributes_hash        #
   #############################################
 
-	def excluded_from_all_attributes_hash
+  def excluded_from_all_attributes_hash
     
     return get_cascading_hash_configuration_from_Object( :exclude_from_all )
     
@@ -91,9 +91,9 @@ module Rpersistence::ObjectInstance::Attributes
   #  atomic_attributes_hash        #
   ##################################
 
-	def atomic_attributes_hash
+  def atomic_attributes_hash
     
-		# atomic attributes are always declared (whether explicitly by attr_atomic or implicitly by attr_accessor)
+    # atomic attributes are always declared (whether explicitly by attr_atomic or implicitly by attr_accessor)
     return included_atomic_attributes_hash
 
   end
@@ -103,22 +103,22 @@ module Rpersistence::ObjectInstance::Attributes
   #  non_atomic_attributes_hash        #
   ######################################
 
-	def non_atomic_attributes_hash
-    			
-		# get declared attributes (their variables may not exist yet)
-		attributes = included_non_atomic_attributes_hash
+  def non_atomic_attributes_hash
+          
+    # get declared attributes (their variables may not exist yet)
+    attributes = included_non_atomic_attributes_hash
 
-		if persists_instance_variables_by_default?
-			
-			# add implicit attributes (default is to persist all variables)
-			instance_variable_as_non_atomic_accessors	=	Hash.new
-			instance_variables_as_accessors.each do |this_variable_accessor|
-				instance_variable_as_non_atomic_accessors[ this_variable_accessor ] = status_for_existing_status_minus_other_status( :accessor, attributes[ this_variable_accessor ] )
-			end
+    if persists_instance_variables_by_default?
+      
+      # add implicit attributes (default is to persist all variables)
+      instance_variable_as_non_atomic_accessors  =  Hash.new
+      instance_variables_as_accessors.each do |this_variable_accessor|
+        instance_variable_as_non_atomic_accessors[ this_variable_accessor ] = status_for_existing_status_minus_other_status( :accessor, attributes[ this_variable_accessor ] )
+      end
 
-		end
-		
-		return attributes
+    end
+    
+    return attributes
     
   end
 
@@ -127,36 +127,36 @@ module Rpersistence::ObjectInstance::Attributes
   #  persistent_attributes_hash        #
   ######################################
 
-	def persistent_attributes_hash
+  def persistent_attributes_hash
 
-		# start with explicitly included attributes
+    # start with explicitly included attributes
     persistent_attributes = included_attributes_hash
 
     if persists_instance_variables_by_default?
-			
+      
       # now add default attributes not already defined
-			instance_variables_as_accessors.each do |this_variable_accessor|
-				# default for instance variables is accessor - if we are persisting all variables then we set all to :accessor unless excluded
-				persistent_attributes[ this_variable_accessor ] = :accessor
-			end
+      instance_variables_as_accessors.each do |this_variable_accessor|
+        # default for instance variables is accessor - if we are persisting all variables then we set all to :accessor unless excluded
+        persistent_attributes[ this_variable_accessor ] = :accessor
+      end
 
     end
 
-		# now exclude explicitly excluded attributes
-		excluded_attributes_hash.each do |this_excluded_attribute, this_excluded_attribute_status|
-			persistent_attributes[ this_excluded_attribute ] = status_for_existing_status_minus_other_status( persistent_attributes[ this_excluded_attribute ], this_excluded_attribute_status )
-		end
+    # now exclude explicitly excluded attributes
+    excluded_attributes_hash.each do |this_excluded_attribute, this_excluded_attribute_status|
+      persistent_attributes[ this_excluded_attribute ] = status_for_existing_status_minus_other_status( persistent_attributes[ this_excluded_attribute ], this_excluded_attribute_status )
+    end
 
     return persistent_attributes
 
-	end
+  end
 
   ##########################################
   #  Klass.non_persistent_attributes_hash  #
   #  non_persistent_attributes_hash        #
   ##########################################
 
-	def non_persistent_attributes_hash
+  def non_persistent_attributes_hash
 
     non_persistent_attributes = nil
 
@@ -164,37 +164,37 @@ module Rpersistence::ObjectInstance::Attributes
       # if we persist all by default then non-persist are the ones we've excluded
       non_persistent_attributes = excluded_from_all_attributes_hash
     else
-			non_persistent_attributes	=	excluded_from_all_attributes_hash
+      non_persistent_attributes  =  excluded_from_all_attributes_hash
       # otherwise the ones we haven't included or have excluded
-			included_attributes	=	included_attributes_hash
-			instance_variables_as_accessors.each do |this_variable_accessor|
-				# add to excluded any instance variables minus the mode by which they are included
-				non_persistent_attributes[ this_variable_accessor ] = status_for_existing_status_minus_other_status( :accessor, included_attributes[ this_variable_accessor ] )
-			end
+      included_attributes  =  included_attributes_hash
+      instance_variables_as_accessors.each do |this_variable_accessor|
+        # add to excluded any instance variables minus the mode by which they are included
+        non_persistent_attributes[ this_variable_accessor ] = status_for_existing_status_minus_other_status( :accessor, included_attributes[ this_variable_accessor ] )
+      end
     end
 
     return non_persistent_attributes
 
-	end
-	
+  end
+  
   ################################################################
   #  Klass.atomic_non_atomic_persistent_accessor_reader_writer?  #
   #  atomic_non_atomic_persistent_accessor_reader_writer?        #
   ################################################################
 
-	def atomic_non_atomic_persistent_accessor_reader_writer?( accessors, attributes )
+  def atomic_non_atomic_persistent_accessor_reader_writer?( accessors, attributes )
     
-		attributes_match = true
-		
-		attributes.each do |this_attribute|
-			this_attribute_accessor, this_attribute	=	accessor_name_for_var_or_method( this_attribute )
-			unless accessors.include?( this_attribute_accessor )
-				attributes_match = false
-				break
-			end
-		end
-		
-		return attributes_match
+    attributes_match = true
+    
+    attributes.each do |this_attribute|
+      this_attribute_accessor, this_attribute  =  accessor_name_for_var_or_method( this_attribute )
+      unless accessors.include?( this_attribute_accessor )
+        attributes_match = false
+        break
+      end
+    end
+    
+    return attributes_match
     
   end
 
@@ -232,7 +232,7 @@ module Rpersistence::ObjectInstance::Attributes
   ############################################
 
   def accessor_name_for_var_or_method( attribute, writer_not_reader = false )
-		
+    
     property_name         = nil
     accessor_method_name  = nil
 
