@@ -3,20 +3,16 @@
 #--------------------------------------  Rpersistence Singleton  -------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------#
 
-class Rpersistence
+module Rpersistence
   
+  PendingIndex     = Struct.new( :klass, :attribute, :permits_duplicates )
+  
+  @ports           = Hash.new
+  @port_for_class  = Hash.new
+  @pending_indexes = Array.new
+
   class << self
     attr_reader  :current_port
-  end
-
-  @ports            = { }
-  @port_for_class  = { }
-
-  ################
-  #  initialize  #
-  ################
-
-  def initialize
   end
 
   ########################
@@ -43,11 +39,13 @@ class Rpersistence
   # Rpersistence.enable_port( :port_name, AdapterClass, directory, ObjectClass or [ ObjectClass ], which implies also descending classes )
   def self.enable_port( port_name, adapter_instance, *persists_classes )
     port  =  Rpersistence::Port.new(  port_name, 
-                                    adapter_instance, 
-                                    *persists_classes )
+                                      adapter_instance, 
+                                      *persists_classes )
     port.enable
     @ports[ port_name.to_sym ] = port
     set_current_port( port ) unless current_port
+    # add any pending indexes that apply to port
+    create_pending_indexes( port )
     return port
   end
 
@@ -64,9 +62,9 @@ class Rpersistence
     return self
   end
 
-  ##################
-  #  current_port  #
-  ##################
+  #######################
+  #  self.current_port  #
+  #######################
   
   def self.current_port( for_class = nil )
     current_port = nil
@@ -80,9 +78,9 @@ class Rpersistence
     return current_port
   end
 
-  ######################
-  #  set_current_port  #
-  ######################
+  ###########################
+  #  self.set_current_port  #
+  ###########################
   
   def self.set_current_port( persistence_port_or_name )
     if persistence_port_or_name

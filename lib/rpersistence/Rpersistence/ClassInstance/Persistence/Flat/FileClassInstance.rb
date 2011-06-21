@@ -14,27 +14,38 @@ module Rpersistence::ClassInstance::Persistence::Flat::FileClassInstance
   # * :port, :bucket, property_name
   def persist( *args )
 
-    port, bucket, key                     = parse_persist_args_with_bucket_accessor( args, :instance_persistence_bucket )
+    key, no_key = parse_flat_persist_args_from_port( args )
+
+    persistence_value  = nil
     
-    global_id                             = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
-
-    persistence_value                     = nil
-
-    if global_id
-
-      # get the class to see if we are persisting path or contents    
-      stored_bucket, stored_key, klass       = port.adapter.get_bucket_key_class_for_object_id( global_id )
-
-      if klass == File::Path
+    if no_key
       
-        persistence_value = File::Path.persist( port, bucket, key )
+      persistence_value = Rpersistence.default_cursor_class.new( persistence_port, instance_persistence_bucket, nil )
       
-      elsif klass == File::Contents
+    else
+      
+      global_id = persistence_port.adapter.get_object_id_for_bucket_index_and_key( instance_persistence_bucket, :persistence_key, key )                       
 
-        persistence_value = File::Contents.persist( port, bucket, key )
-      
+      if global_id
+
+        # get the class to see if we are persisting path or contents    
+        stored_bucket, klass       = persistence_port.adapter.get_bucket_class_for_object_id( global_id )
+
+        # the issue has to do with how File is stored as File::Contents or a File::Path rather than as File
+        # so File is being indexed and returning an ID that is no longer valid
+        
+        prior_bucket                      = klass.instance_persistence_bucket
+        prior_port                        = klass.persistence_port
+        klass.instance_persistence_bucket = instance_persistence_bucket
+        klass.persistence_port            = persistence_port
+        
+        persistence_value                 = klass.persist( key )
+
+        klass.instance_persistence_bucket = prior_bucket
+        klass.persistence_port            = prior_port
+
       end
-
+    
     end
     
     return persistence_value

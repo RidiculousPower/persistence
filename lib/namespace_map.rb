@@ -2,7 +2,7 @@
 #-------------------------------------------  Class Map  -------------------------------------------------#
 #---------------------------------------------------------------------------------------------------------#
 
-class Rpersistence
+module Rpersistence
 
   class Adapter
     class Mock
@@ -18,6 +18,13 @@ class Rpersistence
         module Compound
         end
       end
+    end
+  end
+
+  class Cursor
+    class Mock
+    end
+    module ParseInitializationArgs
     end
   end
 
@@ -66,6 +73,8 @@ class Rpersistence
       module HashClass
       end
       module Flat
+        module ParsePersistenceArgs
+        end
         module FileInstance
         end
       end

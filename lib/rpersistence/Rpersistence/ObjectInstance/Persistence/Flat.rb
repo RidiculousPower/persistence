@@ -38,14 +38,13 @@ module Rpersistence::ObjectInstance::Persistence::Flat
   #  persist!        #
   ####################
 
-  # * property_name
-  # * :bucket, property_name
-  # * :port, :bucket, property_name
-  def persist!( *args )
+  def persist!( key )
 
-    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :persistence_bucket )
+    self.persistence_key = key
 
-    port.adapter.put_object!( self )
+    persistence_port.adapter.put_object!( self )
+
+		index_attributes
 
     # return the object we're persisting
     return self

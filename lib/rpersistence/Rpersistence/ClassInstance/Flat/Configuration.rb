@@ -16,7 +16,7 @@ module Rpersistence::ClassInstance::Configuration::Flat
     @__rpersistence__instance_bucket__ = persistence_bucket_class_or_name.to_s
 
   end
-  alias_method :store_as,   :instance_persistence_bucket=
-  alias_method :persist_in, :instance_persistence_bucket=
+  alias_method :store_as,    :instance_persistence_bucket=
+  alias_method :persists_in, :instance_persistence_bucket=
   
 end

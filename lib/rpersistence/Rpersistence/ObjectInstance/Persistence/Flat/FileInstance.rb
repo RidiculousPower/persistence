@@ -12,29 +12,25 @@ module Rpersistence::ObjectInstance::Persistence::Flat::FileInstance
   # * property_name
   # * :bucket, property_name
   # * :port, :bucket, property_name
-  def persist!( *args )
-    
-    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :persistence_bucket )
+  def persist!( key )
+
+    self.persistence_key = key
     
     starting_pos = self.pos
     
     # if we are persisting by file path
-    if port.persists_file_by_path?
-      
-      # get path and save as File::Path
-      file_path = File::Path.new( path )
-      
-      file_path.persist!( port, bucket, key )
-      
+    persistence_instance = nil
+    if persistence_port.persists_file_by_path?
+      persistence_instance = File::Path.new( path )
     # if we are persisting by file contents
     else
-
-      # get contents and save as File::Contents
-      file_contents = File::Contents.new( self.readlines.join )
-
-      file_contents.persist!( port, bucket, key )
-      
+      persistence_instance = File::Contents.new( self.readlines.join )
     end
+
+    persistence_instance.persistence_port   = persistence_port
+    persistence_instance.persistence_bucket = persistence_bucket
+
+    persistence_instance.persist!( key )
 
     # rewind file to wherever we started
     self.pos = starting_pos

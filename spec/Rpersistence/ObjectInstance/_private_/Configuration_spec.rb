@@ -17,11 +17,6 @@ describe Rpersistence::ObjectInstance::Configuration do
   #  persistence_object_has_configuration         #
   #################################################
 
-  ###########################################
-  #  Klass.set_persistence_key_source_type  #
-  #  set_persistence_key_source_type        #
-  ###########################################
-
   ##############################
   #  Klass::get_atomicity_var  #
   #  get_atomicity_var         #

@@ -44,6 +44,20 @@ class Object
 end
 
 ###########################################################################################################
+##############################################  Class  ####################################################
+###########################################################################################################
+
+class Class
+  
+  # we have to re-open Class after Class and Object have been initialized
+  # otherwise we don't have support yet for attr_index
+
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
+
+end
+
+###########################################################################################################
 #############################################  Bignum  ####################################################
 ###########################################################################################################
 
@@ -54,6 +68,9 @@ class Bignum
 
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
+
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
   
 end
 
@@ -69,6 +86,9 @@ class Fixnum
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
 
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
+
 end
 
 ###########################################################################################################
@@ -82,6 +102,9 @@ class Complex
 
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
+
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
 
 end
 
@@ -97,6 +120,9 @@ class Rational
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
 
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
+
 end
 
 ###########################################################################################################
@@ -111,6 +137,9 @@ class Float
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
   
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
+
 end
 
 ###########################################################################################################
@@ -124,6 +153,9 @@ class TrueClass
 
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
+
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
 
 end
 
@@ -139,6 +171,9 @@ class FalseClass
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
 
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
+
 end
 
 ###########################################################################################################
@@ -152,6 +187,9 @@ class String
 
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
+
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
 
 end
 
@@ -167,6 +205,9 @@ class Symbol
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
 
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
+
 end
 
 ###########################################################################################################
@@ -180,6 +221,9 @@ class Regexp
 
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
+
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
 
 end
 
@@ -197,6 +241,9 @@ class File
   include Rpersistence::ObjectInstance::Persistence::Flat::FileInstance
   include Rpersistence::ObjectInstance::Flat::Configuration
 
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
+
 end
 
 ###########################################################################################################
@@ -210,5 +257,8 @@ class NilClass
 
   include Rpersistence::ObjectInstance::Persistence::Flat
   include Rpersistence::ObjectInstance::Flat::Configuration
+
+  attr_accessor :persistence_key
+  attr_index    :persistence_key
 
 end

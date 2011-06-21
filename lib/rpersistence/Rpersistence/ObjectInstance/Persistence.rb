@@ -37,102 +37,6 @@ module Rpersistence::ObjectInstance::Persistence
     @__rpersistence__id__  =  new_id
   end
 
-  ######################
-  #  persistence_key=  #
-  ######################
-
-  def persistence_key=( key )
-    
-    @__rpersistence__arbitrary_key__    = key
-    has_persistence_key!
-    
-    return self
-    
-  end
-
-  #####################
-  #  persistence_key  #
-  #####################
-  
-  def persistence_key
-
-    key_value  =  nil
-
-		# two possible key sources:
-		# * key method
-		# * key variable
-		#
-		# four possible scenarios:
-		# * atomic element and persistence id
-		# * atomic element and no persistence id
-		# * non-atomic element and persistence id
-		# * non-atomic element and no persistence id
-		#
-		# only atomic elements change when we have persistence id, which means three possible scenarios:
-		# * atomic element and persistence id
-		# * atomic element and no persistence id
-		# * non-atomic element
-		#
-		# if we have an atomic element and a persistence id then we get the persistence key value from the storage port
-		# if we have an atomic element and no persistence id then we get the persistence key value from the object
-		# if if we have a non-atomic element then we get the persistence key value from the object
-		#
-		# if we are getting persistence key value from the object then we want either:
-		# * atomic accessor, which gets property from storage port
-		# * accessor method value
-		# * instance variable value
-		# 
-		# atomic accessor methods should only be used if we have a persistence id
-		# otherwise if we have a variable, we use it
-		# or if we have an accessor method, we use it
-
-		key_source = persistence_key_source
-
-    # if we have a key method specified, use it
-    if key_source
-
-      if persistence_key_source_is_method?
-        
-        # if we don't have an id or if this is our first time persisting then we can't read atomically yet
-        if ! persistence_id
-          
-          # if we have a previous method, call it for our source
-          if accessor_has_prior_method?( @__rpersistence__key_source__, :reader )
-          
-            prior_accessor_method  = name_for_prior_accessor( key_source, :reader )
-          
-            key_value = __send__( prior_accessor_method )
-          
-          # otherwise, use instance_variable_get
-          else
-
-            key_value = __send__( key_source )
-          
-          end
-          
-        else
-
-          key_value = __send__( key_source )
-          
-        end
-        
-      else
-        
-        key_value = instance_variable_get( key_source )
-
-      end
-
-    # otherwise the default value is to return any arbitrarily specified key (or nil)
-    else
-
-      key_value = @__rpersistence__arbitrary_key__
-
-    end
-
-    return key_value
-
-  end
-
   ########################
   #  persistence_locale  #
   ########################
@@ -151,53 +55,20 @@ module Rpersistence::ObjectInstance::Persistence
     return nil
   end
 
-  ##########################
-  #  has_persistence_key!  #
-  ##########################
-  
-  def has_persistence_key!
-    @__rpersistence__has_persistence_key__ = true
-  end
-
-  ##########################
-  #  has_persistence_key?  #
-  ##########################
-  
-  def has_persistence_key?
-    
-    has_key = false
-    
-    if instance_variable_defined?( :@__rpersistence__has_persistence_key__ )
-      
-      has_key = @__rpersistence__has_persistence_key__
-      
-    elsif self.class != Class
-      
-      has_key = self.class.has_persistence_key?
-    
-    end
-    
-    return has_key
-
-  end  
-
   ##############
   #  persist!  #
   ##############
 
-  # * property_name
-  # * :bucket, property_name
-  # * :port, :bucket, property_name
-  def persist!( *args )
+  def persist!
 
-    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :persistence_bucket )
-
-    port.adapter.put_object!( self )
+    persistence_port.adapter.put_object!( self )
 
     remove_atomic_instance_vars
 
     include_or_extend_for_persistence_if_necessary
     
+		index_attributes
+
     # return the object we're persisting
     return self
 
@@ -212,32 +83,42 @@ module Rpersistence::ObjectInstance::Persistence
   # * :port, :bucket, property_name
   def persist( *args )
 
-    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :persistence_bucket )
+    index, value, no_value = parse_persist_args_from_port( args )
 
-    persistence_id    = persistence_port.adapter.get_object_id_for_bucket_and_key( bucket, key ) unless persistence_id
+    if no_value
+      
+      persistence_value = Rpersistence.default_cursor_class.new( persistence_port, persistence_bucket, index )
 
-    if persistence_id
-
-      load_persistence_hash( port, persistence_hash_from_port( port, persistence_id ) )
-        
     else
       
-      # signify that we did not find an existing self
-      return nil
+      persistence_id = persistence_port.adapter.get_object_id_for_bucket_index_and_key( persistence_bucket, index, value ) unless persistence_id
+
+      if persistence_id
+
+        load_persistence_hash( persistence_port, persistence_hash_from_port( persistence_port, persistence_id ) )
+        
+      else
       
+        # signify that we did not find an existing self
+        return nil
+      
+      end
+    
     end
     
     return self
 
   end
-  
+
   ################
   #  persisted?  #
   ################
 
   def persisted?( *args )
 
-    is_persisted  = ( persistence_port.adapter.get_object_id_for_bucket_and_key( persistence_bucket, persistence_key ) ? true : false )
+    index, value, no_value = parse_persist_args_from_port( args, true )
+
+    is_persisted  = ( persistence_port.adapter.get_object_id_for_bucket_index_and_key( persistence_bucket, index, value ) ? true : false )
     
     return is_persisted
     
@@ -290,20 +171,18 @@ module Rpersistence::ObjectInstance::Persistence
   # deletes from storage (archives if appropriate)
   def cease!( *args )
 
-    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :persistence_bucket )
+    index, value, no_value = parse_persist_args_from_port( args, true )
 
     # if we have a key but no persistence ID and we are told to cease! then we assume an object with this key exists
     # if we already had an ID then it is unclear why cease! was called with parameters
     # we get the new id with the parameters and cease
     # we need its ID
     
-    global_id = persistence_id
-
-    if ! global_id and has_persistence_key?
-      global_id = persistence_id = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
+    port.adapter.delete_object!( persistence_id, persistence_bucket )
+    
+    indexes.each do |this_index|
+  		persistence_port.adapter.delete_index_for_object( persistence_bucket, this_index, persistence_id )
     end
-
-    port.adapter.delete_object!( global_id, bucket )
     
     return self
     
@@ -442,6 +321,14 @@ module Rpersistence::ObjectInstance::Persistence
             
       # we're always putting our property, whether the value is a flat object or an ID for a complex object
       persistence_port.adapter.put_property!( self, variable_name, value )
+		
+			# if property has index
+			if has_index?( property_name )
+	      accessor_method_name, property_name  = accessor_name_for_var_or_method( this_unique_attribute )
+				# check for existing entry for ID and delete
+				delete_index_for_object( persistence_bucket, accessor_method_name, persistence_id )
+				index_object_attribute( self, accessor_method_name, value )
+			end
       
     # otherwise get from object
     else
@@ -454,5 +341,5 @@ module Rpersistence::ObjectInstance::Persistence
     return self
     
   end
-    
+
 end

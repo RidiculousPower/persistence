@@ -10,7 +10,7 @@ describe Rpersistence::ClassInstance::Persistence::Flat do
   end
   
   ######################
-  #  Klass.attr_index  #
+  #  Klass.attr_index_with_duplicates  #
   ######################
 
   it "" do

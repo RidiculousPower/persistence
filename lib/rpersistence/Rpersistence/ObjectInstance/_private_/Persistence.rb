@@ -59,27 +59,6 @@ module Rpersistence::ObjectInstance::Persistence
 
   end
 
-  #####################################
-  #  Klass::persistence_id_required?  #
-  #  persistence_id_required?         #
-  #####################################
-
-  def persistence_id_required?
-    
-    persistence_id_required = false
-    
-    if  ! persistence_id  and
-        ( ! has_persistence_key?  or
-          ! ( persistence_id = persistence_port.adapter.get_object_id_for_bucket_and_key( persistence_bucket, persistence_key ) ) )
-      
-      persistence_id_required = true
-      
-    end
-
-    return persistence_id_required
-    
-  end
-
   ###############################
   #  Klass::is_complex_object?  #
   #  is_complex_object?         #
@@ -290,19 +269,16 @@ module Rpersistence::ObjectInstance::Persistence
       object_instance_variable_set( variable_name, value )
 
       # set object's port to this port; cannot persist a single complex object across multiple ports
-      value.persistence_port = persistence_port
+      value.persistence_port   = persistence_port
+      value.persistence_bucket = persistence_bucket
 
       # if our parent object already exists then we need to see if we already have an ID stored for this property
       # if so then we need to use the existing ID to store this object
       
       # we can set the id without checking because we don't have an ID yet so will get the existing ID or nil
-      value.persistence_id  = persistence_port.adapter.get_property( self, variable_name )
-      
-      # if we don't have a key for our sub-object, create an arbitrary key
-      # since it's a sub-object, we will make the key objectID.property_name
-      value.persistence_key = persistence_id.to_s + '.' + variable_name.to_s unless value.persistence_key != nil
+      value.persistence_id  = persistence_port.adapter.get_property( self, variable_name ) unless value.persistence_id
 
-      value.persist!( persistence_port, value.persistence_bucket, value.persistence_key )
+      value.persist!
 
       sub_object_id_or_value = value.persistence_id
 
@@ -370,5 +346,22 @@ module Rpersistence::ObjectInstance::Persistence
     return object
 
   end
+
+  ######################
+  #  index_attributes  #
+  ######################
   
+	def index_attributes
+		self.class.indexes.each do |this_attribute, unique_or_permits_duplicates|
+		  index_value = nil
+		  if this_attribute.to_s.is_variable_name?
+	      index_value = instance_variable_get( this_attribute )
+	    else
+	      index_value = __send__( this_attribute )
+		  end
+		  persistence_port.adapter.index_object_attribute( self, this_attribute, index_value )
+		end
+		return self
+	end
+    
 end

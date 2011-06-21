@@ -92,94 +92,6 @@ module Rpersistence::ObjectInstance::Configuration
 
   end
 
-  ###################################
-  #  Klass.persistence_key_source=  #
-  #  persistence_key_source=        #
-  ###################################
-  
-  # declares method or ivar that provides key for persisting to port 
-  def persistence_key_source=( persistence_key_accessor )
-
-    include_or_extend_for_persistence_if_necessary
-
-    @__rpersistence__key_source__ = persistence_key_accessor
-    
-    set_persistence_key_source_type( persistence_key_accessor )
-
-    has_persistence_key!
-
-    return self
-
-  end
-  alias_method :persistence_key_method=,    :persistence_key_source=
-  alias_method :persistence_key_variable=,  :persistence_key_source=
-  alias_method :persists_by,                :persistence_key_source=
-
-  ##################################
-  #  Klass.persistence_key_source  #
-  #  persistence_key_source        #
-  ##################################
-
-  # returns declared method or ivar that provides key for persisting to port
-  def persistence_key_source
-
-    return get_configuration_searching_upward_from_self( :key_source )
-
-  end
-
-  ##################################
-  #  Klass.persistence_key_method  #
-  #  persistence_key_method        #
-  ##################################
-
-  def persistence_key_method
-
-    key_source = nil
-
-    if persistence_key_source_is_method?
-
-      key_source  = persistence_key_source
-
-    end
-    
-    return key_source
-
-  end
-
-  ####################################
-  #  Klass.persistence_key_variable  #
-  #  persistence_key_variable        #
-  ####################################
-
-  def persistence_key_variable
-
-    key_source = nil
-
-    if persistence_key_source_is_variable?
-
-      key_source  = persistence_key_source
-      
-    end
-
-    return key_source
-
-  end
-
-  ################################
-  #  Klass.persists_declared_by  #
-  #  persists_declared_by        #
-  ################################
-
-  def persists_declared_by( persistence_key_accessor )
-    
-    persists_no_ivars_by_default!
-    
-    self.persistence_key_source  = persistence_key_accessor
-    
-    return self
-    
-  end
-
   ###################################################
   #  Klass.persists_instance_variables_by_default!  #
   #  persists_instance_variables_by_default!        #
@@ -584,5 +496,7 @@ module Rpersistence::ObjectInstance::Configuration
     return self
     
   end
+
+	
 
 end

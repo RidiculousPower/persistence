@@ -11,7 +11,6 @@ module Rpersistence::ClassInstance::Configuration
 
   #########################################################
   #  Klass::get_cascading_hash_configuration_from_Object  #
-  #  get_cascading_hash_configuration_from_Object         #
   #########################################################
 
   def get_cascading_hash_configuration_from_Object( which_configuration )
@@ -40,7 +39,6 @@ module Rpersistence::ClassInstance::Configuration
   
   ##########################################################
   #  Klass::get_cascading_array_configuration_from_Object  #
-  #  get_cascading_array_configuration_from_Object         #
   ##########################################################
 
   def get_cascading_array_configuration_from_Object( which_configuration )
@@ -68,7 +66,6 @@ module Rpersistence::ClassInstance::Configuration
   end
   #########################################################
   #  Klass::get_configuration_searching_upward_from_self  #
-  #  get_configuration_searching_upward_from_self         #
   #########################################################
 
   def get_configuration_searching_upward_from_self( which_configuration )
@@ -87,6 +84,57 @@ module Rpersistence::ClassInstance::Configuration
     return configuration
     
   end
+
+  ############################################# Indexes #####################################################
+  
+  ##############################
+  #  Klass::create_attr_index  #
+  ##############################
+
+	def create_attr_index( attribute, permits_duplicates )
+
+		permits_duplicates = nil
+
+		if has_index?( attribute )
+
+  		# if index has aleady been declared and uniqueness does not match, raise error
+			if permits_duplicates != index_permits_duplicates?( attribute )
+   			raise 'Index ' + attribute.to_s + ' has already been declared ' + ( permits_duplicates ? 'to permit duplicates' : 'unique' ) + 
+   			      ', so cannot be redefined as ' +  ( permits_duplicates ? 'unique' : 'to permit duplicates' )
+		  end
+		  
+		# otherise record uniqueness if needed
+  	else
+  	  
+  	  # if we have a port that supports this class, create the index
+  	  if persistence_port
+  			persistence_port.adapter.create_index( self, attribute, permits_duplicates )
+    		# we need to index any objects of this class already persisted
+    		index_persisted_objects( attribute )
+	    else
+        Rpersistence.create_pending_index_for_class( self, attribute, permits_duplicates )
+      end
+
+		end
+		
+		return self
+		
+	end
+
+  ####################################
+  #  Klass::index_persisted_objects  #
+  ####################################
+
+	def index_persisted_objects( attribute )
+
+		# create a new atomic cursor - this will read all persisted elements atomically
+		Rpersistence::Cursor::Atomic.new( persistence_port, instance_persistence_bucket, nil ).each do |this_object|
+			persistence_port.adapter.index_object_property( this_object, attribute ) if this_object.is_a?( self )
+		end
+
+		return self
+		
+	end
   
 end
 

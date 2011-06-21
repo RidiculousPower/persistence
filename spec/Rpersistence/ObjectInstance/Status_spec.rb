@@ -1,27 +1,6 @@
 
 describe Rpersistence::ObjectInstance::Status do
 
-  #############################################
-  #  Klass.persistence_key_source_is_method?  #
-  #  persistence_key_source_is_method?        #
-  #############################################
-
-  it "can report whether the current key source for persisting is a method" do
-    class Rpersistence::ObjectInstance::Status::Mock01
-    end
-  end
-
-  ###############################################
-  #  Klass.persistence_key_source_is_variable?  #
-  #  persistence_key_source_is_variable?        #
-  ###############################################
-
-  it "can report whether the current key source for persisting is a variable" do
-    class Rpersistence::ObjectInstance::Status::Mock02
-    end
-    
-  end
-
   ###################################################
   #  Klass.persists_instance_variables_by_default?  #
   #  persists_instance_variables_by_default?        #

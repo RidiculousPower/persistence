@@ -110,27 +110,6 @@ module Rpersistence::ObjectInstance::Configuration
     
   end
   
-  ###########################################
-  #  Klass.set_persistence_key_source_type  #
-  #  set_persistence_key_source_type        #
-  ###########################################
-
-  def set_persistence_key_source_type( persistence_key_accessor )
-    
-    if persistence_key_accessor.to_s.is_variable_name?
-      @__rpersistence__key_source_is_variable__ = true
-      @__rpersistence__key_source_is_method__   = false
-    elsif persistence_key_accessor
-      @__rpersistence__key_source_is_method__   = true
-      @__rpersistence__key_source_is_variable__ = false
-    # nil case
-    else
-      @__rpersistence__key_source_is_method__   = false
-      @__rpersistence__key_source_is_variable__ = false
-    end
-    
-  end
-
   ##############################
   #  Klass::get_atomicity_var  #
   #  get_atomicity_var         #
@@ -492,11 +471,9 @@ module Rpersistence::ObjectInstance::Configuration
     accessor_method_name, property_name  = accessor_name_for_var_or_method( attribute, true )
 
     # if we already have an accessor, don't define one
-    if method_defined?( accessor_method_name )
-      return self
+    unless method_defined?( accessor_method_name )
+	    attr_writer( accessor_method_name )
     end
-
-    attr_writer( attribute )
 
     return self
 

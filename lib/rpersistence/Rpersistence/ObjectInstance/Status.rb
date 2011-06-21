@@ -3,64 +3,6 @@ module Rpersistence::ObjectInstance::Status
 
   #######################################  Configuration Status  ############################################
 
-  #############################################
-  #  Klass.persistence_key_source_is_method?  #
-  #  persistence_key_source_is_method?        #
-  #############################################
-
-  def persistence_key_source_is_method?
-
-    key_source_is_method = nil
-
-    if  instance_variable_defined?( :@__rpersistence__key_source_is_method__ )  and
-         @__rpersistence__key_source_is_method__
-        
-      key_source_is_method  = true
-
-    elsif   instance_variable_defined?( :@__rpersistence__key_source_is_variable__ )  and
-            @__rpersistence__key_source_is_variable__
-
-      key_source_is_method  = false
-
-    elsif self.class != Class
-
-      key_source_is_method  = self.class.persistence_key_source_is_method?
-
-    end
-
-    return key_source_is_method
-
-  end
-
-  ###############################################
-  #  Klass.persistence_key_source_is_variable?  #
-  #  persistence_key_source_is_variable?        #
-  ###############################################
-
-  def persistence_key_source_is_variable?
-
-    key_source_is_variable = nil
-
-    if  instance_variable_defined?( :@__rpersistence__key_source_is_variable__ )  and
-        @__rpersistence__key_source_is_variable__
-
-      key_source_is_variable  = true
-
-    elsif  instance_variable_defined?( :@__rpersistence__key_source_is_method__ )  and
-         @__rpersistence__key_source_is_method__
-
-      key_source_is_variable  = false
-
-    elsif self.class != Class
-
-      key_source_is_variable  = self.class.persistence_key_source_is_variable?
-
-    end
-
-    return key_source_is_variable
-
-  end
-  
   ###################################################
   #  Klass.persists_instance_variables_by_default?  #
   #  persists_instance_variables_by_default?        #

@@ -5,28 +5,6 @@
 
 module Rpersistence::ClassInstance::Persistence
 
-  ##################
-  #  Klass.index!  #
-  ##################
-
-  # creates independent index on each object ID
-  def index!
-
-    persistence_port.adapter.index_object!( self )
-
-  end
-
-  ######################
-  #  Klass.attr_index  #
-  ######################
-
-  # creates index for attribute
-  def attr_index( *attributes )
-
-    persistence_port.adapter.index_attribute_for_bucket!( self, *attributes )
-
-  end
-
   #############################################  Persist  ###################################################
 
   ###################
@@ -38,16 +16,21 @@ module Rpersistence::ClassInstance::Persistence
   # * :port, :bucket, property_name
   def persist( *args )
 
-    port, bucket, key               = parse_persist_args_with_bucket_accessor( args, :instance_persistence_bucket )
+    index, value, no_value = parse_persist_args_from_port( args )
 
-    global_persistence_id           = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
-    
-    object                          = nil
-    
-    if ( global_persistence_id )
-
-      object                        = object_for_persistence_id( port, global_persistence_id )
+    if no_value
       
+      persistence_value = Rpersistence.default_cursor_class.new( persistence_port, instance_persistence_bucket, index )
+
+    else
+
+      global_persistence_id = persistence_port.adapter.get_object_id_for_bucket_index_and_key( instance_persistence_bucket, index, value )
+
+      object = nil
+      if ( global_persistence_id )
+        object = object_for_persistence_id( persistence_port, global_persistence_id )
+      end
+    
     end
     
     return object
@@ -60,9 +43,9 @@ module Rpersistence::ClassInstance::Persistence
 
   def persisted?( *args )
 
-    port, bucket, key   = parse_persist_args_with_bucket_accessor( args, :instance_persistence_bucket )
+    index, value, no_value = parse_persist_args_from_port( args, true )
 
-    is_persisted  = ( persistence_port.adapter.persistence_key_exists_for_bucket?( persistence_bucket, key ) ? true : false )      
+    is_persisted  = ( persistence_port.adapter.persistence_key_exists_for_index?( instance_persistence_bucket, index, value ) ? true : false )      
     
     return is_persisted
     
@@ -77,12 +60,16 @@ module Rpersistence::ClassInstance::Persistence
   # deletes from storage (archives if appropriate)
   def cease!( *args )
 
-    port, bucket, key = parse_persist_args_with_bucket_accessor( args, :instance_persistence_bucket )
+    index, value, no_value = parse_persist_args_from_port( args, true )
 
     # if we have Class then we are 
-    global_persistence_id = port.adapter.get_object_id_for_bucket_and_key( bucket, key )
+    global_persistence_id = persistence_port.adapter.get_object_id_for_bucket_index_and_key( instance_persistence_bucket, index, value )
   
-    port.adapter.delete_object!( global_persistence_id, bucket )
+    persistence_port.adapter.delete_object!( global_persistence_id, instance_persistence_bucket )
+
+    indexes.each do |this_index, unique_or_permits_duplicates|
+  		persistence_port.adapter.delete_index_for_object( instance_persistence_bucket, this_index, global_persistence_id )
+    end
     
     return self
     

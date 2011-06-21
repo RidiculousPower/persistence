@@ -60,8 +60,8 @@ describe Rpersistence::ObjectInstance::Persistence do
     hash_to_port[ :@flat_non_atomic_variable ].should == '@flat_non_atomic_variable value'
     
     # make sure that non-persistent elements are not included
-    hash_to_port.has_key?( :complex_non_persistent_attribute ).should_not == true
-    hash_to_port.has_key?( :complex_non_persistent_variable ).should_not == true
+    hash_to_port.has_key?( :@complex_non_persistent_attribute ).should_not == true
+    hash_to_port.has_key?( :@complex_non_persistent_variable ).should_not == true
     
     # make sure that complex objects are stored by ID
     hash_to_port[ :@complex_atomic_attribute ].should == complex_atomic_element.persistence_id

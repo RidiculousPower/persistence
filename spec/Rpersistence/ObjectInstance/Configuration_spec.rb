@@ -40,46 +40,13 @@ describe Rpersistence::ObjectInstance::Configuration do
     instance.persistence_bucket = 'yet another bucket'
     instance.persistence_bucket.should == 'yet another bucket'
   end
-
-  ####################################
-  #  Klass.persistence_key_source=   #
-  #  persistence_key_source=         #
-  #  Klass.persistence_key_source    #
-  #  persistence_key_source          #
-  #  Klass.persistence_key_method    #
-  #  persistence_key_method          #
-  #  Klass.persistence_key_variable  #
-  #  persistence_key_variable        #
-  ####################################
-
-  it "can set and get its persistence key source, as well as whether the source is a method or a variable" do
-    class Rpersistence::ObjectInstance::Configuration::Mock03
-    end
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_source.should == nil
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_source = :store_by
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_source.should == :store_by
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_method.should == :store_by
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_variable.should == nil
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_source = :@store_by
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_source.should == :@store_by
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_method.should == nil
-    Rpersistence::ObjectInstance::Configuration::Mock03.persistence_key_variable.should == :@store_by
-    instance = Rpersistence::ObjectInstance::Configuration::Mock03.new
-    instance.persistence_key_source.should == :@store_by
-    instance.persistence_key_variable.should == :@store_by
-    instance.persistence_key_method.should == nil
-    instance.persistence_key_source = :store_by
-    instance.persistence_key_source.should == :store_by
-    instance.persistence_key_variable.should == nil
-    instance.persistence_key_method.should == :store_by
-  end
   
-  #########################################
+  ######################################################
   #  Klass.persists_instance_variables_by_default!     #
   #  persists_instance_variables_by_default!           #
-  #  Klass.persists_no_ivars_by_default!  #
-  #  persists_no_ivars_by_default!        #
-  #########################################
+  #  Klass.persists_no_ivars_by_default!               #
+  #  persists_no_ivars_by_default!                     #
+  ######################################################
 
   it "can be set to persist all instance variables by default or no instance variables by default" do
     class Rpersistence::ObjectInstance::Configuration::Mock04
@@ -118,40 +85,6 @@ describe Rpersistence::ObjectInstance::Configuration do
     instance.persists_atomic_by_default?.should == true
     instance.persists_non_atomic_by_default!
     instance.persists_atomic_by_default?.should == false
-  end
-
-  ###############################
-  #  Klass.persists_by          #
-  #  persists_by                #
-  #  Klass.persists_declared_by  #
-  #  persists_declared_by        #
-  ###############################
-
-  it "can set the key source as well as setting the key source while also forcing only declared properties to persist" do
-    class Rpersistence::ObjectInstance::Configuration::Mock06
-    end
-    Rpersistence::ObjectInstance::Configuration::Mock06.persistence_key_source.should == nil
-    Rpersistence::ObjectInstance::Configuration::Mock06.persists_by( :method )
-    Rpersistence::ObjectInstance::Configuration::Mock06.persistence_key_source.should == :method
-    Rpersistence::ObjectInstance::Configuration::Mock06.persistence_key_method.should == :method
-    Rpersistence::ObjectInstance::Configuration::Mock06.persistence_key_variable.should == nil
-    Rpersistence::ObjectInstance::Configuration::Mock06.persists_by( :@variable )
-    Rpersistence::ObjectInstance::Configuration::Mock06.persistence_key_source.should == :@variable
-    Rpersistence::ObjectInstance::Configuration::Mock06.persistence_key_variable.should == :@variable
-    Rpersistence::ObjectInstance::Configuration::Mock06.persistence_key_method.should == nil
-    instance = Rpersistence::ObjectInstance::Configuration::Mock06.new
-    instance.persistence_key_source.should == :@variable
-    instance.persistence_key_variable.should == :@variable
-    instance.persistence_key_method.should == nil
-    instance.persistence_key_source = :method
-    instance.persistence_key_source.should == :method
-    instance.persistence_key_variable.should == nil
-    instance.persistence_key_method.should == :method
-    instance.persists_instance_variables_by_default?.should == true
-    instance.persists_declared_by( :method )
-    instance.persists_instance_variables_by_default?.should == false
-    Rpersistence::ObjectInstance::Configuration::Mock06.persists_declared_by( :method )
-    Rpersistence::ObjectInstance::Configuration::Mock06.persists_instance_variables_by_default?.should == false
   end
 
   #######################
