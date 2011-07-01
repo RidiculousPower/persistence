@@ -4,7 +4,7 @@
 
 module Rpersistence
 
-  class Adapter
+  module Adapter
     class Mock
     end
     module Support

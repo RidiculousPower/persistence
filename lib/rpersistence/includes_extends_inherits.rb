@@ -37,7 +37,7 @@ class Object
   #  Default Settings  #
   ######################
 
-   persists_instance_variables_by_default!
+  persists_instance_variables_by_default!
 
   persists_non_atomic_by_default!
 

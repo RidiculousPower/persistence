@@ -29,11 +29,8 @@ module Rpersistence::ClassInstance::Persistence::Flat::FileClassInstance
       if global_id
 
         # get the class to see if we are persisting path or contents    
-        stored_bucket, klass       = persistence_port.adapter.get_bucket_class_for_object_id( global_id )
+        klass = persistence_port.adapter.get_class_for_object_id( global_id )
 
-        # the issue has to do with how File is stored as File::Contents or a File::Path rather than as File
-        # so File is being indexed and returning an ID that is no longer valid
-        
         prior_bucket                      = klass.instance_persistence_bucket
         prior_port                        = klass.persistence_port
         klass.instance_persistence_bucket = instance_persistence_bucket

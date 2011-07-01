@@ -137,7 +137,8 @@ class Rpersistence::Adapter::Mock
     if persistence_hash_from_port
       persistence_hash_from_port.each do |this_property, this_value|
         if @complex_property_for_id[ global_id ][ this_property ]
-          sub_object_bucket, sub_object_klass = get_bucket_class_for_object_id( this_value )
+          sub_object_bucket = get_bucket_for_object_id( this_value )
+          sub_object_klass  = get_class_for_object_id( this_value )
           persistence_hash_from_port[ this_property ]  = [ :__rpersistence__complex_object__, sub_object_klass, get_object( this_value, sub_object_bucket ) ]
         end
       end
@@ -155,7 +156,8 @@ class Rpersistence::Adapter::Mock
     if persistence_hash_from_port
       persistence_hash_from_port.each do |this_property, this_value|
         if @complex_property_for_id[ global_id ][ this_property ] and @delete_cascades_for_id[ global_id ][ this_property ]
-          sub_object_bucket, sub_object_klass = get_bucket_class_for_object_id( this_value )
+          sub_object_bucket = get_bucket_for_object_id( this_value )
+          sub_object_klass  = get_class_for_object_id( this_value )
           delete_object!( this_value, sub_object_bucket )
         end
       end

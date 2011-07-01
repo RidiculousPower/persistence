@@ -79,16 +79,19 @@ class Rpersistence::Cursor
 	def first( count = 1 )
 		objects = nil
 		if @has_position = @cursor_in_adapter.has_key?
-		  if count == 1
-		    objects = @cursor_in_adapter.first
-	    else
-	      objects = Array.new
-  			count.times do
-  				objects.push( object_for_id_or_persistence_hash( @cursor_in_adapter.next ) )
-  			end
-  			# reset to first
-  		  @cursor_in_adapter.first
-		  end
+			begin
+			  if count == 1
+			    objects = @cursor_in_adapter.first
+		    else
+		      objects = Array.new
+	  			count.times do
+	  				objects.push( object_for_id_or_persistence_hash( @cursor_in_adapter.next ) )
+	  			end
+	  			# reset to first
+	  		  @cursor_in_adapter.first
+			  end
+			rescue StopIteration
+			end
 		end
 		return objects
 	end
