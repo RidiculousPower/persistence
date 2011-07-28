@@ -3,8 +3,7 @@ require_relative '../../../lib/rpersistence.rb'
 describe Rpersistence::ObjectInstance::Accessors do
 
   #########################
-  #  Klass.attr_accessor  #
-  #  attr_accessor        #
+  #  attr_accessor  #
   #########################
   
   it "will declare attribute accessors as atomic accessors if declare_atomic_by_default?" do
@@ -23,8 +22,7 @@ describe Rpersistence::ObjectInstance::Accessors do
   end
   
   #######################
-  #  Klass.attr_reader  #
-  #  attr_reader        #
+  #  attr_reader  #
   #######################
 
   it "will declare attribute readers as atomic readers if declare_atomic_by_default?" do
@@ -43,8 +41,7 @@ describe Rpersistence::ObjectInstance::Accessors do
   end
 
   #######################
-  #  Klass.attr_writer  #
-  #  attr_writer        #
+  #  attr_writer  #
   #######################
 
   it "will declare attribute writers as atomic writers if declare_atomic_by_default?" do

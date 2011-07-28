@@ -5,6 +5,8 @@
 
 module Rpersistence
   
+	extend Rpersistence::Locations
+
   PendingIndex     = Struct.new( :klass, :attribute, :permits_duplicates )
   
   @ports           = Hash.new
@@ -13,14 +15,6 @@ module Rpersistence
 
   class << self
     attr_reader  :current_port
-  end
-
-  ########################
-  #  self.spec_location  #
-  ########################
-
-  def self.spec_location
-    return File.expand_path( File.dirname( __FILE__ ) + '../../../spec/Rpersistence/ObjectInstance/Persistence_spec.rb' )
   end
 
   ###############
@@ -90,5 +84,51 @@ module Rpersistence
     end
     return self
   end
+	
+	#####################################
+  #  self.enable_global_persistence!  #
+  #####################################
+  
+	def self.enable_global_persistence!
+	
+		###########################################################################################################
+		#############################################  Object  ####################################################
+		###########################################################################################################
+
+		Object.instance_eval do
+
+		  include Rpersistence::ObjectInstance::Attributes
+		  include Rpersistence::ObjectInstance::Configuration
+		  include Rpersistence::ObjectInstance::Inspect
+		  include Rpersistence::ObjectInstance::ParsePersistenceArgs
+		  include Rpersistence::ObjectInstance::Persistence
+		  include Rpersistence::ObjectInstance::Status
+
+		  ######################
+		  #  Default Settings  #
+		  ######################
+
+		  attr_persistent!
+
+		  persists_non_atomic_by_default!
+
+		end
+
+		###########################################################################################################
+		##############################################  Class  ####################################################
+		###########################################################################################################
+
+		Class.instance_eval do
+
+		  include Rpersistence::ClassInstance::Persistence
+		  include Rpersistence::ClassInstance::Persistence::Flat
+		  include Rpersistence::ClassInstance::Configuration
+
+		  attr_accessor :persistence_key
+		  attr_index    :persistence_key
+
+		end
+		
+	end
 
 end

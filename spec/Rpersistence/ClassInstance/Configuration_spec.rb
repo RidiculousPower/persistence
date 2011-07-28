@@ -3,7 +3,7 @@ require_relative '../../../lib/rpersistence.rb'
 describe Rpersistence::ClassInstance::Configuration do
 
   ##############################
-  #  Klass.persistence_bucket  #
+
   ##############################
 
   it 'can set and get its persistence bucket' do
@@ -15,7 +15,7 @@ describe Rpersistence::ClassInstance::Configuration do
   end
 
   #######################################
-  #  Klass.instance_persistence_bucket  #
+
   #######################################
 
   it 'can set and get a persistence bucket to be used for instances' do
@@ -27,17 +27,16 @@ describe Rpersistence::ClassInstance::Configuration do
   end
 
   ######################################
-  #  Klass.attr_index                  #
-  #  Klass.attr_index_with_duplicates  #
-  #  Klass.has_index?                  #
+  #  Klass.attr_index          #
+  #  Klass.has_index?          #
   #  Klass.index_permits_duplicates?   #
-  #  Klass.delete_index                #
+  #  Klass.delete_index        #
   ######################################
   
   it 'can declare an index on an attribute (unique or with duplicates) as well as report whether an index exists and if it support duplicates' do
     module Rpersistence::ClassInstance::Configuration
       # override cursor
-      def index_persisted_objects( klass, attribute )
+      def create_index_for_existing_objects_on_attribute( attribute )( klass, attribute )
         # no testing of this here
     	end
     end

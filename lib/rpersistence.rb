@@ -1,14 +1,94 @@
 
-require_relative 'namespace_map.rb'
+require 'cascading-configuration'
 
-#require_relative 'rpersistence/require_files_for_namespace.rb'
-#files = class_hierarchized_files_for_namespace( Rpersistence, true, 'rpersistence' )
-#existing_files = Array.new
-#files.each do |this_file|
-#  if File.exists?( this_file )
-#    existing_files.push( this_file )
-#  end
-#end
+module Rpersistence
+
+  module Adapter
+    class Mock
+    end
+    module Support
+      module Enable
+      end
+      module Initialize
+      end
+      module PrimaryKey
+        module Simple
+        end
+        module Compound
+        end
+      end
+    end
+  end
+
+  class Cursor
+    class Mock
+    end
+    module ParseInitializationArgs
+    end
+  end
+
+  class Port
+  end
+
+  module ObjectInstance
+    module Accessors
+    end
+    module Attributes
+    end
+    module Configuration
+    end
+    module Equality
+    end
+    module Flat
+      module Configuration
+      end
+    end
+    module Inspect
+    end
+    module ParsePersistenceArgs
+    end
+    module Persistence
+      module ArrayInstance
+      end
+      module HashInstance
+      end
+      module Flat
+        module FileInstance
+        end
+      end
+    end
+    module Status
+    end
+  end
+  
+  module ClassInstance
+    module Configuration
+      module Flat
+      end
+    end
+    module Persistence
+      module ArrayClass
+      end
+      module HashClass
+      end
+      module Flat
+        module ParsePersistenceArgs
+        end
+        module FileInstance
+        end
+      end
+    end
+  end
+  
+  module Mock
+    class Object
+    end
+  end
+  
+  module Specs
+  end
+
+end
 
 require_relative 'rpersistence/Rpersistence.rb'
 require_relative 'rpersistence/_private_/Rpersistence.rb'
@@ -55,5 +135,3 @@ require_relative 'rpersistence/Rpersistence/Adapter/_private_/Mock.rb'
 
 require_relative 'rpersistence/Rpersistence/Cursor/Mock.rb'
 require_relative 'rpersistence/Rpersistence/Cursor/_private_/Mock.rb'
-
-require_relative 'rpersistence/includes_extends_inherits.rb'

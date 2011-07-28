@@ -21,10 +21,6 @@ describe Rpersistence::ObjectInstance::Persistence do
   #  persistence_id=  #
   #####################
 
-  #############################
-  #  reset_persistence_id_to  #
-  #############################
-
   ########################
   #  persistence_locale  #
   ########################
@@ -337,10 +333,6 @@ describe Rpersistence::ObjectInstance::Persistence do
   #############################
   #  instance_variables_hash  #
   #############################
-
-  ####################################################
-  #  instance_variables_minus_persistence_variables  #
-  ####################################################
 
   ########################
   #  instance_variables  #

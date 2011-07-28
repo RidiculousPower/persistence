@@ -2,7 +2,7 @@
 describe Rpersistence::ClassInstance::Persistence::Flat do
 
   ##################
-  #  Klass.index!  #
+
   ##################
 
   it "" do
@@ -10,7 +10,7 @@ describe Rpersistence::ClassInstance::Persistence::Flat do
   end
   
   ######################
-  #  Klass.attr_index_with_duplicates  #
+
   ######################
 
   it "" do
@@ -18,7 +18,7 @@ describe Rpersistence::ClassInstance::Persistence::Flat do
   end
 
   ###################
-  #  Klass.persist  #
+
   ###################
 
   it "" do
@@ -27,7 +27,7 @@ describe Rpersistence::ClassInstance::Persistence::Flat do
   
   
   ######################
-  #  Klass.persisted?  #
+
   ######################
 
   it "" do
@@ -35,7 +35,7 @@ describe Rpersistence::ClassInstance::Persistence::Flat do
   end
 
   ##################
-  #  Klass.cease!  #
+
   ##################
 
   it "" do

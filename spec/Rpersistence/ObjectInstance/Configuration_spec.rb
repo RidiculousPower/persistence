@@ -4,9 +4,9 @@ describe Rpersistence::ObjectInstance::Configuration do
 
   #############################
   #  Klass.persistence_port=  #
-  #  persistence_port=        #
+  #  persistence_port=#
   #  Klass.persistence_port   #
-  #  persistence_port         #
+  #  persistence_port  #
   #############################
   
   it "can set and get its persistence port" do
@@ -24,9 +24,9 @@ describe Rpersistence::ObjectInstance::Configuration do
   
   ########################################
   #  Klass.instance_persistence_bucket=  #
-  #  persistence_bucket=                 #
+  #  persistence_bucket=         #
   #  Klass.instance_persistence_bucket   #
-  #  persistence_bucket                  #
+  #  persistence_bucket          #
   ########################################
 
   it "can set and get its persistence bucket" do
@@ -42,33 +42,32 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
   
   ######################################################
-  #  Klass.persists_instance_variables_by_default!     #
-  #  persists_instance_variables_by_default!           #
-  #  Klass.persists_no_ivars_by_default!               #
-  #  persists_no_ivars_by_default!                     #
+  #  Klass.attr_persistent!     #
+  #  attr_persistent!   #
+  #  Klass.attr_non_persistent!       #
+  #  attr_non_persistent!             #
   ######################################################
 
   it "can be set to persist all instance variables by default or no instance variables by default" do
     class Rpersistence::ObjectInstance::Configuration::Mock04
     end
-    Rpersistence::ObjectInstance::Configuration::Mock04.persists_instance_variables_by_default?.should == true
-    Rpersistence::ObjectInstance::Configuration::Mock04.persists_no_ivars_by_default!
-    Rpersistence::ObjectInstance::Configuration::Mock04.persists_instance_variables_by_default?.should == false
-    Rpersistence::ObjectInstance::Configuration::Mock04.persists_instance_variables_by_default!
-    Rpersistence::ObjectInstance::Configuration::Mock04.persists_instance_variables_by_default?.should == true
+    Rpersistence::ObjectInstance::Configuration::Mock04.persists_all_by_default?.should == true
+    Rpersistence::ObjectInstance::Configuration::Mock04.attr_non_persistent!
+    Rpersistence::ObjectInstance::Configuration::Mock04.persists_all_by_default?.should == false
+    Rpersistence::ObjectInstance::Configuration::Mock04.attr_persistent!
+    Rpersistence::ObjectInstance::Configuration::Mock04.persists_all_by_default?.should == true
     instance = Rpersistence::ObjectInstance::Configuration::Mock04.new
-    instance.persists_instance_variables_by_default?.should == true
-    instance.persists_no_ivars_by_default!
-    instance.persists_instance_variables_by_default?.should == false
-    instance.persists_instance_variables_by_default!
-    instance.persists_instance_variables_by_default?.should == true
+    instance.persists_all_by_default?.should == true
+    instance.attr_non_persistent!
+    instance.persists_all_by_default?.should == false
+    instance.attr_persistent!
+    instance.persists_all_by_default?.should == true
   end
 
   ###########################################
   #  Klass.persists_atomic_by_default!      #
-  #  persists_atomic_by_default!            #
-  #  Klass.persists_non_atomic_by_default!  #
-  #  persists_non_atomic_by_default!        #
+  #  persists_atomic_by_default!    #
+  #  persists_non_atomic_by_default!  #
   ###########################################
 
   it "can be set to persist atomically by default, which means any accessors declared after this point will automatically be declared atomic or non-atomically by default, which means only explicit calls to persist! will persist properties not explicitly declared atomic" do
@@ -88,8 +87,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   #######################
-  #  Klass.attr_atomic  #
-  #  attr_atomic        #
+  #  attr_atomic  #
   #######################
 
   it "can declare atomic attributes" do
@@ -108,8 +106,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ##############################
-  #  Klass.attr_atomic_reader  #
-  #  attr_atomic_reader        #
+  #  attr_atomic_reader  #
   ##############################
 
   it "can declare atomic attribute readers" do
@@ -128,8 +125,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ##############################
-  #  Klass.attr_atomic_writer  #
-  #  attr_atomic_writer        #
+  #  attr_atomic_writer  #
   ##############################
 
   it "can declare atomic attribute writers" do
@@ -148,8 +144,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ###########################
-  #  Klass.attr_non_atomic  #
-  #  attr_non_atomic        #
+  #  attr_non_atomic  #
   ###########################
 
   it "can declare non-atomic attributes" do
@@ -168,8 +163,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ##################################
-  #  Klass.attr_non_atomic_reader  #
-  #  attr_non_atomic_reader        #
+  #  attr_non_atomic_reader  #
   ##################################
 
   it "can declare non-atomic readers, meaning any time the object is persisted from a port it will load these values" do
@@ -188,8 +182,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ##################################
-  #  Klass.attr_non_atomic_writer  #
-  #  attr_non_atomic_writer        #
+  #  attr_non_atomic_writer  #
   ##################################
 
   it "can declare non-atomic writers, meaning any time the object is told to persist! it will persist these values" do
@@ -208,8 +201,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   #########################
-  #  Klass.attrs_atomic!  #
-  #  attrs_atomic!        #
+  #  attrs_atomic!  #
   #########################
 
   it "can declare all attributes atomic" do
@@ -229,8 +221,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   #############################
-  #  Klass.attrs_non_atomic!  #
-  #  attrs_non_atomic!        #
+  #  attrs_non_atomic!  #
   #############################
 
   it "can declare all attributes non-atomic" do
@@ -250,8 +241,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ###############################
-  #  Klass.attr_non_persistent  #
-  #  attr_non_persistent        #
+  #  attr_non_persistent  #
   ###############################
 
   it "can declare non-persistent attributes" do
@@ -270,8 +260,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   #################################
-  #  Klass.attrs_non_persistent!  #
-  #  attrs_non_persistent!        #
+  #  attrs_non_persistent!  #
   #################################
 
   it "can declare that all currently declared attributes are now non-persistent and future attributes are non-persistent by default" do
@@ -292,8 +281,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ######################################
-  #  Klass.attr_non_persistent_reader  #
-  #  attr_non_persistent_reader        #
+  #  attr_non_persistent_reader  #
   ######################################
 
   it "can declare that attributes should not read persistently, meaning persisted values will never be retrieved from persistence" do
@@ -312,8 +300,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   ######################################
-  #  Klass.attr_non_persistent_writer  #
-  #  attr_non_persistent_writer        #
+  #  attr_non_persistent_writer  #
   ######################################
 
   it "can declare that attributes should not write persistently, meaning the persisted value will never change" do
@@ -332,8 +319,7 @@ describe Rpersistence::ObjectInstance::Configuration do
   end
 
   #####################
-  #  Klass.attr_flat  #
-  #  attr_flat        #
+  #  attr_flat  #
   #####################
 
   it "can declare that complex attributes should be stored as flat attributes" do

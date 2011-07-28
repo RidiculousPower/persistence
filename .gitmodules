@@ -4,3 +4,18 @@
 [submodule "modules"]
 	path = modules
 	url = rp@ridiculouspower.com:rpersistence/modules
+[submodule "configuration"]
+	path = configuration
+	url = rp@ridiculouspower.com:rpersistence/configuration
+[submodule "cursor"]
+	path = cursor
+	url = rp@ridiculouspower.com:rpersistence/cursor
+[submodule "persistence"]
+	path = persistence
+	url = rp@ridiculouspower.com:rpersistence/persistence
+[submodule "port"]
+	path = port
+	url = rp@ridiculouspower.com:rpersistence/port
+[submodule "indexing"]
+	path = indexing
+	url = rp@ridiculouspower.com:rpersistence/indexing

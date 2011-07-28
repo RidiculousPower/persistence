@@ -19,8 +19,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
     
   #############################
-  #  Klass.atomic_attributes  #
-  #  atomic_attributes        #
+  #  atomic_attributes  #
   #############################
 
   it "can report which attributes are atomic (whether :accessor, :reader, or :writer)" do
@@ -48,8 +47,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ######################################
-  #  Klass.atomic_attribute_accessors  #
-  #  atomic_attribute_accessors        #
+  #  atomic_attribute_accessors  #
   ######################################
 
   it "can report which attributes have atomic accessors" do
@@ -73,8 +71,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ####################################
-  #  Klass.atomic_attribute_readers  #
-  #  atomic_attribute_readers        #
+  #  atomic_attribute_readers  #
   ####################################
 
   it "can report which attributes have atomic readers" do
@@ -95,8 +92,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ####################################
-  #  Klass.atomic_attribute_writers  #
-  #  atomic_attribute_writers        #
+  #  atomic_attribute_writers  #
   ####################################
 
   it "can report which attributes have atomic writers" do
@@ -117,8 +113,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   #################################
-  #  Klass.non_atomic_attributes  #
-  #  non_atomic_attributes        #
+  #  non_atomic_attributes  #
   #################################
 
   it "can report which attributes are non-atomic (whether :accessor, :reader, or :writer)" do
@@ -141,8 +136,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ##########################################
-  #  Klass.non_atomic_attribute_accessors  #
-  #  non_atomic_attribute_accessors        #
+  #  non_atomic_attribute_accessors  #
   ##########################################
 
   it "can report which attributes have non-atomic accessors" do
@@ -163,8 +157,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ########################################
-  #  Klass.non_atomic_attribute_readers  #
-  #  non_atomic_attribute_readers        #
+  #  non_atomic_attribute_readers  #
   ########################################
 
   it "can report which attributes have non-atomic readers" do
@@ -190,8 +183,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ########################################
-  #  Klass.non_atomic_attribute_writers  #
-  #  non_atomic_attribute_writers        #
+  #  non_atomic_attribute_writers  #
   ########################################
 
   it "can report which attributes have non-atomic writers" do
@@ -214,8 +206,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   #################################
-  #  Klass.persistent_attributes  #
-  #  persistent_attributes        #
+  #  persistent_attributes  #
   #################################
 
   it "can report which attributes are persistent (whether atomic or non-atomic)" do
@@ -247,8 +238,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ##########################################
-  #  Klass.persistent_attribute_accessors  #
-  #  persistent_attribute_accessors        #
+  #  persistent_attribute_accessors  #
   ##########################################
 
   it "can report which attributes have persistent accessors (whether atomic or non-atomic)" do
@@ -273,8 +263,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ########################################
-  #  Klass.persistent_attribute_readers  #
-  #  persistent_attribute_readers        #
+  #  persistent_attribute_readers  #
   ########################################
 
   it "can report which attributes have persistent readers (whether atomic or non-atomic)" do
@@ -303,8 +292,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ########################################
-  #  Klass.persistent_attribute_writers  #
-  #  persistent_attribute_writers        #
+  #  persistent_attribute_writers  #
   ########################################
 
   it "can report which attributes have persistent writers (whether atomic or non-atomic)" do
@@ -330,8 +318,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   #####################################
-  #  Klass.non_persistent_attributes  #
-  #  non_persistent_attributes        #
+  #  non_persistent_attributes  #
   #####################################
 
   it "can report which attributes are non-persistent" do
@@ -354,8 +341,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ##############################################
-  #  Klass.non_persistent_attribute_accessors  #
-  #  non_persistent_attribute_accessors        #
+  #  non_persistent_attribute_accessors  #
   ##############################################
 
   it "can report which attributes do not have persistent accessors" do
@@ -377,8 +363,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ############################################
-  #  Klass.non_persistent_attribute_readers  #
-  #  non_persistent_attribute_readers        #
+  #  non_persistent_attribute_readers  #
   ############################################
 
   it "can report which attributes do not have persistent readers" do
@@ -403,8 +388,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ############################################
-  #  Klass.non_persistent_attribute_writers  #
-  #  non_persistent_attribute_writers        #
+  #  non_persistent_attribute_writers  #
   ############################################
 
   it "can report which attributes do not have persistent writers" do
@@ -427,8 +411,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ###############################
-  #  Klass.included_attributes  #
-  #  included_attributes        #
+  #  included_attributes  #
   ###############################
 
   it "can report which attributes are explicitly included" do
@@ -460,8 +443,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ########################################
-  #  Klass.included_attribute_accessors  #
-  #  included_attribute_accessors        #
+  #  included_attribute_accessors  #
   ########################################
 
   it "can report which attributes are explicitly included as accessors" do
@@ -485,8 +467,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ######################################
-  #  Klass.included_attribute_readers  #
-  #  included_attribute_readers        #
+  #  included_attribute_readers  #
   ######################################
 
   it "can report which attributes are explicitly included as readers" do
@@ -516,8 +497,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ######################################
-  #  Klass.included_attribute_writers  #
-  #  included_attribute_writers        #
+  #  included_attribute_writers  #
   ######################################
 
   it "can report which attributes are explicitly included as writers" do
@@ -546,8 +526,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ###############################
-  #  Klass.excluded_attributes  #
-  #  excluded_attributes        #
+  #  excluded_attributes  #
   ###############################
 
   it "can report which attributes are explicitly excluded" do
@@ -575,8 +554,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ########################################
-  #  Klass.excluded_attribute_accessors  #
-  #  excluded_attribute_accessors        #
+  #  excluded_attribute_accessors  #
   ########################################
 
   it "can report which attributes are explicitly excluded as accessors" do
@@ -596,8 +574,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
   
   ######################################
-  #  Klass.excluded_attribute_readers  #
-  #  excluded_attribute_readers        #
+  #  excluded_attribute_readers  #
   ######################################
 
   it "can report which attributes are explicitly excluded as readers" do
@@ -620,8 +597,7 @@ describe Rpersistence::ObjectInstance::Attributes do
   end
 
   ######################################
-  #  Klass.excluded_attribute_writers  #
-  #  excluded_attribute_writers        #
+  #  excluded_attribute_writers  #
   ######################################
 
   it "can report which attributes are explicitly excluded as writers" do

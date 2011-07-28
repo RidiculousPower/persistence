@@ -2,8 +2,7 @@
 describe Rpersistence::ObjectInstance::Status do
 
   ###################################################
-  #  Klass.persists_instance_variables_by_default?  #
-  #  persists_instance_variables_by_default?        #
+  #  persists_all_by_default?  #
   ###################################################
 
   it "can report whether it persists all instance variables by default" do
@@ -13,8 +12,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
 
   #######################################
-  #  Klass.persists_atomic_by_default?  #
-  #  persists_atomic_by_default?        #
+  #  persists_atomic_by_default?  #
   #######################################
 
   it "can report whether it persists atomically or non-atomically by default" do
@@ -24,8 +22,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
 
   #############################
-  #  Klass.atomic_attribute?  #
-  #  atomic_attribute?        #
+  #  atomic_attribute?  #
   #############################
 
   it "can report whether a given attribute is atomic" do
@@ -35,8 +32,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ######################################
-  #  Klass.atomic_attribute_accessor?  #
-  #  atomic_attribute_accessor?        #
+  #  atomic_attribute_accessor?  #
   ######################################
 
   it "can report whether a given attribute has an atomic accessor" do
@@ -46,8 +42,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ####################################
-  #  Klass.atomic_attribute_reader?  #
-  #  atomic_attribute_reader?        #
+  #  atomic_attribute_reader?  #
   ####################################
 
   it "can report whether a given attribute has an atomic reader" do
@@ -57,8 +52,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ####################################
-  #  Klass.atomic_attribute_writer?  #
-  #  atomic_attribute_writer?        #
+  #  atomic_attribute_writer?  #
   ####################################
 
   it "can report whether a given attribute has an atomic writer" do
@@ -68,8 +62,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   #################################
-  #  Klass.non_atomic_attribute?  #
-  #  non_atomic_attribute?        #
+  #  non_atomic_attribute?  #
   #################################
 
   it "can report whether a given attribute is non-atomic" do
@@ -79,8 +72,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ##########################################
-  #  Klass.non_atomic_attribute_accessor?  #
-  #  non_atomic_attribute_accessor?        #
+  #  non_atomic_attribute_accessor?  #
   ##########################################
 
   it "can report whether a given attribute has a non-atomic accessor" do
@@ -90,8 +82,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ########################################
-  #  Klass.non_atomic_attribute_reader?  #
-  #  non_atomic_attribute_reader?        #
+  #  non_atomic_attribute_reader?  #
   ########################################
 
   it "can report whether a given attribute has a non-atomic reader" do
@@ -101,8 +92,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ########################################
-  #  Klass.non_atomic_attribute_writer?  #
-  #  non_atomic_attribute_writer?        #
+  #  non_atomic_attribute_writer?  #
   ########################################
 
   it "can report whether a given attribute has a non-atomic writer" do
@@ -112,8 +102,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   #################################
-  #  Klass.persistent_attribute?  #
-  #  persistent_attribute?        #
+  #  persistent_attribute?  #
   #################################
 
   it "can report whether a given attribute is persistent" do
@@ -123,8 +112,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   #####################################
-  #  Klass.non_persistent_attribute?  #
-  #  non_persistent_attribute?        #
+  #  non_persistent_attribute?  #
   #####################################
 
   it "can report whether a given attribute is non-persistent" do
@@ -134,8 +122,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ########################################
-  #  Klass.persistent_attribute_reader?  #
-  #  persistent_attribute_reader?        #
+  #  persistent_attribute_reader?  #
   ########################################
 
   it "can report whether a given attribute has a persistent attribute reader" do
@@ -145,8 +132,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
   
   ########################################
-  #  Klass.persistent_attribute_writer?  #
-  #  persistent_attribute_writer?        #
+  #  persistent_attribute_writer?  #
   ########################################
 
   it "can report whether a given attribute has a persistent attribute writer" do
@@ -156,8 +142,7 @@ describe Rpersistence::ObjectInstance::Status do
   end
 
   ##################################
-  #  Klass.persists_as_flat_file?  #
-  #  persists_as_flat_file?        #
+  #  persists_as_flat_file?  #
   ##################################
 
   def persists_as_flat_file?
