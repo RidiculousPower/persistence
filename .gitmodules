@@ -19,3 +19,6 @@
 [submodule "indexing"]
 	path = indexing
 	url = rp@ridiculouspower.com:rpersistence/indexing
+[submodule "exceptions"]
+	path = exceptions
+	url = ./exceptions/
