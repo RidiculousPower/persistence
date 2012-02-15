@@ -22,3 +22,6 @@
 [submodule "exceptions"]
 	path = exceptions
 	url = ./exceptions/
+[submodule "distribution"]
+	path = distribution
+	url = rp@ridiculouspower.com:rpersistence/distribution

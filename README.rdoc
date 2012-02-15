@@ -1,2 +1,0 @@
-# The methods in these modules are included in Object.
-# Since classes are also objects, this means they effectively (but not actually) extend each class.
