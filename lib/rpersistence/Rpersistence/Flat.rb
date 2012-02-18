@@ -6,16 +6,16 @@ module Rpersistence::Flat
   include Rpersistence::Port::ObjectInstance  
   include_also_extends Rpersistence::Port::ClassInstance
 
-  include Rpersistence::Persistence::Object::ObjectInstance  
-  include_also_extends Rpersistence::Persistence::Object::ClassInstance
+  include Rpersistence::Object::ObjectInstance  
+  include_also_extends Rpersistence::Object::ClassInstance
   
-  include Rpersistence::Persistence::Flat::ObjectInstance
-  include_also_extends Rpersistence::Persistence::Flat::ClassInstance
+  include Rpersistence::Object::Flat::ObjectInstance
+  include_also_extends Rpersistence::Object::Flat::ClassInstance
 
-  include Rpersistence::Persistence::Object::Indexing::ObjectInstance  
-  include_also_extends Rpersistence::Persistence::Object::Indexing::ClassInstance
+  include Rpersistence::Object::Indexing::ObjectInstance  
+  include_also_extends Rpersistence::Object::Indexing::ClassInstance
 
-  include Rpersistence::Persistence::Flat::Indexing::ObjectInstance  
-  include_also_extends Rpersistence::Persistence::Flat::Indexing::ClassInstance
+  include Rpersistence::Object::Flat::Indexing::ObjectInstance  
+  include_also_extends Rpersistence::Object::Flat::Indexing::ClassInstance
     
 end

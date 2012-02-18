@@ -9,7 +9,7 @@
 	url = rp@ridiculouspower.com:rpersistence/configuration
 [submodule "cursor"]
 	path = cursor
-	url = rp@ridiculouspower.com:rpersistence/cursor
+	url = ./cursor/
 [submodule "persistence"]
 	path = persistence
 	url = rp@ridiculouspower.com:rpersistence/persistence

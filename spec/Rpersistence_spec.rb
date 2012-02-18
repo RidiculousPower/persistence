@@ -96,17 +96,17 @@ describe Rpersistence do
     class Address1
       include Rpersistence::Port::ObjectInstance
       extend Rpersistence::Port::ClassInstance
-      include Rpersistence::Persistence::Object::ObjectInstance
-      extend Rpersistence::Persistence::Object::ClassInstance
-      include Rpersistence::Persistence::Complex::ObjectInstance
-      extend Rpersistence::Persistence::Complex::ClassInstance
-      include Rpersistence::Persistence::Object::Indexing::ObjectInstance
-      extend Rpersistence::Persistence::Object::Indexing::ClassInstance
-      include Rpersistence::Persistence::Complex::Indexing::Persist::ObjectInstance
-      extend Rpersistence::Persistence::Complex::Indexing::Indexes::Attributes::ClassInstance
-      include Rpersistence::Persistence::Complex::Indexing::Indexes::Attributes
-      extend Rpersistence::Persistence::Complex::Indexing::Indexes::Attributes
-      include Rpersistence::Persistence::Complex::Indexing::InstanceVariables
+      include Rpersistence::Object::ObjectInstance
+      extend Rpersistence::Object::ClassInstance
+      include Rpersistence::Object::Complex::ObjectInstance
+      extend Rpersistence::Object::Complex::ClassInstance
+      include Rpersistence::Object::Indexing::ObjectInstance
+      extend Rpersistence::Object::Indexing::ClassInstance
+      include Rpersistence::Object::Complex::Indexing::Persist::ObjectInstance
+      extend Rpersistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
+      include Rpersistence::Object::Complex::Indexing::Indexes::Attributes
+      extend Rpersistence::Object::Complex::Indexing::Indexes::Attributes
+      include Rpersistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :number, :street, :city, :state, :zipcode
       attr_atomic_accessor :number
       attrs_atomic!
@@ -151,16 +151,16 @@ describe Rpersistence do
     class Hash
       include Rpersistence::Port::ObjectInstance
       extend Rpersistence::Port::ClassInstance
-      include Rpersistence::Persistence::Object::ObjectInstance
-      extend Rpersistence::Persistence::Object::ClassInstance
-      include Rpersistence::Persistence::Complex::Attributes
-      extend Rpersistence::Persistence::Complex::Attributes
-      include Rpersistence::Persistence::Complex::Attributes::Atomicity
-      extend  Rpersistence::Persistence::Complex::Attributes::Atomicity
-      include Rpersistence::Persistence::Complex::Attributes::Flat
-      extend Rpersistence::Persistence::Complex::Attributes::Flat
-      include Rpersistence::Persistence::Complex::Attributes::PersistenceHash
-      include Rpersistence::Persistence::Complex::Attributes::PersistenceHash::HashInstance
+      include Rpersistence::Object::ObjectInstance
+      extend Rpersistence::Object::ClassInstance
+      include Rpersistence::Object::Complex::Attributes
+      extend Rpersistence::Object::Complex::Attributes
+      include Rpersistence::Object::Complex::Attributes::Atomicity
+      extend  Rpersistence::Object::Complex::Attributes::Atomicity
+      include Rpersistence::Object::Complex::Attributes::Flat
+      extend Rpersistence::Object::Complex::Attributes::Flat
+      include Rpersistence::Object::Complex::Attributes::PersistenceHash
+      include Rpersistence::Object::Complex::Attributes::PersistenceHash::HashInstance
     end
 
     hash_container                  = HashContainerClass1.new
@@ -182,16 +182,16 @@ describe Rpersistence do
     class Array
       include Rpersistence::Port::ObjectInstance
       extend Rpersistence::Port::ClassInstance
-      include Rpersistence::Persistence::Object::ObjectInstance
-      extend Rpersistence::Persistence::Object::ClassInstance
-      include Rpersistence::Persistence::Complex::Attributes
-      extend Rpersistence::Persistence::Complex::Attributes
-      include Rpersistence::Persistence::Complex::Attributes::Atomicity
-      extend  Rpersistence::Persistence::Complex::Attributes::Atomicity
-      include Rpersistence::Persistence::Complex::Attributes::Flat
-      extend Rpersistence::Persistence::Complex::Attributes::Flat
-      include Rpersistence::Persistence::Complex::Attributes::PersistenceHash
-      include Rpersistence::Persistence::Complex::Attributes::PersistenceHash::ArrayInstance
+      include Rpersistence::Object::ObjectInstance
+      extend Rpersistence::Object::ClassInstance
+      include Rpersistence::Object::Complex::Attributes
+      extend Rpersistence::Object::Complex::Attributes
+      include Rpersistence::Object::Complex::Attributes::Atomicity
+      extend  Rpersistence::Object::Complex::Attributes::Atomicity
+      include Rpersistence::Object::Complex::Attributes::Flat
+      extend Rpersistence::Object::Complex::Attributes::Flat
+      include Rpersistence::Object::Complex::Attributes::PersistenceHash
+      include Rpersistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
     end
 
     storage_key                         = :array_container

@@ -6,16 +6,16 @@ module Rpersistence::Complex
   include Rpersistence::Port::ObjectInstance  
   include_also_extends Rpersistence::Port::ClassInstance
 
-  include Rpersistence::Persistence::Object::ObjectInstance  
-  include_also_extends Rpersistence::Persistence::Object::ClassInstance
+  include Rpersistence::Object::ObjectInstance  
+  include_also_extends Rpersistence::Object::ClassInstance
   
-  include Rpersistence::Persistence::Complex::ObjectInstance
-  include_also_extends Rpersistence::Persistence::Complex::ClassInstance
+  include Rpersistence::Object::Complex::ObjectInstance
+  include_also_extends Rpersistence::Object::Complex::ClassInstance
 
-  include Rpersistence::Persistence::Object::Indexing::ObjectInstance  
-  include_also_extends Rpersistence::Persistence::Object::Indexing::ClassInstance
+  include Rpersistence::Object::Indexing::ObjectInstance  
+  include_also_extends Rpersistence::Object::Indexing::ClassInstance
 
-  include Rpersistence::Persistence::Complex::Indexing::ObjectInstance  
-  include_also_extends Rpersistence::Persistence::Complex::Indexing::ClassInstance
+  include Rpersistence::Object::Complex::Indexing::ObjectInstance  
+  include_also_extends Rpersistence::Object::Complex::Indexing::ClassInstance
   
 end

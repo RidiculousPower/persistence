@@ -1,9 +1,17 @@
+
 require 'module-cluster'
 
-require_relative '../port/indexing/lib/rpersistence-port-indexing.rb'
-require_relative '../persistence/cursor/indexing/lib/rpersistence-persistence-cursor-indexing.rb'
-require_relative '../persistence/flat/indexing/lib/rpersistence-persistence-flat-indexing.rb'
-require_relative '../persistence/complex/indexing/lib/rpersistence-persistence-complex-indexing.rb'
+if $__rpersistence__spec__development
+  require_relative '../port/indexing/lib/rpersistence-port-indexing.rb'
+  require_relative '../cursor/indexing/lib/rpersistence-cursor-indexing.rb'
+  require_relative '../object/flat/indexing/lib/rpersistence-object-flat-indexing.rb'
+  require_relative '../object/complex/indexing/lib/rpersistence-object-complex-indexing.rb'
+else
+  require 'rpersistence-port-indexing'
+  require 'rpersistence-cursor-indexing'
+  require 'rpersistence-object-flat-indexing'
+  require 'rpersistence-object-complex-indexing'
+end
 
 module Rpersistence
   module Complex
