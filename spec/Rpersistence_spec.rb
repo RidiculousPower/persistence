@@ -1,7 +1,11 @@
 
-require_relative '../lib/rpersistence.rb'
-
-require_relative '../adapters/mock/lib/rpersistence-adapter-mock.rb'
+if $__rpersistence__spec__development
+  require_relative '../lib/rpersistence.rb'
+  require_relative '../adapters/mock/lib/rpersistence-adapter-mock.rb'
+else
+  require 'rpersistence-port'
+  require 'rpersistence-adapter-mock'
+end
 
 describe Rpersistence do
   
