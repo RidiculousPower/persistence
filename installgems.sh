@@ -23,6 +23,7 @@ sudo gem install ./rpersistence-adapter-mock-0*.gem
 sudo gem install ./rpersistence-adapter-marshal-flat-file-0*.gem
 sudo gem install ./rpersistence-adapter-yaml-flat-file-0*.gem
 sudo gem install ./rpersistence-adapter-kyotocabinet-0*.gem
+sudo gem install ./rpersistence-adapter-kyotocabinet-marshal-0*.gem
 
 sudo gem install ./rpersistence-0*.gem
 
