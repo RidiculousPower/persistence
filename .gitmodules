@@ -15,7 +15,7 @@
 	url = rp@ridiculouspower.com:rpersistence/persistence
 [submodule "port"]
 	path = port
-	url = rp@ridiculouspower.com:rpersistence/port
+	url = ./port
 [submodule "indexing"]
 	path = indexing
 	url = rp@ridiculouspower.com:rpersistence/indexing
@@ -25,3 +25,9 @@
 [submodule "distribution"]
 	path = distribution
 	url = rp@ridiculouspower.com:rpersistence/distribution
+[submodule "stress"]
+	path = stress
+	url = ./stress/
+[submodule "object"]
+	path = object
+	url = ./object/

@@ -3,6 +3,7 @@ if $__rpersistence__spec__development
   require_relative '../lib/rpersistence.rb'
   require_relative '../adapters/mock/lib/rpersistence-adapter-mock.rb'
 else
+  require 'rpersistence'
   require 'rpersistence-port'
   require 'rpersistence-adapter-mock'
 end
@@ -123,6 +124,8 @@ describe Rpersistence do
     user.firstname = 'first'
     user.lastname  = 'last'
 
+    user.persist!
+
     user.address = Address1.new
     user.address.number = 42
     user.address.street = 'Street'
@@ -136,9 +139,9 @@ describe Rpersistence do
     user.alternate_address.city = 'Some Other City'
     user.alternate_address.state = 'TX'
     user.alternate_address.zipcode = '70004'
-    user.persist!
 
-    UserObject6.persist( :username => 'user' ).should == user
+    persisted_user = UserObject6.persist( :username => 'user' )
+    persisted_user.should == user
 
     user.alternate_address.number = 48
 

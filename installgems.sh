@@ -19,6 +19,7 @@ sudo gem install ./rpersistence-object-complex-indexing-0*.gem
 
 sudo gem install ./rpersistence-adapter-abstract-0*.gem
 sudo gem install ./rpersistence-adapter-abstract-flat-file-0*.gem
+sudo gem install ./rpersistence-adapter-mock-0*.gem
 sudo gem install ./rpersistence-adapter-marshal-flat-file-0*.gem
 sudo gem install ./rpersistence-adapter-yaml-flat-file-0*.gem
 sudo gem install ./rpersistence-adapter-kyotocabinet-0*.gem
