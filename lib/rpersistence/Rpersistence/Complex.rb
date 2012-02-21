@@ -23,3 +23,23 @@ module Rpersistence::Complex
   include_also_extends Rpersistence::Object::Complex::Indexing::ClassInstance
   
 end
+
+class Array
+  
+  include Rpersistence::Complex
+  include Rpersistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
+
+  include Rpersistence::Object::Complex::Array::ObjectInstance
+  extend Rpersistence::Object::Complex::Array::ClassInstance
+  
+end
+
+class Hash
+
+  include Rpersistence::Complex
+  include Rpersistence::Object::Complex::Attributes::PersistenceHash::HashInstance
+
+  include Rpersistence::Object::Complex::Hash::ObjectInstance
+  extend Rpersistence::Object::Complex::Hash::ClassInstance
+  
+end
