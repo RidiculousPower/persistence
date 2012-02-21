@@ -95,4 +95,8 @@ cd $RPERSISTENCE_ADAPTER_KYOTOCABINET
 gem build rpersistence-adapter-kyotocabinet.gemspec
 mv rpersistence-adapter-kyotocabinet*.gem $GEMS/
 
+cd $RPERSISTENCE_ADAPTER_KYOTOCABINET_MARSHAL
+gem build rpersistence-adapter-kyotocabinet-marshal.gemspec
+mv rpersistence-adapter-kyotocabinet-marshal*.gem $GEMS/
+
 cd $ROOTDIR
