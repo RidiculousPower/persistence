@@ -1,26 +1,26 @@
 #!/bin/bash
 
-sudo gem uninstall rpersistence-port
-sudo gem uninstall rpersistence-port-indexing
+sudo gem uninstall persistence-port
+sudo gem uninstall persistence-port-indexing
 
-sudo gem uninstall rpersistence-cursor
-sudo gem uninstall rpersistence-cursor-indexing
+sudo gem uninstall persistence-cursor
+sudo gem uninstall persistence-cursor-indexing
 
-sudo gem uninstall rpersistence-object
-sudo gem uninstall rpersistence-object-indexing
+sudo gem uninstall persistence-object
+sudo gem uninstall persistence-object-indexing
 
-sudo gem uninstall rpersistence-object-flat
-sudo gem uninstall rpersistence-object-flat-indexing
+sudo gem uninstall persistence-object-flat
+sudo gem uninstall persistence-object-flat-indexing
 
-sudo gem uninstall rpersistence-object-complex
-sudo gem uninstall rpersistence-object-complex-indexing
+sudo gem uninstall persistence-object-complex
+sudo gem uninstall persistence-object-complex-indexing
 
-sudo gem uninstall rpersistence-adapter-abstract
-sudo gem uninstall rpersistence-adapter-abstract-flat-file
-sudo gem uninstall rpersistence-adapter-mock
-sudo gem uninstall rpersistence-adapter-marshal-flat-file
-sudo gem uninstall rpersistence-adapter-yaml-flat-file
-sudo gem uninstall rpersistence-adapter-kyotocabinet
-sudo gem uninstall rpersistence-adapter-kyotocabinet-marshal
+sudo gem uninstall persistence-adapter-abstract
+sudo gem uninstall persistence-adapter-abstract-flat-file
+sudo gem uninstall persistence-adapter-mock
+sudo gem uninstall persistence-adapter-marshal-flat-file
+sudo gem uninstall persistence-adapter-yaml-flat-file
+sudo gem uninstall persistence-adapter-kyotocabinet
+sudo gem uninstall persistence-adapter-kyotocabinet-marshal
 
-sudo gem uninstall rpersistence
+sudo gem uninstall persistence

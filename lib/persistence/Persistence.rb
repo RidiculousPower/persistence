@@ -1,5 +1,5 @@
 
-module ::Rpersistence
+module ::Persistence
   
   extend ModuleCluster
 
@@ -23,26 +23,26 @@ module ::Rpersistence
         class_or_module.is_a?( NilClass )
       
       class_or_module.module_eval do
-        include ::Rpersistence::Flat
+        include ::Persistence::Flat
       end
       
     # otherwise extend as a complex object
     else
 
       class_or_module.module_eval do
-        include ::Rpersistence::Complex
+        include ::Persistence::Complex
       end
       
     end
         
     # if you want a different result, use the appropriate module directly
-    # * ::Rpersistence::Complex
-    # * ::Rpersistence::Flat
+    # * ::Persistence::Complex
+    # * ::Persistence::Flat
     
   end
   
   class_or_module_or_instance_extend do
-    raise 'Rpersistence does not expect to be used without class-level support.'
+    raise 'Persistence does not expect to be used without class-level support.'
   end
     
 end

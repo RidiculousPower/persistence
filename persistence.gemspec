@@ -2,16 +2,16 @@ require 'date'
 
 Gem::Specification.new do |spec|
 
-  spec.name                      =  'rpersistence'
-  spec.rubyforge_project         =  'rpersistence'
+  spec.name                      =  'persistence'
+  spec.rubyforge_project         =  'persistence'
   spec.version                   =  '0.0.1'
 
-  spec.summary                   =  "Rpersistence."
-  spec.description               =  "Rpersistence."
+  spec.summary                   =  "Persistence."
+  spec.description               =  "Persistence."
 
   spec.authors                   =  [ 'Asher' ]
   spec.email                     =  'asher@ridiculouspower.com'
-  spec.homepage                  =  'http://rubygems.org/gems/rpersistence'
+  spec.homepage                  =  'http://rubygems.org/gems/persistence'
 
   spec.add_dependency            'module-cluster'
   spec.add_dependency            'accessor-utilities'

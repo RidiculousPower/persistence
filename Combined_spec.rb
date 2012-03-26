@@ -1,4 +1,4 @@
-$__rpersistence__spec__development = true
+$__persistence__spec__development__ = true
 
 specs = [
 
@@ -37,14 +37,14 @@ specs = [
   
 ]
 
-module ::Rpersistence
+module ::Persistence
 end
 
 specs.each do |this_spec|
 
   pid = fork do
 
-    describe ::Rpersistence do
+    describe ::Persistence do
 
       RSpec::Core::Runner.run( this_spec, $stderr, $stdout )
   
@@ -56,4 +56,4 @@ specs.each do |this_spec|
   
 end
 
-exec( 'rm -rf /tmp/rpersistence-*' )
+exec( 'rm -rf /tmp/persistence-*' )

@@ -1,7 +1,7 @@
 
 class Mock::User
 
-  include ::Rpersistence
+  include ::Persistence
   attr_atomic_accessor :username, :firstname, :lastname, :address, :alternate_address, :url, :notes, :dictionary, :subaccount
   
   def populate

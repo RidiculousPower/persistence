@@ -1,8 +1,8 @@
 
 
-Rpersistence::Specs::Constraints  = 'Constraints for persistence.'
+Persistence::Specs::Constraints  = 'Constraints for persistence.'
 
-describe ::Rpersistence do
+describe ::Persistence do
   
   ############################################  Constraints  ################################################
 

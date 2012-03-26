@@ -1,11 +1,11 @@
 
-if $__rpersistence__spec__development
-  require_relative '../lib/rpersistence.rb'
-  require_relative '../adapters/mock/lib/rpersistence-adapter-mock.rb'
+if $__persistence__spec__development__
+  require_relative '../lib/persistence.rb'
+  require_relative '../adapters/mock/lib/persistence-adapter-mock.rb'
 else
-  require 'rpersistence'
-  require 'rpersistence-port'
-  require 'rpersistence-adapter-mock'
+  require 'persistence'
+  require 'persistence-port'
+  require 'persistence-adapter-mock'
 end
 
 module Mock
@@ -21,11 +21,11 @@ require_relative 'Mock/User/SubAccount.rb'
 
 # FIX - Date needs to be treated as a string in and out
 
-describe ::Rpersistence do
+describe ::Persistence do
 
   it 'can create some objects with sub-objects and get them back' do
     
-    ::Rpersistence.enable_port( :mock, ::Rpersistence::Adapter::Mock.new )
+    ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
 
     user = Mock::User.new.persist!
     user.populate
@@ -59,7 +59,7 @@ describe ::Rpersistence do
     
     persisted_user.should == user
     
-    ::Rpersistence.disable_port( :mock )
+    ::Persistence.disable_port( :mock )
     
   end
 

@@ -28,75 +28,75 @@ RPERSISTENCE_ADAPTER_KYOTOCABINET=$RPERSISTENCE_ADAPTERS/kyotocabinet
 RPERSISTENCE_ADAPTER_KYOTOCABINET_MARSHAL=$RPERSISTENCE_ADAPTER_KYOTOCABINET/marshal
 
 cd $RPERSISTENCE
-gem build rpersistence.gemspec
-mv rpersistence*.gem $GEMS/
+gem build persistence.gemspec
+mv persistence*.gem $GEMS/
 
 cd $RPERSISTENCE_PORT
-gem build rpersistence-port.gemspec
-mv rpersistence-port*.gem $GEMS/
+gem build persistence-port.gemspec
+mv persistence-port*.gem $GEMS/
 
 cd $RPERSISTENCE_PORT_INDEXING
-gem build rpersistence-port-indexing.gemspec
-mv rpersistence-port-indexing*.gem $GEMS/
+gem build persistence-port-indexing.gemspec
+mv persistence-port-indexing*.gem $GEMS/
 
 cd $RPERSISTENCE_CURSOR
-gem build rpersistence-cursor.gemspec
-mv rpersistence-cursor*.gem $GEMS/
+gem build persistence-cursor.gemspec
+mv persistence-cursor*.gem $GEMS/
 
 cd $RPERSISTENCE_CURSOR_INDEXING
-gem build rpersistence-cursor-indexing.gemspec
-mv rpersistence-cursor-indexing*.gem $GEMS/
+gem build persistence-cursor-indexing.gemspec
+mv persistence-cursor-indexing*.gem $GEMS/
 
 cd $RPERSISTENCE_OBJECT
-gem build rpersistence-object.gemspec
-mv rpersistence-object*.gem $GEMS/
+gem build persistence-object.gemspec
+mv persistence-object*.gem $GEMS/
 
 cd $RPERSISTENCE_OBJECT_INDEXING
-gem build rpersistence-object-indexing.gemspec
-mv rpersistence-object-indexing*.gem $GEMS/
+gem build persistence-object-indexing.gemspec
+mv persistence-object-indexing*.gem $GEMS/
 
 cd $RPERSISTENCE_FLAT
-gem build rpersistence-object-flat.gemspec
-mv rpersistence-object-flat*.gem $GEMS/
+gem build persistence-object-flat.gemspec
+mv persistence-object-flat*.gem $GEMS/
 
 cd $RPERSISTENCE_FLAT_INDEXING
-gem build rpersistence-object-flat-indexing.gemspec
-mv rpersistence-object-flat-indexing*.gem $GEMS/
+gem build persistence-object-flat-indexing.gemspec
+mv persistence-object-flat-indexing*.gem $GEMS/
 
 cd $RPERSISTENCE_COMPLEX
-gem build rpersistence-object-complex.gemspec
-mv rpersistence-object-complex*.gem $GEMS/
+gem build persistence-object-complex.gemspec
+mv persistence-object-complex*.gem $GEMS/
 
 cd $RPERSISTENCE_COMPLEX_INDEXING
-gem build rpersistence-object-complex-indexing.gemspec
-mv rpersistence-object-complex-indexing*.gem $GEMS/
+gem build persistence-object-complex-indexing.gemspec
+mv persistence-object-complex-indexing*.gem $GEMS/
 
 cd $RPERSISTENCE_ADAPTER_ABSTRACT
-gem build rpersistence-adapter-abstract.gemspec
-mv rpersistence-adapter-abstract*.gem $GEMS/
+gem build persistence-adapter-abstract.gemspec
+mv persistence-adapter-abstract*.gem $GEMS/
 
 cd $RPERSISTENCE_ADAPTER_ABSTRACT_FLAT_FILE
-gem build rpersistence-adapter-abstract-flat-file.gemspec
-mv rpersistence-adapter-abstract-flat-file*.gem $GEMS/
+gem build persistence-adapter-abstract-flat-file.gemspec
+mv persistence-adapter-abstract-flat-file*.gem $GEMS/
 
 cd $RPERSISTENCE_ADAPTER_MOCK
-gem build rpersistence-adapter-mock.gemspec
-mv rpersistence-adapter-mock*.gem $GEMS/
+gem build persistence-adapter-mock.gemspec
+mv persistence-adapter-mock*.gem $GEMS/
 
 cd $RPERSISTENCE_ADAPTER_MARSHAL_FLAT_FILE
-gem build rpersistence-adapter-marshal-flat-file.gemspec
-mv rpersistence-adapter-marshal-flat-file*.gem $GEMS/
+gem build persistence-adapter-marshal-flat-file.gemspec
+mv persistence-adapter-marshal-flat-file*.gem $GEMS/
 
 cd $RPERSISTENCE_ADAPTER_YAML_FLAT_FILE
-gem build rpersistence-adapter-yaml-flat-file.gemspec
-mv rpersistence-adapter-yaml-flat-file*.gem $GEMS/
+gem build persistence-adapter-yaml-flat-file.gemspec
+mv persistence-adapter-yaml-flat-file*.gem $GEMS/
 
 cd $RPERSISTENCE_ADAPTER_KYOTOCABINET
-gem build rpersistence-adapter-kyotocabinet.gemspec
-mv rpersistence-adapter-kyotocabinet*.gem $GEMS/
+gem build persistence-adapter-kyotocabinet.gemspec
+mv persistence-adapter-kyotocabinet*.gem $GEMS/
 
 cd $RPERSISTENCE_ADAPTER_KYOTOCABINET_MARSHAL
-gem build rpersistence-adapter-kyotocabinet-marshal.gemspec
-mv rpersistence-adapter-kyotocabinet-marshal*.gem $GEMS/
+gem build persistence-adapter-kyotocabinet-marshal.gemspec
+mv persistence-adapter-kyotocabinet-marshal*.gem $GEMS/
 
 cd $ROOTDIR
