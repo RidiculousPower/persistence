@@ -1,7 +1,7 @@
 
 class Mock::Note
   
-  include Rpersistence
+  include ::Rpersistence
   attr_atomic_accessor :date, :subject, :content
   
   def populate

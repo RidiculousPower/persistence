@@ -8,19 +8,19 @@ else
   require 'rpersistence-adapter-mock'
 end
 
-describe Rpersistence do
+describe ::Rpersistence do
   
   before :all do
-    Rpersistence.enable_port( :mock, Rpersistence::Adapter::Mock.new )
+    ::Rpersistence.enable_port( :mock, ::Rpersistence::Adapter::Mock.new )
   end
 
   after :all do
-    Rpersistence.disable_port( :mock )
+    ::Rpersistence.disable_port( :mock )
   end
 
   it "can persist an object to and from a default bucket with an arbitrary key method" do
     class UserObject3
-      include Rpersistence
+      include ::Rpersistence
       attr_accessor :username, :firstname, :lastname
       attr_index    :username
     end
@@ -34,26 +34,26 @@ describe Rpersistence do
 
   it "can persist an object to and from a default bucket with an arbitrary key variable" do
     class UserObject4
-      include Rpersistence
+      include ::Rpersistence
       attr_accessor :username, :firstname, :lastname
-      attr_index  :@username
+      attr_index  :username
     end
     user = UserObject4.new
     user.username   = 'user'
     user.firstname = 'first'
     user.lastname  = 'last'
     user.persist!
-    UserObject4.persist( :@username => 'user' ).should == user
+    UserObject4.persist( :username => 'user' ).should == user
   end
 
   it "can persist an object with other objects as members" do
     class UserObject5
-      include Rpersistence
+      include ::Rpersistence
       attr_accessor :username, :firstname, :lastname, :address, :alternate_address
-      attr_index  :@username
+      attr_index  :username
     end
     class Address1
-      include Rpersistence
+      include ::Rpersistence
       attr_accessor :number, :street, :city, :state, :zipcode
     end
 
@@ -82,36 +82,36 @@ describe Rpersistence do
     # * address             => should get ID from existing user if user exists => needs to check if existing user address is same ID
     # * alternate_ddress    => should also get ID from existing user if user exists => needs to check if existing alternate address is same ID
 
-    UserObject5.persist( :@username => 'user' ).should == user
+    UserObject5.persist( :username => 'user' ).should == user
 
     user.alternate_address.number = 48
 
     user.alternate_address.persist!
 
-    UserObject5.persist( :@username => 'user' ).should == user
+    UserObject5.persist( :username => 'user' ).should == user
 
   end
 
   it "can persist an object with other objects as members that have atomic properties" do
     class UserObject6
-      include Rpersistence
+      include ::Rpersistence
       attr_accessor :username, :firstname, :lastname, :address, :alternate_address
       attr_index  :username
     end
     class Address1
-      include Rpersistence::Port::ObjectInstance
-      extend Rpersistence::Port::ClassInstance
-      include Rpersistence::Object::ObjectInstance
-      extend Rpersistence::Object::ClassInstance
-      include Rpersistence::Object::Complex::ObjectInstance
-      extend Rpersistence::Object::Complex::ClassInstance
-      include Rpersistence::Object::Indexing::ObjectInstance
-      extend Rpersistence::Object::Indexing::ClassInstance
-      include Rpersistence::Object::Complex::Indexing::Persist::ObjectInstance
-      extend Rpersistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
-      include Rpersistence::Object::Complex::Indexing::Indexes::Attributes
-      extend Rpersistence::Object::Complex::Indexing::Indexes::Attributes
-      include Rpersistence::Object::Complex::Indexing::InstanceVariables
+      include ::Rpersistence::Port::ObjectInstance
+      extend ::Rpersistence::Port::ClassInstance
+      include ::Rpersistence::Object::ObjectInstance
+      extend ::Rpersistence::Object::ClassInstance
+      include ::Rpersistence::Object::Complex::ObjectInstance
+      extend ::Rpersistence::Object::Complex::ClassInstance
+      include ::Rpersistence::Object::Indexing::ObjectInstance
+      extend ::Rpersistence::Object::Indexing::ClassInstance
+      include ::Rpersistence::Object::Complex::Indexing::Persist::ObjectInstance
+      extend ::Rpersistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
+      include ::Rpersistence::Object::Complex::Indexing::Indexes::Attributes
+      extend ::Rpersistence::Object::Complex::Indexing::Indexes::Attributes
+      include ::Rpersistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :number, :street, :city, :state, :zipcode
       attr_atomic_accessor :number
       attrs_atomic!
@@ -151,23 +151,21 @@ describe Rpersistence do
   
   it "can persist an object with hash members" do
     class HashContainerClass1
-      include Rpersistence
+      include ::Rpersistence
       attr_accessor  :some_hash, :storage_key
       attr_index     :storage_key
     end
     class Hash
-      include Rpersistence::Port::ObjectInstance
-      extend Rpersistence::Port::ClassInstance
-      include Rpersistence::Object::ObjectInstance
-      extend Rpersistence::Object::ClassInstance
-      include Rpersistence::Object::Complex::Attributes
-      extend Rpersistence::Object::Complex::Attributes
-      include Rpersistence::Object::Complex::Attributes::Atomicity
-      extend  Rpersistence::Object::Complex::Attributes::Atomicity
-      include Rpersistence::Object::Complex::Attributes::Flat
-      extend Rpersistence::Object::Complex::Attributes::Flat
-      include Rpersistence::Object::Complex::Attributes::PersistenceHash
-      include Rpersistence::Object::Complex::Attributes::PersistenceHash::HashInstance
+      include ::Rpersistence::Port::ObjectInstance
+      extend ::Rpersistence::Port::ClassInstance
+      include ::Rpersistence::Object::ObjectInstance
+      extend ::Rpersistence::Object::ClassInstance
+      include ::Rpersistence::Object::Complex::Attributes
+      extend ::Rpersistence::Object::Complex::Attributes
+      include ::Rpersistence::Object::Complex::Attributes::Flat
+      extend ::Rpersistence::Object::Complex::Attributes::Flat
+      include ::Rpersistence::Object::Complex::Attributes::PersistenceHash
+      include ::Rpersistence::Object::Complex::Attributes::PersistenceHash::HashInstance
     end
 
     hash_container                  = HashContainerClass1.new
@@ -182,23 +180,21 @@ describe Rpersistence do
 
   it "can persist an object with array members" do
     class ArrayContainerClass1
-      include Rpersistence
+      include ::Rpersistence
       attr_accessor  :array, :storage_key
       attr_index     :storage_key
     end
     class Array
-      include Rpersistence::Port::ObjectInstance
-      extend Rpersistence::Port::ClassInstance
-      include Rpersistence::Object::ObjectInstance
-      extend Rpersistence::Object::ClassInstance
-      include Rpersistence::Object::Complex::Attributes
-      extend Rpersistence::Object::Complex::Attributes
-      include Rpersistence::Object::Complex::Attributes::Atomicity
-      extend  Rpersistence::Object::Complex::Attributes::Atomicity
-      include Rpersistence::Object::Complex::Attributes::Flat
-      extend Rpersistence::Object::Complex::Attributes::Flat
-      include Rpersistence::Object::Complex::Attributes::PersistenceHash
-      include Rpersistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
+      include ::Rpersistence::Port::ObjectInstance
+      extend ::Rpersistence::Port::ClassInstance
+      include ::Rpersistence::Object::ObjectInstance
+      extend ::Rpersistence::Object::ClassInstance
+      include ::Rpersistence::Object::Complex::Attributes
+      extend ::Rpersistence::Object::Complex::Attributes
+      include ::Rpersistence::Object::Complex::Attributes::Flat
+      extend ::Rpersistence::Object::Complex::Attributes::Flat
+      include ::Rpersistence::Object::Complex::Attributes::PersistenceHash
+      include ::Rpersistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
     end
 
     storage_key                         = :array_container

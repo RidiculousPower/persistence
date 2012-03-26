@@ -1,4 +1,4 @@
-$__rpersistence__spec__development = true
+
 if $__rpersistence__spec__development
   require_relative '../lib/rpersistence.rb'
   require_relative '../adapters/mock/lib/rpersistence-adapter-mock.rb'
@@ -21,12 +21,12 @@ require_relative 'Mock/User/SubAccount.rb'
 
 # FIX - Date needs to be treated as a string in and out
 
-describe Rpersistence do
+describe ::Rpersistence do
 
   it 'can create some objects with sub-objects and get them back' do
     
-    Rpersistence.enable_port( :mock, Rpersistence::Adapter::Mock.new )
-    
+    ::Rpersistence.enable_port( :mock, ::Rpersistence::Adapter::Mock.new )
+
     user = Mock::User.new.persist!
     user.populate
     
@@ -42,6 +42,9 @@ describe Rpersistence do
     user.notes.persistence_bucket.should == Array.instance_persistence_bucket
     user.notes.persistence_bucket.name.should == Array.to_s.to_sym
 
+    user.dictionary.persistence_bucket.should == Hash.instance_persistence_bucket
+    user.dictionary.persistence_bucket.name.should == Hash.to_s.to_sym
+
     user.notes[0].persistence_bucket.should == Mock::Note.instance_persistence_bucket
     user.notes[0].persistence_bucket.name.should == Mock::Note.to_s.to_sym
 
@@ -53,8 +56,10 @@ describe Rpersistence do
 
     persisted_user = Mock::User.persist( user.persistence_id )
     persisted_user.class.should == Mock::User
-
+    
     persisted_user.should == user
+    
+    ::Rpersistence.disable_port( :mock )
     
   end
 

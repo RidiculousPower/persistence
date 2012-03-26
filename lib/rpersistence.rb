@@ -13,7 +13,7 @@ else
   require 'rpersistence-object-complex-indexing'
 end
 
-module Rpersistence
+module ::Rpersistence
   module Complex
   end
   module Flat
@@ -25,17 +25,17 @@ require_relative 'rpersistence/Rpersistence/Flat.rb'
 
 require_relative 'rpersistence/Rpersistence.rb'
 
-class Rpersistence::Cursor
-  include Rpersistence::Cursor::Indexing::Port::Bucket  
+class ::Rpersistence::Cursor
+  include ::Rpersistence::Cursor::Indexing::Port::Bucket  
 end
 
-class Rpersistence::Port::Bucket
-  include Rpersistence::Port::Indexing::Bucket  
-  include Rpersistence::Cursor::Indexing::Port::Bucket  
+class ::Rpersistence::Port::Bucket
+  include ::Rpersistence::Port::Indexing::Bucket  
+  include ::Rpersistence::Cursor::Indexing::Port::Bucket  
 end
 
-class Rpersistence::Port::Bucket::Index
-  include Rpersistence::Cursor::Indexing::Port::Bucket::Index  
+class ::Rpersistence::Port::Bucket::Index
+  include ::Rpersistence::Cursor::Indexing::Port::Bucket::Index  
 end
 
 

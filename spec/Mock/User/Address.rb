@@ -1,7 +1,7 @@
 
 class Mock::User::Address
   
-  include Rpersistence
+  include ::Rpersistence
   attr_atomic_accessor :number, :street, :city, :state, :zipcode
   
   def populate

@@ -2,7 +2,7 @@
 
 Rpersistence::Specs::Constraints  = 'Constraints for persistence.'
 
-describe Rpersistence do
+describe ::Rpersistence do
   
   ############################################  Constraints  ################################################
 

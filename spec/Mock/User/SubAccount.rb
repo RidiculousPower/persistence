@@ -1,7 +1,7 @@
 
 class Mock::User::SubAccount
   
-  include Rpersistence
+  include ::Rpersistence
   
   attr_atomic_accessor :username, :parent_user
 

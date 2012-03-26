@@ -1,7 +1,7 @@
 
 Rpersistence::Specs::Complex  = 'Complex object specs.'
 
-describe Rpersistence::Specs::Complex do
+describe ::Rpersistence::Specs::Complex do
 
   ##############################################  Cease  ####################################################
 

@@ -37,14 +37,14 @@ specs = [
   
 ]
 
-module Rpersistence
+module ::Rpersistence
 end
 
 specs.each do |this_spec|
 
   pid = fork do
 
-    describe Rpersistence do
+    describe ::Rpersistence do
 
       RSpec::Core::Runner.run( this_spec, $stderr, $stdout )
   

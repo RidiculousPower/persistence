@@ -1,7 +1,7 @@
 
 class Mock::User::DictionaryEntry < String
   
-  include Rpersistence
+  include ::Rpersistence
   
   def populate
   
