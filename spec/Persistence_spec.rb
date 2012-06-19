@@ -1,12 +1,5 @@
 
-if $__persistence__spec__development__
-  require_relative '../lib/persistence.rb'
-  require_relative '../adapters/mock/lib/persistence-adapter-mock.rb'
-else
-  require 'persistence'
-  require 'persistence-port'
-  require 'persistence-adapter-mock'
-end
+require_relative '../lib/persistence.rb'
 
 describe ::Persistence do
   
@@ -111,7 +104,6 @@ describe ::Persistence do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :number, :street, :city, :state, :zipcode
       attr_atomic_accessor :number
       attrs_atomic!
