@@ -1,13 +1,5 @@
 
-if $__persistence__spec__development__
-  require_relative '../../../../../lib/persistence-object.rb'
-  require_relative '../../../../../../adapters/mock/lib/persistence-adapter-mock.rb'
-  require_relative '../../../../../../port/lib/persistence-port.rb'
-else
-  require 'persistence-object'
-  require 'persistence-adapter-mock'
-  require 'persistence-port'
-end
+require_relative '../../../../lib/persistence.rb'
 
 describe ::Persistence::Object::Persist::ObjectInstance do
   

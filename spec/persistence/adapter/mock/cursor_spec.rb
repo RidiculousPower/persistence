@@ -1,8 +1,8 @@
 
 if $__persistence__spec__development__
-  require_relative '../../../../lib/persistence-adapter-mock.rb'
+  require_relative '../../../../lib/persistence.rb'
 else
-  require 'persistence-adapter-mock'
+  require 'persistence'
 end
 
 describe ::Persistence::Adapter::Mock::Cursor do

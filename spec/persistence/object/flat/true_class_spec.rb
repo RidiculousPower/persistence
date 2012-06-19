@@ -1,13 +1,5 @@
 
-if $__persistence__spec__development__
-  require_relative '../lib/persistence-object-flat.rb'
-  require_relative '../../../adapters/mock/lib/persistence-adapter-mock.rb'
-  require_relative '../../../port/lib/persistence-port.rb'
-else
-  require 'persistence-object-flat'
-  require 'persistence-port'
-  require 'persistence-adapter-mock'
-end
+require_relative '../../../../lib/persistence.rb'
 
 describe TrueClass do
   

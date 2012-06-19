@@ -1,23 +1,9 @@
 
-if $__persistence__spec__development__
-  require_relative '../lib/persistence.rb'
-  require_relative '../adapters/mock/lib/persistence-adapter-mock.rb'
-else
-  require 'persistence'
-  require 'persistence-port'
-  require 'persistence-adapter-mock'
-end
-
-module Mock
-end
+require_relative '../lib/persistence.rb'
 
 require 'date'
 
-require_relative 'Mock/Note.rb'
-require_relative 'Mock/User.rb'
-require_relative 'Mock/User/Address.rb'
-require_relative 'Mock/User/DictionaryEntry.rb'
-require_relative 'Mock/User/SubAccount.rb'
+require_relative 'persistence/adapter/mock_helpers.rb'
 
 # FIX - Date needs to be treated as a string in and out
 

@@ -7,7 +7,7 @@ class ::Persistence::Adapter::Abstract::Mock::User::SubAccount
 
   def populate( parent_user = nil )
     
-    self.user = ::Mock::User.new
+    self.user = ::Persistence::Adapter::Abstract::Mock::User.new
     self.parent_user = parent_user
     
   end

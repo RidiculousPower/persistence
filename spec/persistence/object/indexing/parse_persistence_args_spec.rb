@@ -1,13 +1,5 @@
-$__persistence__spec__development__ = true
-if $__persistence__spec__development__
-  require_relative '../../../../../lib/persistence-object-indexing.rb'
-  require_relative '../../../../../../../port/indexing/lib/persistence-port-indexing.rb'
-  require_relative '../../../../../../../adapters/mock/lib/persistence-adapter-mock.rb'
-else
-  require 'persistence-object-indexing'
-  require 'persistence-port-indexing'
-  require 'persistence-adapter-mock'
-end
+
+require_relative '../../../../lib/persistence.rb'
 
 describe ::Persistence::Object::Indexing::ParsePersistenceArgs do
   
