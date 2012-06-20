@@ -35,6 +35,20 @@ module ::Persistence::Port::Indexing::Bucket
   
   end
 
+  ##############################
+  #  disable_adapter_instance  #
+  ##############################
+
+  def disable_adapter_instance
+    
+    super
+    
+    @indexes.each do |this_index_name, this_index|
+      this_index.disable_adapter_instance
+    end
+    
+  end
+
   ##################
   #  create_index  #
   ##################

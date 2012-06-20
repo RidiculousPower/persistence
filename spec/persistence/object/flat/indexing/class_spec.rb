@@ -34,6 +34,8 @@ describe Class do
     Class.persist( :explicit_index, storage_key ).should == class_object
     Class.cease!( :explicit_index, storage_key )
     Class.persist( :explicit_index, storage_key ).should == nil
+    ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default ).remove_configuration( Class, :instance_persistence_port )
+    ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default ).remove_configuration( Class, :instance_persistence_bucket )
   end
   
 end

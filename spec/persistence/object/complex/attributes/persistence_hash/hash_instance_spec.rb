@@ -17,7 +17,7 @@ describe ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstan
 
   it "can create a persistence hash to correspond to persistence state" do
     
-    class Hash
+    class ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstance::HashMock < Hash
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -48,7 +48,7 @@ describe ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstan
     end
     
     complex_instance = ComplexObject.new
-    instance = { }
+    instance = ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstance::HashMock.new
     instance[ 1 ] = :some_value
     instance[ :key ] = :other_value
     instance[ complex_instance ] = :complex_value

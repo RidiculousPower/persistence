@@ -4,7 +4,7 @@ require_relative '../../../../lib/persistence.rb'
 describe ::Persistence::Object::Indexing::ParsePersistenceArgs do
   
   before :all do
-    ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
+    ::Persistence.enable_port( :mock1, ::Persistence::Adapter::Mock.new )
     class ::Persistence::Object::Indexing::ParsePersistenceArgs::Mock
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
@@ -25,7 +25,7 @@ describe ::Persistence::Object::Indexing::ParsePersistenceArgs do
   end
 
   after :all do
-    ::Persistence.disable_port( :mock )
+    ::Persistence.disable_port( :mock1 )
   end
 
   ######################
@@ -35,9 +35,9 @@ describe ::Persistence::Object::Indexing::ParsePersistenceArgs do
   it 'can process a file key for flat persistence' do
     file_instance = File.open( __FILE__ )
     instance = ::Persistence::Object::Indexing::ParsePersistenceArgs::Mock.new
-    ::Persistence.port( :mock ).persist_file_by_path
+    instance.persistence_port.persist_file_by_path
     instance.process_file_key( file_instance ).should == file_instance.path
-    ::Persistence.port( :mock ).persist_file_by_content
+    instance.persistence_port.persist_file_by_content
     instance.process_file_key( file_instance ).should == file_instance.readlines.join
   end
   
@@ -63,9 +63,9 @@ describe ::Persistence::Object::Indexing::ParsePersistenceArgs do
     # test special case: file key
     file_instance = File.open( __FILE__ )
     args = [ :index, file_instance ]
-    ::Persistence.port( :mock ).persist_file_by_path
+    instance.persistence_port.persist_file_by_path
     instance.parse_args_for_index_value_no_value( args ).should == [ ::Persistence::Object::Indexing::ParsePersistenceArgs::Mock::IndexMock, ::Persistence::Object::Flat::File::Path.new( file_instance.path ), false ]
-    ::Persistence.port( :mock ).persist_file_by_content
+    instance.persistence_port.persist_file_by_content
     instance.parse_args_for_index_value_no_value( args ).should == [ ::Persistence::Object::Indexing::ParsePersistenceArgs::Mock::IndexMock, ::Persistence::Object::Flat::File::Contents.new( file_instance.readlines.join ), false ]
   end
   

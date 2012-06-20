@@ -15,7 +15,7 @@ describe String do
     class ::Persistence::Port::Bucket
       include ::Persistence::Port::Indexing::Bucket
     end
-    class String
+    class ::Persistence::Object::Flat::Indexing::StringMock < String
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Object::ClassInstance
@@ -28,12 +28,12 @@ describe String do
       include ::Persistence::Object::Flat::Indexing::ObjectInstance
       explicit_index :explicit_index
     end
-    string_object = "some string"
+    string_object = Persistence::Object::Flat::Indexing::StringMock.new( "some string" )
     storage_key   = "string storage key"
     string_object.persist!( :explicit_index, storage_key )
-    String.persist( :explicit_index, storage_key ).should == string_object
-    String.cease!( :explicit_index, storage_key )
-    String.persist( :explicit_index, storage_key ).should == nil
+    Persistence::Object::Flat::Indexing::StringMock.persist( :explicit_index, storage_key ).should == string_object
+    Persistence::Object::Flat::Indexing::StringMock.cease!( :explicit_index, storage_key )
+    Persistence::Object::Flat::Indexing::StringMock.persist( :explicit_index, storage_key ).should == nil
   end
   
 end

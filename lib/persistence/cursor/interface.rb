@@ -7,15 +7,11 @@ module ::Persistence::Cursor::Interface
   #  initialize  #
   ################
   
-  def initialize( bucket_instance, *args )
-
-    # args can be an ID
+  def initialize( bucket_instance )
 
     @persistence_bucket = bucket_instance
 
     @adapter_cursor = bucket_instance.adapter_bucket.cursor
-    
-    @adapter_cursor.persisted?( *args )
     
   end
 

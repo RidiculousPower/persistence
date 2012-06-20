@@ -17,7 +17,7 @@ describe ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInsta
 
   it "can create a persistence hash to correspond to persistence state" do
 
-    class Array
+    class ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::SubArray < Array
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -29,7 +29,7 @@ describe ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInsta
       include ::Persistence::Object::Complex::Attributes::PersistenceHash
       include ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
     end
-    class ComplexObject
+    class ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::ComplexObject
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -47,8 +47,8 @@ describe ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInsta
 
     end
 
-    complex_instance = ComplexObject.new
-    instance = Array.new( [ 1, 2, 3, 4, 5, complex_instance ] )
+    complex_instance = ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::ComplexObject.new
+    instance = ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::SubArray.new( [ 1, 2, 3, 4, 5, complex_instance ] )
     
     instance.persistence_hash_to_port.should == { 0 => 1,
                                                   1 => 2,

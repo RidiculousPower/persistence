@@ -22,11 +22,23 @@ module ::Persistence::Port::Bucket::Interface
   ################################
   
   def initialize_bucket_for_port( port )
-    
+
     @parent_port = ::Persistence.port_for_name_or_port( port )
 
-    @adapter_bucket = @parent_port.adapter.persistence_bucket( @name )
+    if @parent_port.enabled?
+      @adapter_bucket = @parent_port.adapter.persistence_bucket( @name )
+    end
+    
+  end
+  
+  ##############################
+  #  disable_adapter_instance  #
+  ##############################
 
+  def disable_adapter_instance
+    
+    @adapter_bucket = nil
+    
   end
 
 end

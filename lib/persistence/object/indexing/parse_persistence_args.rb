@@ -106,7 +106,7 @@ module ::Persistence::Object::Indexing::ParsePersistenceArgs
 
     processed_key = nil
     
-    if ( is_a?( Class ) ? instance_persistence_port : persistence_port ).persists_file_by_path?
+    if ( is_a?( ::Class ) ? instance_persistence_port : persistence_port ).persists_file_by_path?
       processed_key = ::Persistence::Object::Flat::File::Path.new( file_key.path )
     else
       starting_pos  = file_key.pos

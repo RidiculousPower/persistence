@@ -1,6 +1,8 @@
 
 require_relative '../../../lib/persistence.rb'
 
+require_relative '../adapter/mock_helpers.rb'
+
 describe ::Persistence::Port::AdapterInterface do
   
   before :all do
@@ -12,6 +14,7 @@ describe ::Persistence::Port::AdapterInterface do
 
     @adapter = ::Persistence::Adapter::Mock.new
     @port_interface = ::Persistence::Port::AdapterInterface::Mock.new( :port_name, @adapter )
+    @port_interface.enable
     
   end
 
@@ -40,6 +43,7 @@ describe ::Persistence::Port::AdapterInterface do
       disable
       enabled?.should == false
       disabled?.should == true
+      enable
     end
   end
   
@@ -51,20 +55,22 @@ describe ::Persistence::Port::AdapterInterface do
     @port_interface.persistence_bucket( :some_bucket ).is_a?( ::Persistence::Port::Bucket ).should == true
   end
   
-  ##############################
-  #  put_object!               #
+  ###################################
+  #  put_object!                    #
   #  get_bucket_name_for_object_id  #
-  #  get_class_for_object_id   #
-  #  get_object                #
-  #  get_object                #
-  #  delete_object!            #
-  #  get_flat_object           #
-  ##############################
+  #  get_class_for_object_id        #
+  #  get_object                     #
+  #  get_object                     #
+  #  delete_object!                 #
+  #  get_flat_object                #
+  ###################################
 
   it 'can interface with the adapter' do
     @object = ::Persistence::Adapter::Abstract::Mock::Object.new
     @object.class.instance_persistence_port = @port_interface
-    @object.class.instance_persistence_bucket = @port_interface.persistence_bucket( :some_bucket )
+    bucket = @port_interface.persistence_bucket( :some_bucket )
+    bucket.initialize_bucket_for_port( @port_interface )
+    @object.class.instance_persistence_bucket = bucket
     @object.class.non_atomic_attribute_readers.push( :some_value, :other_value )
     @object.instance_eval do
       @some_value = :value

@@ -3,6 +3,14 @@ require_relative '../../../../lib/persistence.rb'
 
 describe ::Persistence::Object::Flat::ClassInstance do
   
+  before :all do
+    ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
+  end
+
+  after :all do
+    ::Persistence.disable_port( :mock )
+  end
+  
   #############
   #  persist  #
   #############
@@ -15,7 +23,7 @@ describe ::Persistence::Object::Flat::ClassInstance do
       include ::Persistence::Object::ObjectInstance
       extend ::Persistence::Object::Flat::ClassInstance
       include ::Persistence::Object::Flat::ObjectInstance
-      self.instance_persistence_port = ::Persistence::Port.new( :mock_port, ::Persistence::Adapter::Mock.new )
+      self.instance_persistence_port = ::Persistence.port( :mock_port )
     end
     instance = ::Persistence::Object::Flat::ClassInstance::Mock.new
     instance.persistence_port.put_object!( instance )

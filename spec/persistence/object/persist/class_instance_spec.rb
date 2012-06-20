@@ -2,6 +2,14 @@
 require_relative '../../../../lib/persistence.rb'
 
 describe ::Persistence::Object::Persist::ClassInstance do
+
+  before :all do
+    ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
+  end
+
+  after :all do
+    ::Persistence.disable_port( :mock )
+  end
   
   ################
   #  persisted?  #
@@ -17,7 +25,7 @@ describe ::Persistence::Object::Persist::ClassInstance do
       include ::Persistence::Object::Equality
       include ::Persistence::Object::Persist::ObjectInstance
       extend ::Persistence::Object::Persist::ClassInstance
-      self.instance_persistence_port = ::Persistence::Port.new( :mock_port, ::Persistence::Adapter::Mock.new )
+      self.instance_persistence_port = ::Persistence.port( :mock_port )
       def persistence_hash_to_port
         return {}
       end

@@ -1,6 +1,8 @@
 
 module ::Persistence::Object::Complex::ObjectInstance
 
+  include ::Persistence::Object::Equality
+
   include ::Persistence::Object::Complex::Attributes
   include ::Persistence::Object::Complex::Attributes::Flat
   include ::Persistence::Object::Complex::Attributes::Persistence

@@ -15,7 +15,7 @@ describe Regexp do
     class ::Persistence::Port::Bucket
       include ::Persistence::Port::Indexing::Bucket
     end
-    class Regexp
+    class ::Persistence::Object::Flat::Indexing::RegexpMock < Regexp
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Object::ClassInstance
@@ -28,12 +28,12 @@ describe Regexp do
       include ::Persistence::Object::Flat::Indexing::ObjectInstance
       explicit_index :explicit_index
     end
-    regexp_object = /some_regexp_([A-Za-z])/
+    regexp_object = ::Persistence::Object::Flat::Indexing::RegexpMock.new( /some_regexp_([A-Za-z])/ )
     storage_key   = /regexp_storage_key/
     regexp_object.persist!( :explicit_index, storage_key )
-    Regexp.persist( :explicit_index, storage_key ).should == regexp_object
-    Regexp.cease!( :explicit_index, storage_key )
-    Regexp.persist( :explicit_index, storage_key ).should == nil
+    ::Persistence::Object::Flat::Indexing::RegexpMock.persist( :explicit_index, storage_key ).should == regexp_object
+    ::Persistence::Object::Flat::Indexing::RegexpMock.cease!( :explicit_index, storage_key )
+    ::Persistence::Object::Flat::Indexing::RegexpMock.persist( :explicit_index, storage_key ).should == nil
   end
   
 end

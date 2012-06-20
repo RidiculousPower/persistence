@@ -37,7 +37,7 @@ module ::Persistence::Port::Indexing::Bucket::Index::Interface
   def initialize_for_bucket( parent_bucket )
 
     @parent_bucket = parent_bucket
-    
+
     # object indexes are held and run by the classes/modules that define them
     # synchronize the index instance with the parent bucket's adapter instance
 
@@ -67,6 +67,16 @@ module ::Persistence::Port::Indexing::Bucket::Index::Interface
       parent_bucket.pend_index( self )
     
     end
+    
+  end
+
+  ##############################
+  #  disable_adapter_instance  #
+  ##############################
+
+  def disable_adapter_instance
+
+    @adapter_index = nil
     
   end
 

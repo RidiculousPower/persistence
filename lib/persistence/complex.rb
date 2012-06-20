@@ -23,23 +23,3 @@ module ::Persistence::Complex
   include_also_extends ::Persistence::Object::Complex::Indexing::ClassInstance
   
 end
-
-class Array
-  
-  include ::Persistence::Complex
-  include ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
-
-  include ::Persistence::Object::Complex::Array::ObjectInstance
-  extend ::Persistence::Object::Complex::Array::ClassInstance
-  
-end
-
-class Hash
-
-  include ::Persistence::Complex
-  include ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstance
-
-  include ::Persistence::Object::Complex::Hash::ObjectInstance
-  extend ::Persistence::Object::Complex::Hash::ClassInstance
-  
-end

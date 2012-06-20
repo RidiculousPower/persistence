@@ -20,6 +20,7 @@ describe ::Persistence::Object::Complex::Equality do
       include ::Persistence::Object::Complex::Attributes::PersistenceHash
       include ::Persistence::Object::Complex::Attributes::Flat
       extend ::Persistence::Object::Complex::Attributes::Flat
+      include ::Persistence::Object::Equality
       include ::Persistence::Object::Complex::Equality
       attr_non_atomic_accessor :some_var, :some_other_var
     end

@@ -15,7 +15,7 @@ describe File do
     class ::Persistence::Port::Bucket
       include ::Persistence::Port::Indexing::Bucket
     end
-    class File
+    class ::Persistence::Object::Flat::Indexing::FileMock < File
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Object::ClassInstance
@@ -54,23 +54,23 @@ describe File do
       extend ::Persistence::Object::Flat::Indexing::ClassInstance
       include ::Persistence::Object::Flat::Indexing::ObjectInstance
     end
-    file_object = File.open( __FILE__, 'r' )
+    file_object = ::Persistence::Object::Flat::Indexing::FileMock.open( __FILE__, 'r' )
     file_object.persistence_port.persist_file_by_path
     file_object.persistence_port.persist_file_paths_as_strings
     file_object.persist!( :explicit_index => __FILE__ )
     
-    persisted_file = File.persist( :explicit_index => __FILE__ )
+    persisted_file = ::Persistence::Object::Flat::Indexing::FileMock.persist( :explicit_index => __FILE__ )
     persisted_file.should == file_object.path
     file_object.persistence_port.persist_file_paths_as_objects
-    persisted_file = File.persist( :explicit_index => __FILE__ )
+    persisted_file = ::Persistence::Object::Flat::Indexing::FileMock.persist( :explicit_index => __FILE__ )
     persisted_file.path.should == file_object.path
     
     file_object.persistence_port.persist_file_by_content
     file_object.persist!( :explicit_index => __FILE__ )
-    persisted_file = File.persist( :explicit_index => __FILE__ )
+    persisted_file = ::Persistence::Object::Flat::Indexing::FileMock.persist( :explicit_index => __FILE__ )
     persisted_file.should == file_object.readlines.join
-    File.cease!( :explicit_index => __FILE__ )
-    File.persist( :explicit_index => __FILE__ ).should == nil
+    ::Persistence::Object::Flat::Indexing::FileMock.cease!( :explicit_index => __FILE__ )
+    ::Persistence::Object::Flat::Indexing::FileMock.persist( :explicit_index => __FILE__ ).should == nil
   end
   
 end

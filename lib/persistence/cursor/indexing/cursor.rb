@@ -5,7 +5,7 @@ module ::Persistence::Cursor::Indexing::Cursor
   #  initialize  #
   ################
   
-  def initialize( bucket_instance, index_instance, *args )
+  def initialize( bucket_instance, index_instance = nil )
 
     @persistence_bucket = bucket_instance
     @parent_index = index_instance
@@ -16,9 +16,7 @@ module ::Persistence::Cursor::Indexing::Cursor
     else
       @adapter_cursor = bucket_instance.adapter_bucket.cursor
     end
-    
-    @adapter_cursor.persisted?( *args )
-    
+        
   end
 
 end

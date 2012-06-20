@@ -1,6 +1,39 @@
 
 module ::Persistence::Port::Controller
 
+  ###################
+  #  self.extended  #
+  ###################
+
+  def self.extended( instance )
+    
+    instance.module_eval do
+      @ports = { }
+      @pending_buckets = { }
+    end
+    
+  end
+  
+  ###########
+  #  ports  #
+  ###########
+
+  def ports
+    
+    return @ports
+
+  end
+
+  #####################
+  #  pending_buckets  #
+  #####################
+  
+  def pending_buckets
+
+    return @pending_buckets
+
+  end
+  
   #################
   #  enable_port  #
   #################
@@ -11,22 +44,35 @@ module ::Persistence::Port::Controller
 
     if adapter_instance
 
-      port_instance = ::Persistence::Port.new( port_name, 
-                                               adapter_instance )
-      ports_hash[ port_name.to_sym ] = port_instance
+      port_instance = ::Persistence::Port.new( port_name, adapter_instance )
+      
+      prior_port_by_name = @ports[ port_name.to_sym ]
+      
+      @ports[ port_name.to_sym ] = port_instance
 
+      port_instance.enable
+      
+      if prior_port_by_name
+        buckets_around_from_prior_port = prior_port_by_name.buckets
+        buckets_around_from_prior_port.each do |this_bucket_name, this_bucket|
+          port_instance.initialize_persistence_bucket_from_instance( this_bucket )
+        end
+      end
+      
     else
 
       unless port_instance = port( port_name )
         raise 'Port must first be enabled with adapter instance before it can be re-enabled by name.'
       end
 
+      port_instance.enable
+
     end
 
-    port_instance.enable
-
-    set_current_port( port_instance ) unless current_port
-
+    unless current_port
+      set_current_port( port_instance )
+    end
+    
     create_pending_buckets( port_instance )
 
     return port_instance
@@ -42,7 +88,9 @@ module ::Persistence::Port::Controller
     
     port_instance = port( port_name )
     
-    set_current_port( nil ) if current_port == port_instance
+    if current_port == port_instance
+      set_current_port( nil )
+    end
     
     port_instance.disable
     
@@ -72,7 +120,7 @@ module ::Persistence::Port::Controller
   ##########
   
   def port( port_name )
-    return ports_hash[ port_name.to_sym ]
+    return @ports[ port_name.to_sym ]
   end
 
   ###########################
@@ -83,10 +131,11 @@ module ::Persistence::Port::Controller
     
     port_instance = nil
     
-    if persistence_port_or_name.is_a?( String ) or persistence_port_or_name.is_a?( Symbol )
-      port_instance = port( persistence_port_or_name )
-    else
-      port_instance = persistence_port_or_name
+    case persistence_port_or_name
+      when ::Symbol, ::String
+        port_instance = port( persistence_port_or_name )
+      else
+        port_instance = persistence_port_or_name
     end
     
     return port_instance
@@ -99,7 +148,7 @@ module ::Persistence::Port::Controller
 
   def create_pending_buckets( port )
     
-    pending_buckets_hash.delete_if do |this_class, this_bucket|
+    @pending_buckets.delete_if do |this_class, this_bucket|
       this_bucket.initialize_bucket_for_port( port )
       true
     end
@@ -116,36 +165,12 @@ module ::Persistence::Port::Controller
 
     bucket_instance = nil
 
-    unless bucket_instance = pending_buckets_hash[ klass ] and bucket_instance.name == bucket_name
-      pending_buckets_hash[ klass ] = bucket_instance = ::Persistence::Port::Bucket.new( nil, bucket_name )
+    unless bucket_instance = @pending_buckets[ klass ] and bucket_instance.name == bucket_name
+      @pending_buckets[ klass ] = bucket_instance = ::Persistence::Port::Bucket.new( nil, bucket_name )
     end
     
     return bucket_instance
     
-  end
-
-  ##################################################################################################
-      private ######################################################################################
-  ##################################################################################################
-
-  ################
-  #  ports_hash  #
-  ################
-
-  def ports_hash
-    
-    return @ports ||= { }
-
-  end
-
-  ##########################
-  #  pending_buckets_hash  #
-  ##########################
-  
-  def pending_buckets_hash
-
-    return @pending_buckets_hash ||= { }
-
   end
 
 end

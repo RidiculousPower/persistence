@@ -16,7 +16,7 @@ describe ::Persistence::Object::Flat::File::ObjectInstance do
   ##############
   
   it 'can persist a flat object and test whether it has been persisted' do
-    class File
+    class ::Persistence::Object::Flat::File::ObjectInstance::FileMock < File
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Object::ClassInstance
@@ -43,8 +43,8 @@ describe ::Persistence::Object::Flat::File::ObjectInstance do
       include ::Persistence::Object::Flat::ObjectInstance
     end
     
-    File.instance_persistence_port = :mock_port
-    instance = File.open( __FILE__, 'r' )
+    ::Persistence::Object::Flat::File::ObjectInstance::FileMock.instance_persistence_port = :mock_port
+    instance = ::Persistence::Object::Flat::File::ObjectInstance::FileMock.open( __FILE__, 'r' )
 
     # by content
     instance.persistence_port.persist_file_by_content

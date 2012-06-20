@@ -4,11 +4,11 @@ require_relative '../../../../lib/persistence.rb'
 describe ::Persistence::Object::Indexing::Persist do
 
   before :all do
-    ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
+    ::Persistence.enable_port( :mocker, ::Persistence::Adapter::Mock.new )
   end
 
   after :all do
-    ::Persistence.disable_port( :mock )
+    ::Persistence.disable_port( :mocker )
   end
 
   ################
@@ -36,6 +36,7 @@ describe ::Persistence::Object::Indexing::Persist do
       extend ::Persistence::Object::Indexing::ParsePersistenceArgs
       include ::Persistence::Object::Indexing::Persist::ObjectInstance
       extend ::Persistence::Object::Indexing::Persist::ClassInstance      
+      include ::Persistence::Object::Equality
       explicit_index :explicit_index
       # mock - not relevant to explicit indexing
       def self.non_atomic_attribute_readers
@@ -44,6 +45,7 @@ describe ::Persistence::Object::Indexing::Persist do
       def persistence_hash_to_port
       end
     end
+    encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
     ::Persistence::Object::Indexing::Persist::Mock.count.should == 0
     ::Persistence::Object::Indexing::Persist::Mock.count( :explicit_index ).should == 0
     instance_one = ::Persistence::Object::Indexing::Persist::Mock.new.persist!

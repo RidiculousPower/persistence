@@ -47,11 +47,11 @@ describe ::Persistence::Port::Controller do
   it 'can allow a bucket to be initialized before its port is open' do
     bucket_instance = ::Persistence.pending_bucket( ::Persistence::Port::Controller, :some_bucket )
     ::Persistence.instance_eval do
-      pending_buckets_hash.should == { ::Persistence::Port::Controller => bucket_instance }
+      pending_buckets.should == { ::Persistence::Port::Controller => bucket_instance }
     end
     ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
     ::Persistence.instance_eval do
-      pending_buckets_hash.should == {}
+      pending_buckets.should == {}
     end
     bucket_instance.parent_port.should == ::Persistence.port( :mock )
     ::Persistence.disable_port( :mock )

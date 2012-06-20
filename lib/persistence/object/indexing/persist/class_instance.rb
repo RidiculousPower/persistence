@@ -10,7 +10,7 @@ module ::Persistence::Object::Indexing::Persist::ClassInstance
     persistence_value = nil
 
     index_instance, key, no_key = parse_args_for_index_value_no_value( args )
-    
+
     # if no key, open a cursor for a list
     if no_key
 

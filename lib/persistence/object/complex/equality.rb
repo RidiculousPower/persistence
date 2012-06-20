@@ -1,6 +1,8 @@
 
 module ::Persistence::Object::Complex::Equality
 
+  include ::Persistence::Object::Equality
+
   ########
   #  ==  # 
   ########

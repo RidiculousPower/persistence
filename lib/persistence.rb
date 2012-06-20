@@ -97,6 +97,26 @@ end
 
 require_relative './persistence_requires.rb'
 
+class ::Array
+  
+  include ::Persistence::Complex
+  include ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
+
+  include ::Persistence::Object::Complex::Array::ObjectInstance
+  extend ::Persistence::Object::Complex::Array::ClassInstance
+  
+end
+
+class ::Hash
+
+  include ::Persistence::Complex
+  include ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstance
+
+  include ::Persistence::Object::Complex::Hash::ObjectInstance
+  extend ::Persistence::Object::Complex::Hash::ClassInstance
+  
+end
+
 class ::Persistence::Cursor
   include ::Persistence::Cursor::Indexing::Port::Bucket  
 end
@@ -134,7 +154,7 @@ module ::Persistence
         class_or_module <= Regexp      or
         class_or_module <= File        or
         class_or_module <= NilClass
-      
+
       class_or_module.module_eval do
         include ::Persistence::Flat
       end

@@ -7,7 +7,7 @@ module ::Persistence::Object::Flat::ClassInstance
   
   def persist( global_id )
 
-    return instance_persistence_port.get_flat_object( global_id )
+    return instance_persistence_bucket.get_flat_object( global_id )
 
   end
 

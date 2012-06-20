@@ -28,6 +28,7 @@ describe ::Persistence::Object::Complex::Cease::ClassInstance do
       include ::Persistence::Object::Complex::Attributes::Flat
       extend ::Persistence::Object::Complex::Attributes::Flat
       include ::Persistence::Object::Complex::Persist::ObjectInstance
+      include ::Persistence::Object::Equality
       include ::Persistence::Object::Complex::Equality
       extend ::Persistence::Object::Complex::Cease::ClassInstance
       attr_non_atomic_accessor :some_value, :some_other_value

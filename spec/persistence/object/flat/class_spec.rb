@@ -25,6 +25,8 @@ describe Class do
     Class.persist( class_object.persistence_id ).should == class_object
     class_object.cease!
     Class.persist( class_object.persistence_id ).should == nil
+    ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default ).remove_configuration( Class, :instance_persistence_port )
+    ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default ).remove_configuration( Class, :instance_persistence_bucket )
   end
   
 end

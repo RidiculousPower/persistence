@@ -13,15 +13,16 @@ module ::Persistence::Object::Equality
     
     # if we have the same ruby instance
     if super( other_object )
-      
+
       objects_are_equal = true
     
     # or if both classes are the same and the ids are the same
-    elsif self.class == other_object.class                and
-          other_object.respond_to?( :persistence_id )     and 
+    elsif other_object.is_a?( ::Persistence::Object::Equality )  and
+          self.class.equal?( other_object.class )                and
+          other_object.respond_to?( :persistence_id )            and 
           persistence_id == other_object.persistence_id
 
-          objects_are_equal = true
+      objects_are_equal = true
 
     end
 

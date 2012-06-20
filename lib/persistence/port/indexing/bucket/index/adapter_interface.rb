@@ -6,8 +6,10 @@ module ::Persistence::Port::Indexing::Bucket::Index::AdapterInterface
   ###################
   
   def adapter_index
-    
-    raise 'Persistence port must be enabled first.' unless @adapter_index
+
+    unless @adapter_index
+      raise 'Persistence port must be enabled first.'
+    end
     
     return @adapter_index
     

@@ -7,7 +7,9 @@ module ::Persistence::Port::Bucket::AdapterInterface
   
   def adapter_bucket
     
-    raise 'Persistence port must be enabled first.' unless @adapter_bucket
+    unless @adapter_bucket
+      raise 'Persistence port must be enabled first.'
+    end
     
     return @adapter_bucket
     
@@ -80,7 +82,7 @@ module ::Persistence::Port::Bucket::AdapterInterface
   #####################
 
   def get_flat_object( global_id )
-    
+
     flat_object = nil
 
     if persistence_value_hash = adapter_bucket.get_object( global_id )

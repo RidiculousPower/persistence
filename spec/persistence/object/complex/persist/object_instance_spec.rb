@@ -89,7 +89,7 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       include ::Persistence::Object::Complex::Equality
       attr_non_atomic_accessor :username, :firstname, :lastname, :address, :alternate_address
     end
-    class Address1
+    class ::Persistence::Object::Complex::Persist::ObjectInstance::Address1
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -110,14 +110,14 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
     user.firstname = 'first'
     user.lastname  = 'last'
 
-    user.address = Address1.new
+    user.address = ::Persistence::Object::Complex::Persist::ObjectInstance::Address1.new
     user.address.number = 42
     user.address.street = 'Street'
     user.address.city = 'Some City'
     user.address.state = 'GA'
     user.address.zipcode = '30003'
 
-    user.alternate_address = Address1.new
+    user.alternate_address = ::Persistence::Object::Complex::Persist::ObjectInstance::Address1.new
     user.alternate_address.number = 37
     user.alternate_address.street = 'Another Street'
     user.alternate_address.city = 'Some Other City'
@@ -156,7 +156,7 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       include ::Persistence::Object::Complex::Equality
       attr_non_atomic_accessor :username, :firstname, :lastname, :address, :alternate_address
     end
-    class Address1
+    class ::Persistence::Object::Complex::Persist::ObjectInstance::Address1
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -174,21 +174,21 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       attrs_atomic!
     end
     
-    Address1.atomic_attribute?( :number ).should == true
+    ::Persistence::Object::Complex::Persist::ObjectInstance::Address1.atomic_attribute?( :number ).should == true
 
     user = ::Persistence::Object::Complex::Persist::ObjectInstance::UserObject6.new
     user.username   = 'user'
     user.firstname = 'first'
     user.lastname  = 'last'
 
-    user.address = Address1.new
+    user.address = ::Persistence::Object::Complex::Persist::ObjectInstance::Address1.new
     user.address.number = 42
     user.address.street = 'Street'
     user.address.city = 'Some City'
     user.address.state = 'GA'
     user.address.zipcode = '30003'
 
-    user.alternate_address = Address1.new
+    user.alternate_address = ::Persistence::Object::Complex::Persist::ObjectInstance::Address1.new
     user.alternate_address.number = 37
     user.alternate_address.street = 'Another Street'
     user.alternate_address.city = 'Some Other City'
@@ -205,7 +205,7 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
   end
   
   it "can persist an object with hash members" do
-    class Hash
+    class ::Persistence::Object::Complex::Persist::ObjectInstance::SubHash < Hash
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -221,7 +221,7 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       include ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstance
       include ::Persistence::Object::Complex::Equality
     end
-    class HashContainerClass1
+    class ::Persistence::Object::Complex::Persist::ObjectInstance::HashContainerClass1
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -237,16 +237,16 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       attr_non_atomic_accessor :some_hash
     end
 
-    hash_container = HashContainerClass1.new
-    hash_container.some_hash = { }
+    hash_container = ::Persistence::Object::Complex::Persist::ObjectInstance::HashContainerClass1.new
+    hash_container.some_hash = ::Persistence::Object::Complex::Persist::ObjectInstance::SubHash.new
     hash_container.some_hash[ :hash_key ] = :hash_data
     hash_container.persist!
-    HashContainerClass1.persist( hash_container.persistence_id ).should == hash_container
+    ::Persistence::Object::Complex::Persist::ObjectInstance::HashContainerClass1.persist( hash_container.persistence_id ).should == hash_container
     
   end
 
   it "can persist an object with array members" do
-    class Array
+    class ::Persistence::Object::Complex::Persist::ObjectInstance::SubArray < Array
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -282,7 +282,7 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
     array_data                          = :array_data
     array_container                     = ::Persistence::Object::Complex::Persist::ObjectInstance::ArrayContainerClass1.new
     array_container.storage_key         = storage_key
-    array_container.array               = [ ]
+    array_container.array               = ::Persistence::Object::Complex::Persist::ObjectInstance::SubArray.new
     array_container.array.push( array_data )
     
     array_container.persist!

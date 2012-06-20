@@ -9,7 +9,11 @@ module ::Persistence::Cursor::Indexing::Port::Bucket::Index
 
   def cursor( *args, & block )
 
-    cursor_instance = ::Persistence::Cursor.new( @parent_bucket, self, *args )
+    cursor_instance = ::Persistence::Cursor.new( @parent_bucket, self )
+    
+    if args.count > 0
+      cursor_instance.persisted?( *args )
+    end
     
     if block_given?
       cursor_instance = cursor_instance.instance_eval( & block )
