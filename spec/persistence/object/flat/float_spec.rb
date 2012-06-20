@@ -23,7 +23,7 @@ describe Float do
     float_object  = 42.020
     float_object.persist!
     Float.persist( float_object.persistence_id ).should == float_object
-    Float.cease!( float_object.persistence_id )
+    float_object.cease!
     Float.persist( float_object.persistence_id ).should == nil
   end
   

@@ -24,8 +24,8 @@ describe String do
     string_object.persist!
     string_object.persistence_id.should_not == nil
     String.persist( string_object.persistence_id ).should == string_object
-    String.cease!( string_object.persistence_id )
-    String.persist( string_object ).should == nil
+    string_object.cease!
+    String.persist( string_object.persistence_id ).should == nil
   end
   
 end

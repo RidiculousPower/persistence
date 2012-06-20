@@ -32,7 +32,7 @@ describe Symbol do
     storage_key   = :symbol_storage_key
     symbol_object.persist!( :explicit_index, storage_key )
     Symbol.persist( :explicit_index, storage_key ).should == symbol_object
-    Symbol.cease!( :explicit_index, storage_key )
+    symbol_object.cease!
     Symbol.persist( :explicit_index, storage_key ).should == nil
   end
 

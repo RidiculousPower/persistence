@@ -53,7 +53,7 @@ describe File do
     file_object.persist!
     persisted_file = File.persist( file_object.persistence_id )
     persisted_file.should == file_object.readlines.join
-    File.cease!( file_object.persistence_id )
+    file_object.cease!
     File.persist( file_object.persistence_id ).should == nil
   end
   

@@ -1,6 +1,8 @@
 
 require_relative '../../../../../lib/persistence.rb'
 
+require_relative '../../../adapter/mock_helpers.rb'
+
 describe ::Persistence::Object::Complex::Cease::Cascades do
 
   before :all do

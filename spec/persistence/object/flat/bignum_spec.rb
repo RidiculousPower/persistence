@@ -23,7 +23,7 @@ describe Bignum do
     bignum_object = 10**20
     bignum_object.persist!
     Bignum.persist( bignum_object.persistence_id ).should == bignum_object
-    Bignum.cease!( bignum_object.persistence_id )
+    bignum_object.cease!
     Bignum.persist( bignum_object.persistence_id ).should == nil
   end
   

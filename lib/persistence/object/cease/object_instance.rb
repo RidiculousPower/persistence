@@ -10,7 +10,7 @@ module ::Persistence::Object::Cease::ObjectInstance
     persistence_port.delete_object!( persistence_id )
     
     self.persistence_id = nil
-    
+
     return self
 
   end

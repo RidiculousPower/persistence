@@ -23,7 +23,7 @@ describe Rational do
     rational_object = Rational( 42, 37 )
     rational_object.persist!
     Rational.persist( rational_object.persistence_id ).should == rational_object
-    Rational.cease!( rational_object.persistence_id )
+    rational_object.cease!
     Rational.persist( rational_object.persistence_id ).should == nil
   end
   

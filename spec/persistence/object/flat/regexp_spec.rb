@@ -23,7 +23,7 @@ describe Regexp do
     regexp_object = /some_regexp_([A-Za-z])/
     regexp_object.persist!
     Regexp.persist( regexp_object.persistence_id ).should == regexp_object
-    Regexp.cease!( regexp_object.persistence_id )
+    regexp_object.cease!
     Regexp.persist( regexp_object.persistence_id ).should == nil
   end
   

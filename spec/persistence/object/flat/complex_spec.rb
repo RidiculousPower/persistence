@@ -24,7 +24,7 @@ describe Complex do
     storage_key     = Complex( 37, 12 )
     complex_object.persist!
     Complex.persist( complex_object.persistence_id ).should == complex_object
-    Complex.cease!( complex_object.persistence_id )
+    complex_object.cease!
     Complex.persist( complex_object.persistence_id ).should == nil
   end
   

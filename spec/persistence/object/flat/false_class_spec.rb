@@ -24,7 +24,7 @@ describe FalseClass do
     storage_key   = true
     false_object.persist!
     FalseClass.persist( false_object.persistence_id ).should == false_object
-    FalseClass.cease!( false_object.persistence_id )
+    false_object.cease!
     FalseClass.persist( false_object.persistence_id ).should == nil
   end
   

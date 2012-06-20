@@ -26,7 +26,7 @@ describe ::Persistence::Object::Flat::File::ClassInstance do
       extend ::Persistence::Object::Flat::File::ClassInstance
       include ::Persistence::Object::Flat::File::ObjectInstance
     end
-    class ::Persistence::Object::File:: Contents
+    class ::Persistence::Object::Flat::File::Contents
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Object::ClassInstance
@@ -47,7 +47,7 @@ describe ::Persistence::Object::Flat::File::ClassInstance do
     instance = File.open( __FILE__, 'r' )
     
     # by content
-    instance_to_persist = ::Persistence::Object::File:: Contents.new( instance.readlines.join )
+    instance_to_persist = ::Persistence::Object::Flat::File::Contents.new( instance.readlines.join )
     instance_to_persist.persistence_bucket = File.instance_persistence_bucket
     instance_to_persist.persistence_port.put_object!( instance_to_persist )
     instance_to_persist.persistence_id.should_not == nil

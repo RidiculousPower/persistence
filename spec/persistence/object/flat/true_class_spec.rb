@@ -23,7 +23,7 @@ describe TrueClass do
     true_object = true
     true_object.persist!
     TrueClass.persist( true_object.persistence_id ).should == true_object
-    TrueClass.cease!( true_object.persistence_id )
+    true_object.cease!
     TrueClass.persist( true_object.persistence_id ).should == nil
   end
   

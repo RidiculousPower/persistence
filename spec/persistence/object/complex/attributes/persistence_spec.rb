@@ -65,7 +65,7 @@ describe ::Persistence::Object::Complex::Attributes::Persistence do
       is_complex_object?( /some_string/ ).should == false                                                                  # Regexp
       is_complex_object?( File.new( '.' ) ).should == false                                                                # File
       is_complex_object?( ::Persistence::Object::Flat::File::Path.new( '/some/path' ) ).should == false                         # File::Path
-      is_complex_object?( ::Persistence::Object::File:: Contents.new( 'some file contents' ) ).should == false            # File::Contents
+      is_complex_object?( ::Persistence::Object::Flat::File::Contents.new( 'some file contents' ) ).should == false            # File::Contents
       is_complex_object?( nil ).should == false                                                                            # NilClass
       is_complex_object?( Object.new ).should == true                                                                      # Object
     end

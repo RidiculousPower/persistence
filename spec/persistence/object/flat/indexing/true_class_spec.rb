@@ -32,7 +32,7 @@ describe TrueClass do
     storage_key = false
     true_object.persist!( :explicit_index, storage_key )
     TrueClass.persist( :explicit_index, storage_key ).should == true_object
-    TrueClass.cease!( :explicit_index, storage_key )
+    true_object.cease!
     TrueClass.persist( :explicit_index, storage_key ).should == nil
   end
   

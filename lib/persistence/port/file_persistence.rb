@@ -6,6 +6,8 @@ module ::Persistence::Port::FilePersistence
 
   include ::CascadingConfiguration::Setting
 
+  attr_configuration :persists_file_by_path, :persists_file_paths_as_objects
+
   ##########################
   #  persist_file_by_path  #
   ##########################
@@ -67,11 +69,5 @@ module ::Persistence::Port::FilePersistence
   def persists_file_paths_as_strings?
     return ( ( persists_file_paths_as_objects == nil ) ? self.class.persists_file_paths_as_strings? : ! persists_file_paths_as_objects )
   end
-
-  ##################################################################################################
-      private ######################################################################################
-  ##################################################################################################
-  
-  attr_configuration :persists_file_by_path, :persists_file_paths_as_objects
 
 end

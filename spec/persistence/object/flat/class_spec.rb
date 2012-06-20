@@ -23,7 +23,7 @@ describe Class do
     class_object = Object
     class_object.persist!
     Class.persist( class_object.persistence_id ).should == class_object
-    Class.cease!( class_object.persistence_id )
+    class_object.cease!
     Class.persist( class_object.persistence_id ).should == nil
   end
   

@@ -23,7 +23,7 @@ describe Fixnum do
     fixnum_object = 420
     fixnum_object.persist!
     Fixnum.persist( fixnum_object.persistence_id ).should == fixnum_object
-    Fixnum.cease!( fixnum_object.persistence_id )
+    fixnum_object.cease!
     Fixnum.persist( fixnum_object.persistence_id ).should == nil
   end
   

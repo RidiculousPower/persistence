@@ -28,7 +28,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :username, :firstname, :lastname
       attr_index    :username
     end
@@ -54,7 +53,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :username, :firstname, :lastname
       attr_index  :username
     end
@@ -80,7 +78,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :username, :firstname, :lastname, :address, :alternate_address
       attr_index  :username
     end
@@ -97,7 +94,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :number, :street, :city, :state, :zipcode
     end
 
@@ -150,7 +146,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :username, :firstname, :lastname, :address, :alternate_address
       attr_index  :username
     end
@@ -167,7 +162,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor :number, :street, :city, :state, :zipcode
       attr_atomic_accessor :number
       attrs_atomic!
@@ -220,7 +214,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor  :some_hash, :storage_key
       attr_index     :storage_key
     end
@@ -261,7 +254,6 @@ describe ::Persistence::Object::Complex::Persist::ObjectInstance do
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
       include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
       extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-      include ::Persistence::Object::Complex::Indexing::InstanceVariables
       attr_accessor  :array, :storage_key
       attr_index     :storage_key
     end

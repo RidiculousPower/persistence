@@ -26,7 +26,7 @@ describe ::Persistence::Object::Flat::File::ObjectInstance do
       extend ::Persistence::Object::Flat::File::ClassInstance
       include ::Persistence::Object::Flat::File::ObjectInstance
     end
-    class ::Persistence::Object::File:: Contents
+    class ::Persistence::Object::Flat::File::Contents
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Object::ClassInstance

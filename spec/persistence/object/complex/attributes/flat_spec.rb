@@ -10,12 +10,12 @@ describe ::Persistence::Object::Complex::Attributes::Flat do
   ####################
   
   it 'can force storing a attribute as a flat object' do
-    class ::Persistence::Object::Complex::Persist::Flat::Mock01
+    class ::Persistence::Object::Complex::Attributes::Flat::Mock01
       include ::Persistence::Object::Complex::Attributes
       extend ::Persistence::Object::Complex::Attributes
       include ::Persistence::Object::Complex::Attributes::Flat
     end
-    ::Persistence::Object::Complex::Persist::Flat::Mock01.new.instance_eval do
+    ::Persistence::Object::Complex::Attributes::Flat::Mock01.new.instance_eval do
       persists_flat?( :some_attribute ).should == nil
       attr_flat :some_attribute
       persists_flat?( :some_attribute ).should == true

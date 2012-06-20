@@ -118,10 +118,10 @@ files.concat [
   'port/bucket/object_instance',
   'port/bucket',
 
+  'port/file_persistence',
   'port/file_persistence/port_instance',
   'port/file_persistence/bucket_instance',
   'port/file_persistence/class_instance',
-  'port/file_persistence',
 
   'port/class_instance',
   'port/object_instance',
