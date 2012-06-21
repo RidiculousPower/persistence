@@ -1,4 +1,7 @@
 
+###
+# Interface implementation for Bucket class instances.
+#
 module ::Persistence::Adapter::Mock::Bucket::BucketInterface
 
   include ::Persistence::Adapter::Abstract::PrimaryKey::Simple
@@ -8,7 +11,11 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   ################
   #  initialize  #
   ################
-
+  
+  ###
+  #
+  # @param name Name of bucket.
+  #
   def initialize( name )
 
     super() if defined?( super )
@@ -24,6 +31,11 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  count  #
   ###########
   
+  ###
+  # Get the number of objects in this bucket.
+  #
+  # @return [Integer] Number of objects in this bucket.
+  #
   def count
     
     return @objects.count
@@ -34,8 +46,13 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  put_object!  #
   #################
 
-  # must be recoverable by information in the object
-  # we currently use class and persistence key
+  ###
+  # Store object properties in this bucket.
+  #
+  # @param object Object whose properties are being stored.
+  #
+  # @return [Integer] Object persistence ID.
+  #
   def put_object!( object )
 
     parent_adapter.ensure_object_has_globally_unique_id( object )
@@ -50,6 +67,13 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  get_object  #
   ################
 
+  ###
+  # Retrieve object properties from this bucket.
+  #
+  # @param global_id Object persistence ID to retrieve object properties.
+  #
+  # @return [Integer] Object persistence ID.
+  #
   def get_object( global_id )
 
     return @objects[ global_id ]
@@ -60,6 +84,13 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  delete_object!  #
   ####################
 
+  ###
+  # Delete object properties from this bucket.
+  #
+  # @param global_id Object persistence ID to delete object properties.
+  #
+  # @return [Hash{Symbol,String=>Object}] Hash of property data deleted from port.
+  #
   def delete_object!( global_id )
 
     persistence_hash_in_port = @objects[ global_id ]
@@ -77,6 +108,15 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  put_attribute!  #
   ####################
 
+  ###
+  # Store object property in this bucket.
+  #
+  # @param object Object whose properties are being stored.
+  # @param attribute_name Name of property being stored.
+  # @param attribute_value Value of property to store.
+  #
+  # @return self
+  #
   def put_attribute!( object, attribute_name, attribute_value )
 
     @objects[ object.persistence_id ] ||= { }
@@ -90,6 +130,14 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  get_attribute  #
   ###################
 
+  ###
+  # Get object property stored in this bucket.
+  #
+  # @param object Object whose properties are being stored.
+  # @param attribute_name Name of property being stored.
+  #
+  # @return Value of property stored in this bucket for object.
+  #
   def get_attribute( object, attribute_name )
 
     @objects[ object.persistence_id ] ||= { }
@@ -102,13 +150,23 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  delete_attribute!  #
   #######################
 
+  ###
+  # Delete object property stored in this bucket.
+  #
+  # @param object Object whose properties are being stored.
+  # @param attribute_name Name of property being stored.
+  #
+  # @return Value of property deleted from this bucket for object.
+  #
   def delete_attribute!( object, attribute_name )
     
+    deleted_value = nil
+    
     if @objects[ object.persistence_id ]
-      @objects[ object.persistence_id ].delete( attribute_name )
+      deleted_value = @objects[ object.persistence_id ].delete( attribute_name )
     end
     
-    return self
+    return deleted_value
 
   end
 
@@ -116,14 +174,29 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  cursor  #
   ############
 
+  ###
+  # Create and return cursor instance for this bucket.
+  #
+  # @return [Persistence::Adapter::Mock::Cursor] New cursor instance.
+  #
   def cursor
+
     return ::Persistence::Adapter::Mock::Cursor.new( self, nil )
+
   end
 
   ##################
   #  create_index  #
   ##################
 
+  ###
+  # Create and return index for this bucket.
+  #
+  # @param index_name Name to be used for index.
+  # @param permits_duplicates Whether index permits duplicate entries for the same key.
+  #
+  # @return [Persistence::Adapter::Mock::Bucket::Index] New index instance.
+  #
   def create_index( index_name, permits_duplicates )
 
     index_instance = ::Persistence::Adapter::Mock::Bucket::Index.new( index_name, self, permits_duplicates )
@@ -137,6 +210,13 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  index  #
   ###########
   
+  ###
+  # Get index for this bucket.
+  #
+  # @param index_name Name of desired index.
+  #
+  # @return [Persistence::Adapter::Mock::Bucket::Index] Index instance for name.
+  #
   def index( index_name )
     
     return @indexes[ index_name ]
@@ -147,6 +227,13 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  delete_index  #
   ##################
 
+  ###
+  # Delete index for this bucket.
+  #
+  # @param index_name Index name to be deleted.
+  #
+  # @return [Persistence::Adapter::Mock::Bucket::Index] Deleted index instance.
+  #
   def delete_index( index_name )
 
     return @indexes.delete( index_name )
@@ -157,6 +244,13 @@ module ::Persistence::Adapter::Mock::Bucket::BucketInterface
   #  has_index?  #
   ################
   
+  ###
+  # Reports whether bucket has index by name.
+  #
+  # @param index_name Index name being queried.
+  #
+  # @return [true,false] Whether bucket has index by name.
+  #  
   def has_index?( index_name )
 
     return @indexes.has_key?( index_name )

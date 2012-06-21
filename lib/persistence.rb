@@ -2,134 +2,18 @@
 require 'module-cluster'
 require 'cascading-configuration'
 
-module ::Persistence
-  module Adapter
-    module Abstract
-      module PrimaryKey
-      end
-    end
-    class Mock
-      class Bucket
-        class Index
-        end
-      end
-      class Cursor
-      end
-    end
-  end
-  module Object
-    module Persist
-    end
-    module Cease
-    end
-    module Flat
-      module File
-      end
-      module Indexing
-      end
-    end
-    module Complex
-      module Array
-      end
-      module Hash
-      end
-      module Attributes
-      end
-      module Persist
-      end
-      module Cease
-      end
-      module Indexing
-        module Indexes
-        end
-        module Persist
-        end
-        module Cease
-        end
-      end
-    end
-    module Indexing
-      module Indexes
-        module Block
-        end
-        module Explicit
-        end
-      end
-      module Persist
-      end
-      module Cease
-      end
-      module Exceptions
-      end
-    end
-  end
-  class Port
-    class Bucket
-      class Index
-      end
-    end
-    module FilePersistence
-    end
-    module Exceptions
-    end
-    module Indexing
-      module Bucket
-        class Index
-          module Exceptions
-          end
-          module ObjectOrientedIndex
-          end
-          module SortingProcs
-          end
-        end
-      end
-    end
-  end
-  class Cursor
-    module Port
-    end
-    module Indexing
-      module Port
-      end
-    end
-  end
-end
+# namespaces that have to be declared ahead of time for proper load order
+require_relative './namespaces'
 
-require_relative './persistence_requires.rb'
+# source file requires
+require_relative './requires.rb'
 
-class ::Array
-  
-  include ::Persistence::Complex
-  include ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
+# post-require setup in Ruby namespace
+require_relative './setup.rb'
 
-  include ::Persistence::Object::Complex::Array::ObjectInstance
-  extend ::Persistence::Object::Complex::Array::ClassInstance
-  
-end
-
-class ::Hash
-
-  include ::Persistence::Complex
-  include ::Persistence::Object::Complex::Attributes::PersistenceHash::HashInstance
-
-  include ::Persistence::Object::Complex::Hash::ObjectInstance
-  extend ::Persistence::Object::Complex::Hash::ClassInstance
-  
-end
-
-class ::Persistence::Cursor
-  include ::Persistence::Cursor::Indexing::Port::Bucket  
-end
-
-class ::Persistence::Port::Bucket
-  include ::Persistence::Port::Indexing::Bucket  
-  include ::Persistence::Cursor::Indexing::Port::Bucket  
-end
-
-class ::Persistence::Port::Bucket::Index
-  include ::Persistence::Cursor::Indexing::Port::Bucket::Index  
-end
-
+###
+# Primary interface for enabling persistence for a given object type.
+#
 module ::Persistence
   
   extend ::Persistence::Port::Controller
@@ -143,17 +27,17 @@ module ::Persistence
     # * flat objects persist themselves (no ivars)
     
     # if we have a flat object, extend for flat object
-    if  class_or_module <= Bignum      or
-        class_or_module <= Fixnum      or
-        class_or_module <= Complex     or
-        class_or_module <= Rational    or
-        class_or_module <= TrueClass   or
-        class_or_module <= FalseClass  or
-        class_or_module <= String      or
-        class_or_module <= Symbol      or
-        class_or_module <= Regexp      or
-        class_or_module <= File        or
-        class_or_module <= NilClass
+    if  class_or_module <= ::Bignum      or
+        class_or_module <= ::Fixnum      or
+        class_or_module <= ::Complex     or
+        class_or_module <= ::Rational    or
+        class_or_module <= ::TrueClass   or
+        class_or_module <= ::FalseClass  or
+        class_or_module <= ::String      or
+        class_or_module <= ::Symbol      or
+        class_or_module <= ::Regexp      or
+        class_or_module <= ::File        or
+        class_or_module <= ::NilClass
 
       class_or_module.module_eval do
         include ::Persistence::Flat

@@ -1,4 +1,9 @@
 
+###
+# Convenience module for extending flat object types (singletons and instances) with persistence capabilities.
+#   Flat object types include: Bignum, Fixnum, Complex, Rational, TrueClass, FalseClass, 
+#                              String, Symbol, Regexp, File, NilClass.
+#
 module ::Persistence::Flat
   
   extend ModuleCluster

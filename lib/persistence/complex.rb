@@ -1,4 +1,10 @@
 
+###
+# Convenience module for extending complex object types (singletons and instances) with persistence capabilities.
+#   Complex object types are object types not included in Flat object types.
+#   Flat object types include: Bignum, Fixnum, Complex, Rational, TrueClass, FalseClass, 
+#                              String, Symbol, Regexp, File, NilClass.
+#
 module ::Persistence::Complex
   
   extend ModuleCluster

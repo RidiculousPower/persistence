@@ -43,7 +43,7 @@ module ::Persistence::Adapter::Mock::Bucket::Index::IndexInterface
   ############
 
   ###
-  # Create and return cursor instance for this bucket.
+  # Create and return cursor instance for this index.
   #
   # @return [Persistence::Adapter::Mock::Cursor] New cursor instance.
   #
@@ -57,7 +57,7 @@ module ::Persistence::Adapter::Mock::Bucket::Index::IndexInterface
   #  count  #
   ###########
   
-  ##
+  ###
   # Get the number of indexed objects in this index.
   #
   # @return [Integer] Number of indexed objects in this index.
