@@ -1,12 +1,19 @@
 
+###
+# Interface implementation for Cursor class instances.
+#
 module ::Persistence::Cursor::CursorInterface
 
-  include Enumerable
+  include ::Enumerable
 
   ################
   #  initialize  #
   ################
   
+  ###
+  #
+  # @param bucket_instance Bucket instance to use for cursor context.
+  #
   def initialize( bucket_instance )
 
     @persistence_bucket = bucket_instance
@@ -18,10 +25,17 @@ module ::Persistence::Cursor::CursorInterface
   ###########
   #  close  #
   ###########
-
+  
+  ###
+  # Declare cursor use complete.
+  #
+  # @return self
+  #
   def close
     
-    return @adapter_cursor.close
+    @adapter_cursor.close
+    
+    return self
     
   end
 
@@ -29,6 +43,12 @@ module ::Persistence::Cursor::CursorInterface
   #  atomize  #
   #############
 
+  ###
+  # Enable cursor as atomic cursor, causing objects to be loaded with atomic properties, 
+  #   regardless how they are configured.
+  #
+  # @return self
+  #
   def atomize
     
     extend( ::Persistence::Cursor::Atomic )
@@ -41,8 +61,18 @@ module ::Persistence::Cursor::CursorInterface
   #  persisted?  #
   ################
   
-  # [ global_id, ... ]
+  ###
+  # Query whether keys are persisted in cursor's current context.
+  #
+  # @overload persisted?( key, ... )
+  #
+  #   @param [Object] Key to look up.
+  #
+  # @return [true,false] Whether key(s) exist in cursor's current context.
+  #
   def persisted?( *args )
+
+    # [ global_id, ... ]
 
     persisted = false
 
@@ -70,6 +100,13 @@ module ::Persistence::Cursor::CursorInterface
   #  persist  #
   #############
 
+  ###
+  # Load object with specified persistence ID.
+  #
+  # @param global_id Object persistence ID for retrieval.
+  #
+  # @return [Object] Object for persistence ID.
+  #
   def persist( global_id )
 
     object = nil
@@ -86,6 +123,13 @@ module ::Persistence::Cursor::CursorInterface
   #  each  #
   ##########
   
+  ###
+  # Iterate objects in current cursor context.
+  #
+  # @yield [object] Current object for cursor context.
+  #
+  # @yieldparam object Object stored in cursor context.
+  #
   def each
 
     # we have to set position if it's not already set before we can iterate
@@ -111,6 +155,13 @@ module ::Persistence::Cursor::CursorInterface
   #  first  #
   ###########
   
+  ###
+  # Persist first object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from start of cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
   def first( first_count = 1 )
 
     objects = nil
@@ -139,6 +190,13 @@ module ::Persistence::Cursor::CursorInterface
   #  last  #
   ##########
   
+  ###
+  # Persist last object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from end of cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
   def last( last_count = 1 )
     
     objects = nil
@@ -172,6 +230,13 @@ module ::Persistence::Cursor::CursorInterface
   #  any  #
   #########
   
+  ###
+  # Persist any object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
   def any( any_count = 1 )
     
     object = nil
@@ -202,6 +267,11 @@ module ::Persistence::Cursor::CursorInterface
   #  current  #
   #############
   
+  ###
+  # Persist current object in cursor context.
+  #
+  # @return [Object,Array<Object>] Object requested.
+  #
   def current
 
     first unless @has_position
@@ -214,6 +284,11 @@ module ::Persistence::Cursor::CursorInterface
   #  next  #
   ##########
   
+  ###
+  # Return the next object in cursor's current context.
+  #
+  # @return [Object] Next object in cursor's current context.
+  #  
   def next( count = 1 )
 
     objects = nil
@@ -239,6 +314,13 @@ module ::Persistence::Cursor::CursorInterface
   #  get_object  #
   ################
 
+  ###
+  # Get persistence hash for object with specified persistence ID.
+  #
+  # @param global_id Object persistence ID for retrieval.
+  #
+  # @return [Hash{String,Symbol=>Object}] Persistence hash of object properties for persistence ID.
+  #
   def get_object( global_id )
 
     return @persistence_bucket.get_object( global_id )

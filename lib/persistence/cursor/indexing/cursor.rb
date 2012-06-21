@@ -1,10 +1,18 @@
 
+###
+# Indexing initialization for cursor instances.
+#
 module ::Persistence::Cursor::Indexing::Cursor
   
   ################
   #  initialize  #
   ################
   
+  ###
+  #
+  # @param bucket_instance Bucket to use for cursor context.
+  # @param index_instance Index to use for cursor context.
+  #
   def initialize( bucket_instance, index_instance = nil )
 
     @persistence_bucket = bucket_instance

@@ -5,6 +5,27 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  cursor  #
   ############
 
+  ###
+  # Create and return cursor instance for this bucket.
+  #
+  # @overload cursor( global_id )
+  #
+  #    @param global_id Object persistence ID for retrieval.
+  #
+  # @overload cursor( index_name, key )
+  #
+  #    @param index_name Name of index for lookup of object persistence ID.
+  #
+  #    @param key Key to look up in index.
+  #
+  # @overload cursor( index, key )
+  #
+  #    @param index Index instance for lookup of object persistence ID.
+  #
+  #    @param key Key to look up in index.
+  #
+  # @return [Persistence::Adapter::Mock::Cursor] New cursor instance.
+  #
   def cursor( *args, & block )
     
     cursor_instance = nil
@@ -36,7 +57,10 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   ##########
   #  all?  #
   ##########
-
+  
+  ###
+  # See Enumerable.
+  #
   def all?( index_name = nil, & block )
     
     return_value = nil
@@ -55,6 +79,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  any?  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def any?( index_name = nil, & block )
     
     return_value = nil
@@ -73,6 +100,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  chunk  #
   ###########
 
+  ###
+  # See Enumerable.
+  #
   def chunk( index_name = nil, & block )
     
     return_value = nil
@@ -91,6 +121,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  collect  #
   #############
 
+  ###
+  # See Enumerable.
+  #
   def collect( index_name = nil, & block )
     
     return_value = nil
@@ -110,6 +143,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  collect_concat  #
   ####################
 
+  ###
+  # See Enumerable.
+  #
   def flat_map( index_name = nil, & block )
     
     return_value = nil
@@ -129,6 +165,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  count  #
   ###########
 
+  ###
+  # See Enumerable.
+  #
   def count( index_name = nil, *args, & block )
     
     return_value = 0
@@ -147,6 +186,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  cycle  #
   ###########
 
+  ###
+  # See Enumerable.
+  #
   def cycle( index_name = nil, item = nil, & block )
     
     return_value = nil
@@ -154,7 +196,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).cycle( item, & block )
     else
-      return_value = super      
+      return_value = super( item, & block )
     end
     
     return return_value
@@ -165,6 +207,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  detect  #
   ############
 
+  ###
+  # See Enumerable.
+  #
   def detect( index_name = nil, if_none = nil, & block )
     
     return_value = nil
@@ -172,7 +217,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).detect( if_none, & block )
     else
-      return_value = super      
+      return_value = super( if_none, & block )    
     end
     
     return return_value
@@ -183,6 +228,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  drop  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def drop( index_name = nil, number = nil, & block )
     
     return_value = nil
@@ -190,7 +238,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).drop( number, & block )
     else
-      return_value = super      
+      return_value = super( number, & block )   
     end
     
     return return_value
@@ -201,6 +249,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  drop_while  #
   ################
 
+  ###
+  # See Enumerable.
+  #
   def drop_while( index_name = nil, & block )
     
     return_value = nil
@@ -208,7 +259,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).drop_while( & block )
     else
-      return_value = super      
+      return_value = super( & block )  
     end
     
     return return_value
@@ -219,6 +270,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  each  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def each( index_name = nil, & block )
     
     return_value = nil
@@ -226,7 +280,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).each( & block )
     else
-      return_value = super()
+      return_value = super( & block )
     end
     
     return return_value
@@ -237,6 +291,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  each_cons  #
   ###############
 
+  ###
+  # See Enumerable.
+  #
   def each_cons( index_name = nil, number = nil, & block )
     
     return_value = nil
@@ -244,7 +301,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).each_cons( number, & block )
     else
-      return_value = super      
+      return_value = super( number, & block )
     end
     
     return return_value
@@ -255,14 +312,17 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  each_slice  #
   ################
 
-  def each_cons( index_name = nil, slice_size = nil, & block )
+  ###
+  # See Enumerable.
+  #
+  def each_slice( index_name = nil, slice_size = nil, & block )
     
     return_value = nil
     
     if index_name
       return_value = index( index_name ).each_cons( slice_size, & block )
     else
-      return_value = super      
+      return_value = super( slice_size, & block )     
     end
     
     return return_value
@@ -273,6 +333,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  each_with_index  #
   #####################
 
+  ###
+  # See Enumerable.
+  #
   def each_with_index( index_name = nil, *args, & block )
     
     return_value = nil
@@ -280,7 +343,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).each_with_index( *args, & block )
     else
-      return_value = super      
+      return_value = super( *args, & block )
     end
     
     return return_value
@@ -291,6 +354,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  each_with_object  #
   ######################
 
+  ###
+  # See Enumerable.
+  #
   def each_with_object( index_name = nil, object = nil, & block )
     
     return_value = nil
@@ -298,7 +364,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).each_with_object( object, & block )
     else
-      return_value = super      
+      return_value = super( object, & block )
     end
     
     return return_value
@@ -309,6 +375,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  entries  #
   #############
 
+  ###
+  # See Enumerable.
+  #
   def entries( index_name = nil, & block )
     
     return_value = nil
@@ -327,6 +396,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  find  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def find( index_name = nil, if_none = nil, & block )
     
     return_value = nil
@@ -334,7 +406,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).find( if_none, & block )
     else
-      return_value = super      
+      return_value = super( if_none, & block )    
     end
     
     return return_value
@@ -345,6 +417,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  find_all  #
   ##############
   
+  ###
+  # See Enumerable.
+  #
   def find_all( index_name = nil, & block )
     
     return_value = nil
@@ -363,6 +438,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  select  #
   ############
 
+  ###
+  # See Enumerable.
+  #
   def select( index_name = nil, & block )
     
     return_value = nil
@@ -381,6 +459,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  find_index  #
   ################
 
+  ###
+  # See Enumerable.
+  #
   def find_index( index_name = nil, value = nil, & block )
     
     return_value = nil
@@ -388,7 +469,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).find_index( value, & block )
     else
-      return_value = super      
+      return_value = super( value, & block )
     end
     
     return return_value
@@ -399,6 +480,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  first  #
   ###########
 
+  ###
+  # See Enumerable.
+  #
   def first( index_name = nil, number = nil, & block )
     
     return_value = nil
@@ -406,7 +490,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).first( number, & block )
     else
-      return_value = super      
+      return_value = super( number, & block )
     end
     
     return return_value
@@ -417,6 +501,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  grep  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def grep( index_name = nil, pattern = nil, & block )
     
     return_value = nil
@@ -424,7 +511,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).grep( pattern, & block )
     else
-      return_value = super      
+      return_value = super( pattern, & block )
     end
     
     return return_value
@@ -435,6 +522,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  group_by  #
   ##############
 
+  ###
+  # See Enumerable.
+  #
   def group_by( index_name = nil, & block )
     
     return_value = nil
@@ -454,6 +544,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  member?   #
   ##############
 
+  ###
+  # See Enumerable.
+  #
   def include?( index_name = nil, object = nil, & block )
     
     return_value = nil
@@ -461,7 +554,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).include?( object, & block )
     else
-      return_value = super      
+      return_value = super( object, & block )
     end
     
     return return_value
@@ -474,6 +567,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  reduce  #
   ############
 
+  ###
+  # See Enumerable.
+  #
   def inject( index_name = nil, initial = nil, sym = nil, & block )
     
     return_value = nil
@@ -481,7 +577,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).inject( initial, sym, & block )
     else
-      return_value = super      
+      return_value = super( initial, sym, & block )
     end
     
     return return_value
@@ -493,6 +589,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  map  #
   #########
 
+  ###
+  # See Enumerable.
+  #
   def map( index_name = nil, & block )
     
     return_value = nil
@@ -511,6 +610,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  max  #
   #########
 
+  ###
+  # See Enumerable.
+  #
   def max( index_name = nil, & block )
     
     return_value = nil
@@ -529,6 +631,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  max_by  #
   ############
 
+  ###
+  # See Enumerable.
+  #
   def max_by( index_name = nil, & block )
     
     return_value = nil
@@ -547,6 +652,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  min_by  #
   ############
 
+  ###
+  # See Enumerable.
+  #
   def min_by( index_name = nil, & block )
     
     return_value = nil
@@ -565,6 +673,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  minmax  #
   ############
 
+  ###
+  # See Enumerable.
+  #
   def minmax( index_name = nil, & block )
     
     return_value = nil
@@ -583,6 +694,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  minmax_by  #
   ###############
 
+  ###
+  # See Enumerable.
+  #
   def minmax_by( index_name = nil, & block )
     
     return_value = nil
@@ -601,6 +715,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  none?  #
   ###########
 
+  ###
+  # See Enumerable.
+  #
   def none?( index_name = nil, & block )
     
     return_value = nil
@@ -619,6 +736,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  one?  # 
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def one?( index_name = nil, & block )
     
     return_value = nil
@@ -637,6 +757,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  partition  #
   ###############
 
+  ###
+  # See Enumerable.
+  #
   def partition( index_name = nil, & block )
     
     return_value = nil
@@ -655,6 +778,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  reject  #
   ############
 
+  ###
+  # See Enumerable.
+  #
   def reject( index_name = nil, & block )
     
     return_value = nil
@@ -673,6 +799,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  reverse_each  #
   ##################
 
+  ###
+  # See Enumerable.
+  #
   def reverse_each( index_name = nil, *args, & block )
     
     return_value = nil
@@ -680,7 +809,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).reverse_each( *args, & block )
     else
-      return_value = super      
+      return_value = super( *args, & block )
     end
     
     return return_value
@@ -691,6 +820,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  slice_before  #
   ##################
 
+  ###
+  # See Enumerable.
+  #
   def slice_before( index_name = nil, pattern = nil, & block )
     
     return_value = nil
@@ -698,7 +830,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).slice_before( pattern, & block )
     else
-      return_value = super      
+      return_value = super( pattern, & block )
     end
     
     return return_value
@@ -709,6 +841,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  sort  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def sort( index_name = nil, & block )
     
     return_value = nil
@@ -727,6 +862,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  sort_by  #
   #############
 
+  ###
+  # See Enumerable.
+  #
   def sort_by( index_name = nil, & block )
     
     return_value = nil
@@ -745,6 +883,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  take_while  #
   ################
 
+  ###
+  # See Enumerable.
+  #
   def take_while( index_name = nil, & block )
     
     return_value = nil
@@ -763,6 +904,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  to_a  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def to_a( index_name = nil, & block )
     
     return_value = nil
@@ -781,6 +925,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  take  #
   ##########
 
+  ###
+  # See Enumerable.
+  #
   def take( index_name = nil, number = nil, & block )
     
     return_value = nil
@@ -788,7 +935,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).take( number, & block )
     else
-      return_value = super      
+      return_value = super( number, & block )
     end
     
     return return_value
@@ -799,6 +946,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  zip  #
   #########
 
+  ###
+  # See Enumerable.
+  #
   def zip( index_name = nil, *args, & block )
     
     return_value = nil
@@ -806,7 +956,7 @@ module ::Persistence::Cursor::Indexing::ClassInstance
     if index_name
       return_value = index( index_name ).zip( *args, & block )
     else
-      return_value = super      
+      return_value = super( *args, & block )
     end
     
     return return_value
@@ -817,6 +967,9 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  count  #
   ###########
 
+  ###
+  # See Enumerable.
+  #
   def count( index_name = nil, *args, & block )
     
     return_value = 0
@@ -835,6 +988,13 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  persist_first  #
   ###################
 
+  ###
+  # Persist first object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from start of cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
   def persist_first( *index_name_and_or_count )
     
     objects = nil
@@ -867,6 +1027,13 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  persist_last  #
   ##################
   
+  ###
+  # Persist last object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from end of cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
   def persist_last( *index_name_and_or_count )
     
     objects = nil
@@ -899,6 +1066,13 @@ module ::Persistence::Cursor::Indexing::ClassInstance
   #  persist_any  #
   #################
   
+  ###
+  # Persist any object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
   def persist_any( *index_name_and_or_count )
 
     objects = nil

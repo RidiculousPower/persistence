@@ -1,11 +1,18 @@
 
+###
+# Module to enable bucket instances with indexed cursor capabilities.
+#
 module ::Persistence::Cursor::Indexing::Port::Bucket
 
   ############
   #  cursor  #
   ############
 
-  # allows global_id to set position
+  ###
+  # Create and return cursor instance for this bucket.
+  #
+  # @return [Persistence::Cursor] New cursor instance.
+  #
   def cursor( *args, & block )
   
     cursor_instance = ::Persistence::Cursor.new( self )

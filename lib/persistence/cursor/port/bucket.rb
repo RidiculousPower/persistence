@@ -1,13 +1,20 @@
 
+###
+# Module to enable index instances with cursor capabilities.
+#
 module ::Persistence::Cursor::Port::Bucket
 
-  include Enumerable
+  include ::Enumerable
 
   ############
   #  cursor  #
   ############
 
-  # allows global_id to set position
+  ###
+  # Create and return cursor instance for this bucket.
+  #
+  # @return [Persistence::Cursor] New cursor instance.
+  #
   def cursor( *args, & block )
     
     cursor_instance = ::Persistence::Cursor.new( self )
@@ -29,7 +36,12 @@ module ::Persistence::Cursor::Port::Bucket
   #  atomic_cursor  #
   ###################
 
-  # allows global_id to set position
+  ###
+  # Create and return cursor instance for this index enabled to load all object properties as atomic.
+  #   See Persistence::Cursor#atomize.
+  #
+  # @return [Persistence::Cursor] New cursor instance.
+  #
   def atomic_cursor( *args )
     
     return cursor( *args ).atomize
@@ -40,6 +52,13 @@ module ::Persistence::Cursor::Port::Bucket
   #  each  #
   ##########
 
+  ###
+  # Iterate objects in current bucket.
+  #
+  # @yield [object] Current object.
+  #
+  # @yieldparam object Object stored in bucket.
+  #
   def each( & block )
     
     return atomic_cursor.each( & block )
@@ -50,6 +69,11 @@ module ::Persistence::Cursor::Port::Bucket
   #  count  #
   ###########
 
+  ###
+  # Get the number of objects in bucket.
+  #
+  # @return [Integer] Number of objects in current bucket.
+  #
   def count( *args, & block )
     
     return_value = 0

@@ -1,10 +1,20 @@
 
+###
+# Cursor subclass that automatically performs atomic lookups on attributes. 
+#
 module ::Persistence::Cursor::Atomic
 
-  ##################################################################################################
-      private ######################################################################################
-  ##################################################################################################
+  ################
+  #  get_object  #
+  ################
 
+  ###
+  # Get object for persistence ID using atomic attribute loading, regardless how attributes are declared.
+  #
+  # @param global_id Persistence ID to retrieve object.
+  #
+  # @return [Object] Object being retrieved for persistence ID.
+  #
   def get_object( global_id )
     
     klass = @persistence_bucket.parent_port.get_class_for_object_id( global_id )

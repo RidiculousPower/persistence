@@ -1,12 +1,20 @@
 
+###
+# Singleton methods providing implicit cursor interfacing for persistence-enabled object types.
+#
 module ::Persistence::Cursor::ClassInstance
   
-  include Enumerable
+  include ::Enumerable
   
   ############
   #  cursor  #
   ############
 
+  ###
+  # Create and return cursor instance for this bucket.
+  #
+  # @return [Persistence::Cursor] New cursor instance.
+  #
   def cursor( *args, & block )
     
     return instance_persistence_bucket.cursor( *args, & block )
@@ -17,6 +25,13 @@ module ::Persistence::Cursor::ClassInstance
   #  each  #
   ##########
 
+  ###
+  # Iterate objects in current cursor context.
+  #
+  # @yield [object] Current object for cursor context.
+  #
+  # @yieldparam object Object stored in cursor context.
+  #
   def each( & block )
     
     return instance_persistence_bucket.each( & block )
@@ -27,6 +42,11 @@ module ::Persistence::Cursor::ClassInstance
   #  count  #
   ###########
 
+  ###
+  # Get the number of objects in current cursor context.
+  #
+  # @return [Integer] Number of objects in current cursor context.
+  #
   def count( *args, & block )
     
     return_value = 0
@@ -46,8 +66,15 @@ module ::Persistence::Cursor::ClassInstance
   ###################
   #  persist_first  #
   ###################
-
-  def persist_first( count = nil )
+  
+  ###
+  # Persist first object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from start of cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
+  def persist_first( count = 1 )
     
     return instance_persistence_bucket.cursor.first( count )
     
@@ -57,7 +84,14 @@ module ::Persistence::Cursor::ClassInstance
   #  persist_last  #
   ##################
   
-  def persist_last( count = nil )
+  ###
+  # Persist last object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from end of cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
+  def persist_last( count = 1 )
     
     return instance_persistence_bucket.cursor.last( count )
 
@@ -67,7 +101,14 @@ module ::Persistence::Cursor::ClassInstance
   #  persist_any  #
   #################
   
-  def persist_any( count = nil )
+  ###
+  # Persist any object in cursor context.
+  #
+  # @param [Integer] count How many objects to persist from cursor context.
+  #
+  # @return [Object,Array<Object>] Object or objects requested.
+  #
+  def persist_any( count = 1 )
     
     return instance_persistence_bucket.cursor.any( count )
     
