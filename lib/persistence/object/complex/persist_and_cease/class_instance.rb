@@ -1,5 +1,5 @@
 
-module ::Persistence::Object::Complex::Cease::ClassInstance
+module ::Persistence::Object::Complex::PersistAndCease::ClassInstance
 
   ############
   #  cease!  #

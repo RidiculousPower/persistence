@@ -1,5 +1,18 @@
 
-module ::Persistence::Object::Complex::Cease::ObjectInstance
+module ::Persistence::Object::Complex::PersistAndCease::ObjectInstance
+
+  #############
+  #  persist  #
+  #############
+  
+  def persist
+
+    persistence_hash_from_port = persistence_bucket.get_object_hash( persistence_id )
+    load_persistence_hash( persistence_port, persistence_hash_from_port )
+    
+    return self
+
+  end
 
   ############
   #  cease!  #
@@ -27,5 +40,5 @@ module ::Persistence::Object::Complex::Cease::ObjectInstance
     return self
     
   end
-  
+
 end

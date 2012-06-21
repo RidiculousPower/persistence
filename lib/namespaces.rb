@@ -15,9 +15,7 @@ module ::Persistence
     end
   end
   module Object
-    module Persist
-    end
-    module Cease
+    module PersistAndCease
     end
     module Flat
       module File
@@ -32,16 +30,12 @@ module ::Persistence
       end
       module Attributes
       end
-      module Persist
-      end
-      module Cease
+      module PersistAndCease
       end
       module Indexing
         module Indexes
         end
-        module Persist
-        end
-        module Cease
+        module PersistAndCease
         end
       end
     end
@@ -52,9 +46,7 @@ module ::Persistence
         module Explicit
         end
       end
-      module Persist
-      end
-      module Cease
+      module PersistAndCease
       end
       module Exceptions
       end

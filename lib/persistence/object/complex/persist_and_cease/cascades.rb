@@ -1,7 +1,9 @@
 
-module ::Persistence::Object::Complex::Cease::Cascades
+module ::Persistence::Object::Complex::PersistAndCease::Cascades
 
   include ::CascadingConfiguration::Hash
+
+  attr_configuration_hash :delete_cascades
   
   ##########################
   #  attr_delete_cascades  #
@@ -36,7 +38,9 @@ module ::Persistence::Object::Complex::Cease::Cascades
   ###########################
 
   def attr_delete_cascades!
+
     return attr_delete_cascades( *persistent_attributes.keys )
+
   end
 
 
@@ -45,13 +49,9 @@ module ::Persistence::Object::Complex::Cease::Cascades
   ###################################
 
   def attr_delete_does_not_cascade!
+
     return attr_delete_does_not_cascade( *persistent_attributes.keys )
+
   end
-
-  ##################################################################################################
-      private ######################################################################################
-  ##################################################################################################
-
-  attr_configuration_hash :delete_cascades
 
 end

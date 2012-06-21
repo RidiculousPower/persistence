@@ -1,5 +1,5 @@
 
-module ::Persistence::Object::Complex::Cease::Cascades::ClassInstance
+module ::Persistence::Object::Complex::PersistAndCease::Cascades::ClassInstance
 
   ######################
   #  delete_cascades?  #

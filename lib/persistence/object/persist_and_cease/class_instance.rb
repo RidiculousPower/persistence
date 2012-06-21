@@ -1,5 +1,5 @@
 
-module ::Persistence::Object::Persist::ClassInstance
+module ::Persistence::Object::PersistAndCease::ClassInstance
 
   #############
   #  persist  #
@@ -28,6 +28,21 @@ module ::Persistence::Object::Persist::ClassInstance
   def count
     
     return instance_persistence_bucket.count
+    
+  end
+
+  ############
+  #  cease!  #
+  ############
+  
+  ###
+  # Remove object properties stored for object ID from persistence bucket and indexes.
+  #
+  # @param global_id Object persistence ID.
+  #
+  def cease!( global_id )
+    
+    return instance_persistence_port.delete_object!( global_id )
     
   end
 

@@ -13,16 +13,16 @@ describe ::Persistence::Object::Equality do
       include ::Persistence::Object::PersistenceID
       include ::Persistence::Object::Equality
       def persistence_hash_to_port
-        return {}
+        return { }
       end
       def self.non_atomic_attribute_readers
-        return []
+        return [ ]
       end
       def non_atomic_attribute_readers
-        return []
+        return [ ]
       end
       def atomic_attribute_readers
-        return []
+        return [ ]
       end
     end
 

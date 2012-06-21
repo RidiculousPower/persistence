@@ -1,5 +1,5 @@
 
-module ::Persistence::Object::Indexing::Persist::ObjectInstance
+module ::Persistence::Object::Indexing::PersistAndCease::ObjectInstance
 
   ##############
   #  persist!  #
@@ -36,6 +36,23 @@ module ::Persistence::Object::Indexing::Persist::ObjectInstance
         this_block_index.index_object( self )
       end
     end
+    
+    return self
+    
+  end
+
+  ############
+  #  cease!  #
+  ############
+
+  # deletes from storage (archives if appropriate)
+  def cease!
+
+    indexes.each do |this_index_name, this_index|
+      this_index.delete_keys_for_object_id!( persistence_id )
+    end
+
+    super
     
     return self
     

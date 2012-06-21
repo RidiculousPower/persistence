@@ -1,5 +1,5 @@
 
-module ::Persistence::Object::Complex::Indexing::Persist::ObjectInstance
+module ::Persistence::Object::Complex::Indexing::PersistAndCease::ObjectInstance
 
   ##############
   #  persist!  #

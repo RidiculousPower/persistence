@@ -100,7 +100,7 @@ describe ::Persistence do
   #    extend ::Persistence::Object::Complex::ClassInstance
   #    include ::Persistence::Object::Indexing::ObjectInstance
   #    extend ::Persistence::Object::Indexing::ClassInstance
-  #    include ::Persistence::Object::Complex::Indexing::Persist::ObjectInstance
+  #    include ::Persistence::Object::Complex::Indexing::PersistAndCease::ObjectInstance
   #    extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes::ClassInstance
   #    include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
   #    extend ::Persistence::Object::Complex::Indexing::Indexes::Attributes

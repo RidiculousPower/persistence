@@ -32,11 +32,8 @@ files.concat [
 
   'object/persistence_id',
 
-  'object/persist/class_instance',
-  'object/persist/object_instance',
-
-  'object/cease/class_instance',
-  'object/cease/object_instance',
+  'object/persist_and_cease/class_instance',
+  'object/persist_and_cease/object_instance',
 
   'object/equality',
 
@@ -79,13 +76,11 @@ files.concat [
 
   'object/complex/equality',
 
-  'object/complex/persist/object_instance',
-
-  'object/complex/cease/cascades',
-  'object/complex/cease/class_instance',
-  'object/complex/cease/object_instance',
-  'object/complex/cease/cascades/class_instance',
-  'object/complex/cease/cascades/object_instance',
+  'object/complex/persist_and_cease/cascades',
+  'object/complex/persist_and_cease/class_instance',
+  'object/complex/persist_and_cease/object_instance',
+  'object/complex/persist_and_cease/cascades/class_instance',
+  'object/complex/persist_and_cease/cascades/object_instance',
 
   'object/complex/complex_object',
 
@@ -156,11 +151,8 @@ files.concat [
   'object/indexing/indexes/explicit/object_instance',
   'object/indexing/indexes/class_instance',
 
-  'object/indexing/persist/class_instance',
-  'object/indexing/persist/object_instance',
-
-  'object/indexing/cease/class_instance',
-  'object/indexing/cease/object_instance',
+  'object/indexing/persist_and_cease/class_instance',
+  'object/indexing/persist_and_cease/object_instance',
 
   'object/indexing/exceptions/explicit_index_required',
   'object/indexing/exceptions/key_value_required',
@@ -186,7 +178,7 @@ files.concat [
   'object/complex/indexing/indexes/attributes',
   'object/complex/indexing/indexes/attributes/class_instance',
 
-  'object/complex/indexing/persist/object_instance',
+  'object/complex/indexing/persist_and_cease/object_instance',
 
   'object/complex/indexing/class_instance',
   'object/complex/indexing/object_instance'

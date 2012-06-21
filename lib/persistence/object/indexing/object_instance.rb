@@ -5,7 +5,7 @@ module ::Persistence::Object::Indexing::ObjectInstance
   include ::Persistence::Object::Indexing::Indexes::Explicit::ObjectInstance
   include ::Persistence::Object::Indexing::Indexes::Block::ObjectInstance
   include ::Persistence::Object::Indexing::Indexes
-  include ::Persistence::Object::Indexing::Persist::ObjectInstance
-  include ::Persistence::Object::Indexing::Cease::ObjectInstance
+  include ::Persistence::Object::Indexing::PersistAndCease::ObjectInstance
+  include ::Persistence::Object::Indexing::PersistAndCease::ObjectInstance
   
 end

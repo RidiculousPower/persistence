@@ -3,7 +3,7 @@ require_relative '../../../../../lib/persistence.rb'
 
 require_relative '../../../adapter/mock_helpers.rb'
 
-describe ::Persistence::Object::Complex::Cease::Cascades do
+describe ::Persistence::Object::Complex::PersistAndCease::Cascades do
 
   before :all do
     ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
@@ -22,7 +22,7 @@ describe ::Persistence::Object::Complex::Cease::Cascades do
   ###################################
 
   it 'can set an attribute to be deleted if self is deleted' do
-    class ::Persistence::Object::Complex::Cease::Mock
+    class ::Persistence::Object::Complex::PersistAndCease::Mock
       include ::Persistence::Port::ObjectInstance
       extend ::Persistence::Port::ClassInstance
       include ::Persistence::Object::ObjectInstance
@@ -33,10 +33,10 @@ describe ::Persistence::Object::Complex::Cease::Cascades do
       include ::Persistence::Object::Complex::Attributes::PersistenceHash
       include ::Persistence::Object::Complex::Attributes::Flat
       extend ::Persistence::Object::Complex::Attributes::Flat
-      include ::Persistence::Object::Complex::Cease::Cascades
-      extend ::Persistence::Object::Complex::Cease::Cascades
-      include ::Persistence::Object::Complex::Cease::Cascades::ObjectInstance
-      extend ::Persistence::Object::Complex::Cease::Cascades::ClassInstance
+      include ::Persistence::Object::Complex::PersistAndCease::Cascades
+      extend ::Persistence::Object::Complex::PersistAndCease::Cascades
+      include ::Persistence::Object::Complex::PersistAndCease::Cascades::ObjectInstance
+      extend ::Persistence::Object::Complex::PersistAndCease::Cascades::ClassInstance
       attr_non_atomic_accessor :some_attribute, :cascading_attribute, :non_cascading_attribute, :complex_attribute
       attr_delete_cascades :some_attribute
       delete_cascades?( :some_attribute ).should == true
@@ -51,7 +51,7 @@ describe ::Persistence::Object::Complex::Cease::Cascades do
       delete_cascades?( :cascading_attribute ).should == true
       delete_cascades?( :non_cascading_attribute ).should == false
     end
-    ::Persistence::Object::Complex::Cease::Mock.new.instance_eval do
+    ::Persistence::Object::Complex::PersistAndCease::Mock.new.instance_eval do
       delete_cascades?( :cascading_attribute ).should == true
       delete_cascades?( :non_cascading_attribute ).should == false
       object = ::Persistence::Adapter::Abstract::Mock::Object.new

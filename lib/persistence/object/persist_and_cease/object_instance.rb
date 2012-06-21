@@ -1,5 +1,5 @@
 
-module ::Persistence::Object::Persist::ObjectInstance
+module ::Persistence::Object::PersistAndCease::ObjectInstance
 
   ##############
   #  persist!  #
@@ -25,4 +25,21 @@ module ::Persistence::Object::Persist::ObjectInstance
     return persistence_port.get_bucket_name_for_object_id( persistence_id ) ? true : false
   end
   
+  ############
+  #  cease!  #
+  ############
+
+  ###
+  # Remove object properties stored for object from persistence bucket and indexes.
+  #
+  def cease!
+    
+    persistence_port.delete_object!( persistence_id )
+    
+    self.persistence_id = nil
+
+    return self
+
+  end
+
 end

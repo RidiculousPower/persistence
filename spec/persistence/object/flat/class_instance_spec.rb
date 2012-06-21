@@ -27,7 +27,7 @@ describe ::Persistence::Object::Flat::ClassInstance do
     end
     instance = ::Persistence::Object::Flat::ClassInstance::Mock.new
     instance.persistence_port.put_object!( instance )
-    instance.persistence_id.should == 0
+    instance.persistence_id.nil?.should == false
     ::Persistence::Object::Flat::ClassInstance::Mock.persisted?( 0 ).should == true
     ::Persistence::Object::Flat::ClassInstance::Mock.persist( 0 ).should == instance
   end

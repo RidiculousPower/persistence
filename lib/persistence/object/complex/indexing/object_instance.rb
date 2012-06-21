@@ -2,7 +2,7 @@
 module ::Persistence::Object::Complex::Indexing::ObjectInstance
 
   include ::Persistence::Object::Complex::Indexing::Indexes::Attributes
-  include ::Persistence::Object::Complex::Indexing::Persist::ObjectInstance
+  include ::Persistence::Object::Complex::Indexing::PersistAndCease::ObjectInstance
   
   ###################
   #  set_attribute  #
