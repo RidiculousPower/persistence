@@ -1,5 +1,5 @@
 
-module ::Persistence::Port::Indexing::Bucket::Index::Interface
+module ::Persistence::Port::Indexing::Bucket::Index::IndexInterface
 
   include ::Persistence::Port::Indexing::Bucket::Index::SortingProcs
 

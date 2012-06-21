@@ -1,5 +1,5 @@
 
-module ::Persistence::Cursor::Interface
+module ::Persistence::Cursor::CursorInterface
 
   include Enumerable
 

@@ -16,13 +16,13 @@ files.concat [
 # Mock Adapter
 files.concat [
   
-  'adapter/mock/bucket/index/interface',
+  'adapter/mock/bucket/index/index_interface',
   'adapter/mock/bucket/index',
-  'adapter/mock/bucket/interface',
+  'adapter/mock/bucket/bucket_interface',
   'adapter/mock/bucket',
-  'adapter/mock/cursor/interface',
+  'adapter/mock/cursor/cursor_interface',
   'adapter/mock/cursor',
-  'adapter/mock/interface',
+  'adapter/mock/adapter_interface',
   'adapter/mock'
   
 ]
@@ -109,10 +109,10 @@ files.concat [
 
   'port/controller',
 
-  'port/interface',
+  'port/port_interface',
   'port/adapter_interface',
 
-  'port/bucket/interface',
+  'port/bucket/bucket_interface',
   'port/bucket/adapter_interface',
   'port/bucket/class_instance',
   'port/bucket/object_instance',
@@ -135,7 +135,7 @@ files.concat [
 # Cursor
 files.concat [
 
-  'cursor/interface',
+  'cursor/cursor_interface',
   'cursor/atomic',
 
   'cursor/port/bucket',
@@ -202,7 +202,7 @@ files.concat [
   'port/indexing/bucket/index/bucket_index',
   'port/indexing/bucket/index/explicit_index',
 
-  'port/indexing/bucket/index/interface',
+  'port/indexing/bucket/index/index_interface',
 
   'port/indexing/bucket/index/object_oriented_index',
 

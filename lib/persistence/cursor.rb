@@ -2,6 +2,6 @@
 class ::Persistence::Cursor
   
   include Enumerable
-  include ::Persistence::Cursor::Interface
+  include ::Persistence::Cursor::CursorInterface
   
 end

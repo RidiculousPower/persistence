@@ -1,5 +1,5 @@
 
-module ::Persistence::Adapter::Mock::Interface
+module ::Persistence::Adapter::Mock::AdapterInterface
 
   include ::Persistence::Adapter::Abstract::EnableDisable
   
@@ -8,10 +8,13 @@ module ::Persistence::Adapter::Mock::Interface
   ################
 
   def initialize( home_directory = nil )
+    
     super() if defined?( super )
+    
     @bucket_for_id = { }
     @class_for_id = { }
     @buckets = { }
+    
   end
   
   ########################

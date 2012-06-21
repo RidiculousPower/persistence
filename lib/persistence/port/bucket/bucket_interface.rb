@@ -1,5 +1,5 @@
 
-module ::Persistence::Port::Bucket::Interface
+module ::Persistence::Port::Bucket::BucketInterface
 
   attr_accessor :parent_port, :name
 

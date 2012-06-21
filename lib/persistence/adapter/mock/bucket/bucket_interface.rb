@@ -1,5 +1,5 @@
 
-module ::Persistence::Adapter::Mock::Bucket::Interface
+module ::Persistence::Adapter::Mock::Bucket::BucketInterface
 
   include ::Persistence::Adapter::Abstract::PrimaryKey::Simple
 

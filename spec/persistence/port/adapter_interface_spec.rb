@@ -8,7 +8,7 @@ describe ::Persistence::Port::AdapterInterface do
   before :all do
 
     class ::Persistence::Port::AdapterInterface::Mock
-      include ::Persistence::Port::Interface
+      include ::Persistence::Port::PortInterface
       include ::Persistence::Port::AdapterInterface
     end
 

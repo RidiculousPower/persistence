@@ -1,5 +1,5 @@
 
-module ::Persistence::Adapter::Mock::Cursor::Interface
+module ::Persistence::Adapter::Mock::Cursor::CursorInterface
 
   ################
   #  initialize  #

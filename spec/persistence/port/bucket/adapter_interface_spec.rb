@@ -18,7 +18,7 @@ describe ::Persistence::Port::Bucket::AdapterInterface do
   it 'can initialize with an adapter and bucket name' do
     class ::Persistence::Port::Bucket::AdapterInterface::Mock
       include ::Persistence::Port::Bucket::AdapterInterface
-      include ::Persistence::Port::Bucket::Interface
+      include ::Persistence::Port::Bucket::BucketInterface
     end
     instance_two = ::Persistence::Port::Bucket::AdapterInterface::Mock.new( :mock, :some_bucket )
     instance_two.parent_port.should == ::Persistence.port( :mock )
@@ -36,7 +36,7 @@ describe ::Persistence::Port::Bucket::AdapterInterface do
   it 'can serve as an adapter to a persistence bucket instance in an adapter instance' do
     class ::Persistence::Port::Bucket::AdapterInterface::Mock
       include ::Persistence::Port::Bucket::AdapterInterface
-      include ::Persistence::Port::Bucket::Interface
+      include ::Persistence::Port::Bucket::BucketInterface
     end
     class ::Persistence::Port::Bucket::AdapterInterface::MockClass
       attr_accessor :persistence_port, :persistence_id
@@ -101,7 +101,7 @@ describe ::Persistence::Port::Bucket::AdapterInterface do
   it 'can serve as an adapter to a persistence bucket instance in an adapter instance' do
     class ::Persistence::Port::Bucket::AdapterInterface::Mock
       include ::Persistence::Port::Bucket::AdapterInterface
-      include ::Persistence::Port::Bucket::Interface
+      include ::Persistence::Port::Bucket::BucketInterface
     end
     class ::Persistence::Port::Bucket::AdapterInterface::MockClass
       include ::CascadingConfiguration::Hash

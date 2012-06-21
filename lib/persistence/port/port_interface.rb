@@ -1,5 +1,5 @@
 
-module ::Persistence::Port::Interface
+module ::Persistence::Port::PortInterface
 
   attr_reader :name
 
