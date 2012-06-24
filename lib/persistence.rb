@@ -9,9 +9,6 @@ require_relative './namespaces'
 # source file requires
 require_relative './requires.rb'
 
-# post-require setup in Ruby namespace
-require_relative './setup.rb'
-
 ###
 # Primary interface for enabling persistence for a given object type.
 #

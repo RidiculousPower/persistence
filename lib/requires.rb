@@ -57,6 +57,7 @@ files.concat [
 
   'object/complex/attributes/attributes_array',
   'object/complex/attributes/attributes_hash',
+  'object/complex/attributes/default_atomic_non_atomic',
   'object/complex/attributes/hash_to_port',
   'object/complex/attributes',
 

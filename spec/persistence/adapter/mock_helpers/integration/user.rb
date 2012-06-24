@@ -19,14 +19,14 @@ class ::Persistence::Adapter::Abstract::Mock::User
     # new visitors have an address
     self.alternate_address = ::Persistence::Adapter::Abstract::Mock::User::Address.new
     
-    self.notes = [ ]
+    self.notes = ::Persistence::Adapter::Abstract::Mock::NotesArray.new
 
     new_note = ::Persistence::Adapter::Abstract::Mock::Note.new
     self.notes.push( new_note )
 
     self.notes.persist!
 
-    self.dictionary = { }
+    self.dictionary = ::Persistence::Adapter::Abstract::Mock::DictionaryHash.new
 
     new_entry = ::Persistence::Adapter::Abstract::Mock::User::DictionaryEntry.new
     new_entry.populate

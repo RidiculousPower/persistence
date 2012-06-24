@@ -15,7 +15,7 @@ module ::Persistence::Object::Complex::Hash::ClassInstance
       global_id = key
     end
     
-    object = { }
+    object = new
     
     object.persistence_id = global_id
 

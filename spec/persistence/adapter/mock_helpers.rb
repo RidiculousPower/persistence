@@ -11,6 +11,8 @@ files = [
   'port',
   
   'integration/note',
+  'integration/notes_array',
+  'integration/dictionary_hash',
   'integration/user',
   'integration/user/address',
   'integration/user/dictionary_entry',

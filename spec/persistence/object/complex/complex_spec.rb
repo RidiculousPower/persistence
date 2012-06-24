@@ -825,6 +825,7 @@ describe ::Persistence::Object::Complex do
       end
 
       class HashMock < ::Hash
+        include ::Persistence::Object::Complex::Hash
       end
 
       hash_container = HashContainerClass.new
