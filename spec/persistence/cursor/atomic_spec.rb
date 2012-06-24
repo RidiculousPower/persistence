@@ -8,17 +8,8 @@ describe ::Persistence::Cursor::Atomic do
     ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
 
     class ::Persistence::Cursor::Atomic::Mock
-      include ::Persistence::Port::ObjectInstance
-      extend ::Persistence::Port::ClassInstance
-      include ::Persistence::Object::ObjectInstance
-      extend ::Persistence::Object::ClassInstance
-      include ::Persistence::Object::Complex::ObjectInstance
-      extend ::Persistence::Object::Complex::ClassInstance
+      include ::Persistence
       attr_non_atomic_accessor :name
-    end
-
-    class ::Persistence::Port::Bucket
-      include ::Persistence::Cursor::Port::Bucket
     end
 
     @objects = [ ]

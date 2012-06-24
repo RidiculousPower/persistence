@@ -4,7 +4,7 @@ class ::Persistence::Adapter::Abstract::Mock::Object
   include ::CascadingConfiguration::Setting
   attr_class_configuration :instance_persistence_bucket, :instance_persistence_port
   attr_local_configuration :adapter, :persistence_bucket, :persistence_port
-  attr_instance_configuration :persistence_id
+  attr_instance_setting :persistence_id
   attr_object_configuration :instance_persistence_bucket
   include ::CascadingConfiguration::Hash
   

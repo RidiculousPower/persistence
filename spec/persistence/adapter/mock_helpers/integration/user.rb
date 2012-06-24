@@ -2,6 +2,7 @@
 class ::Persistence::Adapter::Abstract::Mock::User
 
   include ::Persistence
+  
   attr_atomic_accessor :username, :firstname, :lastname, :address, :alternate_address, :url, :notes, :dictionary, :subaccount
   
   def populate
@@ -19,8 +20,10 @@ class ::Persistence::Adapter::Abstract::Mock::User
     self.alternate_address = ::Persistence::Adapter::Abstract::Mock::User::Address.new
     
     self.notes = [ ]
+
     new_note = ::Persistence::Adapter::Abstract::Mock::Note.new
     self.notes.push( new_note )
+
     self.notes.persist!
 
     self.dictionary = { }

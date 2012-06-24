@@ -1,7 +1,7 @@
 
 require_relative '../../../../../../lib/persistence.rb'
 
-describe ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance do
+describe ::Persistence::Object::Complex::Array do
 
   before :all do
     ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
@@ -17,28 +17,14 @@ describe ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInsta
 
   it "can create a persistence hash to correspond to persistence state" do
 
-    class ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::SubArray < Array
-      include ::Persistence::Port::ObjectInstance
-      extend ::Persistence::Port::ClassInstance
-      include ::Persistence::Object::ObjectInstance
-      extend ::Persistence::Object::ClassInstance
-      include ::Persistence::Object::Complex::Attributes
-      extend ::Persistence::Object::Complex::Attributes
-      include ::Persistence::Object::Complex::Attributes::Flat
-      extend ::Persistence::Object::Complex::Attributes::Flat
-      include ::Persistence::Object::Complex::Attributes::PersistenceHash
-      include ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance
+    class ::Persistence::Object::Complex::Array::SubArray < Array
+      include ::Persistence::Object::Complex
+      include ::Persistence::Object::Complex::Array::ObjectInstance
+      extend ::Persistence::Object::Complex::Array::ClassInstance
     end
-    class ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::ComplexObject
-      include ::Persistence::Port::ObjectInstance
-      extend ::Persistence::Port::ClassInstance
-      include ::Persistence::Object::ObjectInstance
-      extend ::Persistence::Object::ClassInstance
-      include ::Persistence::Object::Complex::Attributes
-      extend ::Persistence::Object::Complex::Attributes
-      include ::Persistence::Object::Complex::Attributes::Flat
-      extend ::Persistence::Object::Complex::Attributes::Flat
-      include ::Persistence::Object::Complex::Attributes::PersistenceHash
+    class ::Persistence::Object::Complex::Array::ComplexObject
+
+      include ::Persistence::Object::Complex
       
       def persist!        
         persistence_port.put_object!( self )
@@ -47,8 +33,8 @@ describe ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInsta
 
     end
 
-    complex_instance = ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::ComplexObject.new
-    instance = ::Persistence::Object::Complex::Attributes::PersistenceHash::ArrayInstance::SubArray.new( [ 1, 2, 3, 4, 5, complex_instance ] )
+    complex_instance = ::Persistence::Object::Complex::Array::ComplexObject.new
+    instance = ::Persistence::Object::Complex::Array::SubArray.new( [ 1, 2, 3, 4, 5, complex_instance ] )
     
     instance.persistence_hash_to_port.should == { 0 => 1,
                                                   1 => 2,

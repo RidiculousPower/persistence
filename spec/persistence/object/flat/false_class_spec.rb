@@ -13,12 +13,8 @@ describe FalseClass do
 
   it "can put a false object to a persistence port and get it back" do
     class FalseClass
-      include ::Persistence::Port::ObjectInstance
-      extend ::Persistence::Port::ClassInstance
-      include ::Persistence::Object::ObjectInstance
-      extend ::Persistence::Object::ClassInstance
-      include ::Persistence::Object::Flat::ObjectInstance
-      extend ::Persistence::Object::Flat::ClassInstance
+      include ::Persistence::Object::Flat
+      explicit_index :explicit_index
     end
     false_object  = false
     storage_key   = true
@@ -26,6 +22,13 @@ describe FalseClass do
     FalseClass.persist( false_object.persistence_id ).should == false_object
     false_object.cease!
     FalseClass.persist( false_object.persistence_id ).should == nil
+
+    false_object  = false
+    storage_key   = true
+    false_object.persist!( :explicit_index, storage_key )
+    FalseClass.persist( :explicit_index, storage_key ).should == false_object
+    FalseClass.cease!( :explicit_index, storage_key )
+    FalseClass.persist( :explicit_index, storage_key ).should == nil
   end
   
 end

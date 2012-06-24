@@ -15,12 +15,8 @@ module ::Persistence
     end
   end
   module Object
-    module PersistAndCease
-    end
     module Flat
       module File
-      end
-      module Indexing
       end
     end
     module Complex
@@ -30,56 +26,24 @@ module ::Persistence
       end
       module Attributes
       end
-      module PersistAndCease
-      end
-      module Indexing
-        module Indexes
-        end
-        module PersistAndCease
+      module Index
+        class AttributeIndex
         end
       end
     end
-    module Indexing
-      module Indexes
-        module Block
-        end
-        module Explicit
-        end
+    module Index
+      class BlockIndex
       end
-      module PersistAndCease
-      end
-      module Exceptions
+      class ExplicitIndex
       end
     end
   end
   class Port
     class Bucket
-      class Index
-      end
-    end
-    module FilePersistence
-    end
-    module Exceptions
-    end
-    module Indexing
-      module Bucket
-        class Index
-          module Exceptions
-          end
-          module ObjectOrientedIndex
-          end
-          module SortingProcs
-          end
-        end
-      end
     end
   end
   class Cursor
-    module Port
-    end
-    module Indexing
-      module Port
-      end
-    end
+  end
+  module Exception
   end
 end

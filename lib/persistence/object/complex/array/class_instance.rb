@@ -5,7 +5,15 @@ module ::Persistence::Object::Complex::Array::ClassInstance
   #  persist  #
   #############
   
-  def persist( global_id )
+  def persist( *args )
+    
+    index, key, no_key = parse_args_for_index_value_no_value( args, true )
+    
+    if index
+      global_id = index.get_object_id( key )
+    else
+      global_id = key
+    end
     
     object = [ ]
     

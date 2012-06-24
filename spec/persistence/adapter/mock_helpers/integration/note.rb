@@ -2,6 +2,7 @@
 class ::Persistence::Adapter::Abstract::Mock::Note
   
   include ::Persistence
+  
   attr_atomic_accessor :date, :subject, :content
   
   def populate

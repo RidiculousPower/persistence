@@ -13,7 +13,7 @@ describe ::Persistence::Port::Bucket do
 
   it 'is a module cluster' do
     ::Persistence::Port::Bucket.new( :mock, :some_bucket ).instance_eval do
-      is_a?( ::Persistence::Port::Bucket::AdapterInterface ).should == true
+      is_a?( ::Persistence::Port::Bucket::BucketInterface ).should == true
     end
   end
   

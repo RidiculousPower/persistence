@@ -17,12 +17,7 @@ describe ::Persistence::Object::Flat::ClassInstance do
   
   it 'can persist a flat object and test whether it has been persisted' do
     class ::Persistence::Object::Flat::ClassInstance::Mock
-      extend ::Persistence::Port::ClassInstance
-      include ::Persistence::Port::ObjectInstance
-      extend ::Persistence::Object::ClassInstance
-      include ::Persistence::Object::ObjectInstance
-      extend ::Persistence::Object::Flat::ClassInstance
-      include ::Persistence::Object::Flat::ObjectInstance
+      include ::Persistence::Object::Flat
       self.instance_persistence_port = ::Persistence.port( :mock_port )
     end
     instance = ::Persistence::Object::Flat::ClassInstance::Mock.new

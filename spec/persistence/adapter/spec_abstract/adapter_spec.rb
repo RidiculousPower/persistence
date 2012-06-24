@@ -10,7 +10,10 @@ describe ::Persistence::Adapter do
     ::Persistence.enable_port( :mock, @adapter )
 
     class ::Persistence::Adapter::MockObject
-      include ::Persistence
+      include ::Persistence::Object::ObjectInstance
+      extend ::Persistence::Object::ClassInstance
+      include ::Persistence::Object::Complex::ObjectInstance
+      extend ::Persistence::Object::Complex::ClassInstance
       include ::CascadingConfiguration::Setting
       attr_non_atomic_accessor :attribute
     end

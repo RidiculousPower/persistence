@@ -5,6 +5,88 @@ module ::Persistence::Object::Complex::Attributes
   include ::CascadingConfiguration::Array::Sorted::Unique
   include ::CascadingConfiguration::Setting
 
+  #####################
+  #  default_atomic!  #
+  #####################
+
+  def default_atomic!
+
+    @default_atomic = true
+
+  end
+
+  ###################################
+  #  default_atomic_without_hooks!  #
+  ###################################
+
+  def default_atomic_without_hooks!
+
+    @without_hooks = true
+    
+    default_atomic!
+    
+    @without_hooks = false
+
+  end
+
+  #########################
+  #  default_non_atomic!  #
+  #########################
+
+  def default_non_atomic!
+
+    @default_atomic = false
+
+  end
+
+  #######################################
+  #  default_non_atomic_without_hooks!  #
+  #######################################
+
+  def default_non_atomic_without_hooks!
+
+    @without_hooks = true
+    
+    default_non_atomic!
+    
+    @without_hooks = false
+
+  end
+
+  #####################
+  #  default_atomic?  #
+  #####################
+
+  def default_atomic?
+
+    return @default_atomic
+    
+  end
+
+  #########################
+  #  default_non_atomic?  #
+  #########################
+  
+  def default_non_atomic?
+
+    return ! @default_atomic
+    
+  end
+
+  ##################
+  #  attr_atomic!  #
+  ##################
+
+  def attr_atomic!
+    
+    non_atomic_attributes.each do |this_attribute|
+      attr_atomic_accessor( this_attribute )
+    end
+    
+    return self
+    
+  end
+
   ##########################
   #  attr_atomic_accessor  #
   ##########################
@@ -280,7 +362,7 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attributes  #
   #######################
 
-  attr_configuration_hash  :atomic_attributes, AttributesHash do
+  attr_hash  :atomic_attributes, AttributesHash do
 
     #=======================#
     #  update_for_addition  #
@@ -455,7 +537,7 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attributes  #
   ###########################
   
-  attr_configuration_hash  :non_atomic_attributes, AttributesHash do
+  attr_hash  :non_atomic_attributes, AttributesHash do
 
     #=======================#
     #  update_for_addition  #
@@ -629,7 +711,7 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attributes  #
   ###########################
   
-  attr_configuration_hash  :persistent_attributes, AttributesHash, PersistentAttributes do
+  attr_hash  :persistent_attributes, AttributesHash do
 
     #===================#
     #  default_atomic!  #
@@ -789,7 +871,7 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_readers  #
   ##############################
 
-  attr_configuration_sorted_unique_array :atomic_attribute_readers, AttributesArray do
+  attr_sorted_unique_array :atomic_attribute_readers, AttributesArray do
 
     #=================#
     #  post_set_hook  #
@@ -841,7 +923,7 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_writers  #
   ##############################
 
-  attr_configuration_sorted_unique_array :atomic_attribute_writers, AttributesArray do
+  attr_sorted_unique_array :atomic_attribute_writers, AttributesArray do
     
     #=================#
     #  post_set_hook  #
@@ -893,7 +975,7 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_accessors  #
   ################################
 
-  attr_configuration_sorted_unique_array :atomic_attribute_accessors, AttributesArray do
+  attr_sorted_unique_array :atomic_attribute_accessors, AttributesArray do
     
     #=================#
     #  post_set_hook  #
@@ -944,7 +1026,7 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_readers  #
   ##################################
 
-  attr_configuration_sorted_unique_array :non_atomic_attribute_readers, AttributesArray do
+  attr_sorted_unique_array :non_atomic_attribute_readers, AttributesArray do
 
     #=================#
     #  post_set_hook  #
@@ -996,7 +1078,7 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_writers  #
   ##################################
 
-  attr_configuration_sorted_unique_array :non_atomic_attribute_writers, AttributesArray do
+  attr_sorted_unique_array :non_atomic_attribute_writers, AttributesArray do
     
     #=================#
     #  post_set_hook  #
@@ -1048,7 +1130,7 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_accessors  #
   ####################################
 
-  attr_configuration_sorted_unique_array :non_atomic_attribute_accessors, AttributesArray do
+  attr_sorted_unique_array :non_atomic_attribute_accessors, AttributesArray do
     
     #=================#
     #  post_set_hook  #
@@ -1099,8 +1181,7 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_readers  #
   ##################################
 
-  attr_configuration_sorted_unique_array :persistent_attribute_readers, 
-                                         AttributesArray, PersistentAttributes do
+  attr_sorted_unique_array :persistent_attribute_readers, AttributesArray do
 
     #===================#
     #  default_atomic!  #
@@ -1216,8 +1297,7 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_writers  #
   ##################################
 
-  attr_configuration_sorted_unique_array :persistent_attribute_writers, 
-                                         AttributesArray, PersistentAttributes do
+  attr_sorted_unique_array :persistent_attribute_writers, AttributesArray do
     
     #===================#
     #  default_atomic!  #
@@ -1333,8 +1413,7 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_accessors  #
   ####################################
 
-  attr_configuration_sorted_unique_array :persistent_attribute_accessors, 
-                                         AttributesArray, PersistentAttributes do
+  attr_sorted_unique_array :persistent_attribute_accessors, AttributesArray do
     
     #===================#
     #  default_atomic!  #

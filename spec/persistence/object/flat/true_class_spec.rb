@@ -13,18 +13,20 @@ describe TrueClass do
 
   it "can put a true object to a persistence port and get it back" do
     class TrueClass
-      include ::Persistence::Port::ObjectInstance
-      extend ::Persistence::Port::ClassInstance
-      include ::Persistence::Object::ObjectInstance
-      extend ::Persistence::Object::ClassInstance
-      include ::Persistence::Object::Flat::ObjectInstance
-      extend ::Persistence::Object::Flat::ClassInstance
+      include ::Persistence::Object::Flat
+      explicit_index :explicit_index
     end
     true_object = true
     true_object.persist!
     TrueClass.persist( true_object.persistence_id ).should == true_object
     true_object.cease!
     TrueClass.persist( true_object.persistence_id ).should == nil
+
+    storage_key = false
+    true_object.persist!( :explicit_index, storage_key )
+    TrueClass.persist( :explicit_index, storage_key ).should == true_object
+    true_object.cease!
+    TrueClass.persist( :explicit_index, storage_key ).should == nil
   end
   
 end

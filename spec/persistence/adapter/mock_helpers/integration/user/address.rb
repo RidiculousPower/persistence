@@ -2,6 +2,7 @@
 class ::Persistence::Adapter::Abstract::Mock::User::Address
   
   include ::Persistence
+
   attr_atomic_accessor :number, :street, :city, :state, :zipcode
   
   def populate

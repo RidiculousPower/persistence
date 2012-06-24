@@ -30,63 +30,39 @@ files.concat [
 # Object
 files.concat [
 
-  'object/persistence_id',
+  'object/parse_persistence_args',
 
-  'object/persist_and_cease/class_instance',
-  'object/persist_and_cease/object_instance',
-
-  'object/equality',
-
-  'object/suspend',
+  'object/index',
   
-  'object/class_instance',
-  'object/object_instance'
+  'object/index_hash',
 
-]
+  'object/index/block_index/block_index_interface',
+  'object/index/block_index',
+  'object/index/explicit_index/explicit_index_interface',
+  'object/index/explicit_index',
 
-# Flat Object
-files.concat [
-
-  'object/flat/persistence_hash',
-
-  'object/flat/class_instance',
-  'object/flat/object_instance',
+  'object/flat/file/file_persistence',
+  
+  'object/flat/file/contents',
+  'object/flat/file/path',
   
   'object/flat/file/class_instance',
   'object/flat/file/object_instance',
   
-  'object/flat/file/contents',
-  'object/flat/file/path'
+  'object/class_instance',
+  'object/object_instance',
 
-]
-
-# Complex Object
-files.concat [
+  'object/flat/class_instance',
+  'object/flat/object_instance',
 
   'object/complex/attributes/attributes_array',
   'object/complex/attributes/attributes_hash',
   'object/complex/attributes/hash_to_port',
-  'object/complex/attributes/flat',
-  'object/complex/attributes/persistence',
-  'object/complex/attributes/persistence_hash',
-  'object/complex/attributes/persistence_hash/array_instance',
-  'object/complex/attributes/persistence_hash/hash_instance',
-  'object/complex/attributes/persistent_attributes',
   'object/complex/attributes',
-
-  'object/complex/equality',
-
-  'object/complex/persist_and_cease/cascades',
-  'object/complex/persist_and_cease/class_instance',
-  'object/complex/persist_and_cease/object_instance',
-  'object/complex/persist_and_cease/cascades/class_instance',
-  'object/complex/persist_and_cease/cascades/object_instance',
 
   'object/complex/complex_object',
 
-  'object/complex/port',
-  'object/complex/port/bucket',
-
+  'object/complex/class_and_object_instance',
   'object/complex/class_instance',
   'object/complex/object_instance',
 
@@ -94,9 +70,18 @@ files.concat [
   'object/complex/array/object_instance',
 
   'object/complex/hash/class_instance',
-  'object/complex/hash/object_instance'
-
+  'object/complex/hash/object_instance',
   
+  'object/complex',
+  'object/complex/array',
+  'object/complex/hash',
+
+  'object/flat',
+  'object/flat/file',
+
+  'object/autodetermine',
+  'object',
+
 ]
 
 # Port
@@ -105,23 +90,9 @@ files.concat [
   'port/controller',
 
   'port/port_interface',
-  'port/adapter_interface',
 
   'port/bucket/bucket_interface',
-  'port/bucket/adapter_interface',
-  'port/bucket/class_instance',
-  'port/bucket/object_instance',
   'port/bucket',
-
-  'port/file_persistence',
-  'port/file_persistence/port_instance',
-  'port/file_persistence/bucket_instance',
-  'port/file_persistence/class_instance',
-
-  'port/class_instance',
-  'port/object_instance',
-
-  'port/exceptions/no_port_enabled',
 
   'port'
 
@@ -133,103 +104,38 @@ files.concat [
   'cursor/cursor_interface',
   'cursor/atomic',
 
-  'cursor/port/bucket',
-
-  'cursor/class_instance',
-
   'cursor'
 
 ]
 
-# Object indexing
+# Complex Index
 files.concat [
 
-  'object/indexing/indexes',
-  'object/indexing/indexes/block/class_instance',
-  'object/indexing/indexes/block/object_instance',
-  'object/indexing/indexes/explicit/class_instance',
-  'object/indexing/indexes/explicit/object_instance',
-  'object/indexing/indexes/class_instance',
-
-  'object/indexing/persist_and_cease/class_instance',
-  'object/indexing/persist_and_cease/object_instance',
-
-  'object/indexing/exceptions/explicit_index_required',
-  'object/indexing/exceptions/key_value_required',
-
-  'object/indexing/parse_persistence_args',
-
-  'object/indexing/class_instance',
-  'object/indexing/object_instance'
+  'object/complex/index/attribute_index/attribute_index_interface',
+  'object/complex/index/attribute_index'
 
 ]
 
-# Flat Indexing
+# Port Index
 files.concat [
 
-  'object/flat/indexing/class_instance',
-  'object/flat/indexing/object_instance'
+  'port/bucket/bucket_index'
 
 ]
 
-# Complex Indexing
+# Exceptions
 files.concat [
-
-  'object/complex/indexing/indexes/attributes',
-  'object/complex/indexing/indexes/attributes/class_instance',
-
-  'object/complex/indexing/persist_and_cease/object_instance',
-
-  'object/complex/indexing/class_instance',
-  'object/complex/indexing/object_instance'
-
-]
-
-# Port Indexing
-files.concat [
-
-  'port/indexing/bucket/index/adapter_interface',
-  'port/indexing/bucket/index/attribute_index',
-  'port/indexing/bucket/index/block_index',
-  'port/indexing/bucket/index/bucket_index',
-  'port/indexing/bucket/index/explicit_index',
-
-  'port/indexing/bucket/index/index_interface',
-
-  'port/indexing/bucket/index/object_oriented_index',
-
-  'port/indexing/bucket/index/sorting_procs',
-
-  'port/indexing/bucket/index',
-  'port/indexing/bucket',
-
-  'port/indexing/bucket/index/exceptions/block_required',
-  'port/indexing/bucket/index/exceptions/conflicting_index_already_declared',
-  'port/indexing/bucket/index/exceptions/duplicate_violates_unique_index',
-  'port/indexing/bucket/index/exceptions/indexing_block_failed_to_generate_keys',
-  'port/indexing/bucket/index/exceptions/indexing_object_requires_keys'
-
-]
-
-# Cursor Indexing
-files.concat [
-
-  'cursor/indexing/cursor',
-  'cursor/indexing/cursor/atomic',
-
-  'cursor/indexing/port/bucket',
-  'cursor/indexing/port/bucket/index',
-
-  'cursor/indexing/class_instance'
-
-]
-
-# Public Interface
-files.concat [
-
-  'complex',
-  'flat'
-
+  
+  'exception/block_required',
+  'exception/conflicting_index_already_declared',
+  'exception/duplicate_violates_unique_index',
+  'exception/indexing_block_failed_to_generate_keys',
+  'exception/indexing_object_requires_keys',
+  
+  'exception/no_port_enabled',
+  'exception/explicit_index_required',
+  'exception/key_value_required'
+  
 ]
 
 files.each do |this_file|

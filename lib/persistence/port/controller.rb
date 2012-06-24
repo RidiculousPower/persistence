@@ -86,13 +86,15 @@ module ::Persistence::Port::Controller
   # ::Persistence.disable_port( :port_name )
   def disable_port( port_name )
     
-    port_instance = port( port_name )
+    if port_instance = port( port_name )
     
-    if current_port == port_instance
-      set_current_port( nil )
+      if current_port == port_instance
+        set_current_port( nil )
+      end
+    
+      port_instance.disable
+
     end
-    
-    port_instance.disable
     
     return self
 
@@ -127,7 +129,7 @@ module ::Persistence::Port::Controller
   #  port_for_name_or_port  #
   ###########################
   
-  def port_for_name_or_port( persistence_port_or_name )
+  def port_for_name_or_port( persistence_port_or_name, ensure_exists = false )
     
     port_instance = nil
     
@@ -136,6 +138,12 @@ module ::Persistence::Port::Controller
         port_instance = port( persistence_port_or_name )
       else
         port_instance = persistence_port_or_name
+    end
+    
+    unless port_instance
+      if ensure_exists
+        raise ::ArgumentError, 'No port found by name ' << persistence_port_or_name.to_s
+      end
     end
     
     return port_instance
@@ -149,10 +157,10 @@ module ::Persistence::Port::Controller
   def create_pending_buckets( port )
     
     @pending_buckets.delete_if do |this_class, this_bucket|
-      this_bucket.initialize_bucket_for_port( port )
+      this_bucket.initialize_for_port( port )
       true
     end
-    
+
     return self
     
   end

@@ -41,7 +41,7 @@ describe ::Persistence::Port::Controller do
 
   ############################
   #  create_pending_buckets  #
-  #  pending_bucket  #
+  #  pending_bucket          #
   ############################
   
   it 'can allow a bucket to be initialized before its port is open' do
