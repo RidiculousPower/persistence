@@ -38,12 +38,14 @@ module ::Persistence::Cursor::Atomic
   ###
   # Load object with specified persistence ID.
   #
-  # @param global_id Object persistence ID for retrieval.
+  # @param key Key to retrieve.
   #
   # @return [Object] Object for persistence ID.
   #
   def persist( key )
+    
     return super.attr_atomic!
+
   end
 
   ###########

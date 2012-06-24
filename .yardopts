@@ -1,0 +1,4 @@
+--no-private
+--embed-mixins
+lib/**/*.rb
+spec/example_objects/**/*.rb

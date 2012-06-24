@@ -1,4 +1,7 @@
 
+###
+# Instance methods for any objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::ObjectInstance
   
   include ::Persistence::Object::ParsePersistenceArgs

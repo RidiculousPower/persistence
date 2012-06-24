@@ -1,5 +1,7 @@
 
 ###
+# @private
+###
 # Provides primary key with attribute name to including adapter class.
 #
 module ::Persistence::Adapter::Abstract::PrimaryKey::Simple

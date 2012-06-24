@@ -165,7 +165,7 @@ module ::Persistence::Cursor::CursorInterface
   ###
   # Persist first object in cursor context.
   #
-  # @param [Integer] count How many objects to persist from start of cursor context.
+  # @param [Integer] first_count How many objects to persist from start of cursor context.
   #
   # @return [Object,Array<Object>] Object or objects requested.
   #
@@ -200,7 +200,7 @@ module ::Persistence::Cursor::CursorInterface
   ###
   # Persist last object in cursor context.
   #
-  # @param [Integer] count How many objects to persist from end of cursor context.
+  # @param [Integer] last_count How many objects to persist from end of cursor context.
   #
   # @return [Object,Array<Object>] Object or objects requested.
   #
@@ -240,7 +240,7 @@ module ::Persistence::Cursor::CursorInterface
   ###
   # Persist any object in cursor context.
   #
-  # @param [Integer] count How many objects to persist from cursor context.
+  # @param [Integer] any_count How many objects to persist from cursor context.
   #
   # @return [Object,Array<Object>] Object or objects requested.
   #

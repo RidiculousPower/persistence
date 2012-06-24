@@ -1,5 +1,7 @@
 
 ###
+# @private
+###
 # Singleton providing helper methods for writing adapters.
 #
 module ::Persistence::Adapter::Abstract

@@ -1,4 +1,7 @@
 
+###
+# Instance methods for flat objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::Flat::ObjectInstance
 
   ##############################

@@ -1,4 +1,7 @@
 
+###
+# Class methods for any objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::ClassInstance
   
   include ::Persistence::Object::ParsePersistenceArgs
@@ -16,6 +19,17 @@ module ::Persistence::Object::ClassInstance
 
   attr_setting :instance_persistence_port
 
+  ###
+  # Assign a persistence port to be used with instances of this object.
+  #
+  # @overload instance_persistence_port=( port_name )
+  #    
+  #   @param port_name Name of port to be used. Expects port by name to be available in Persistence controller.
+  #
+  # @overload instance_persistence_port=( port_instance )
+  #
+  #   @param port_instance Port instance to use.
+  #
   def instance_persistence_port=( port_object_port_or_port_name )
 
     port = nil
@@ -74,7 +88,13 @@ module ::Persistence::Object::ClassInstance
   ###############################
   #  instance_persistence_port  #
   ###############################
-
+  
+  ###
+  # Get persistence port that will be used with instances of this object. Will use current port if available and
+  #   no port is assigned.
+  #
+  # @return [Persistence::Port,nil] Persistence port instance.
+  #
   def instance_persistence_port
 
     return super || ( self.instance_persistence_port = ::Persistence.current_port )
@@ -89,7 +109,18 @@ module ::Persistence::Object::ClassInstance
 
   attr_setting :instance_persistence_bucket
 
-  # declare name of persistence bucket where object instances will be stored
+  ###
+  # Assign a persistence bucket to be used with instances of this object.
+  #
+  # @overload instance_persistence_bucket=( bucket_name )
+  #    
+  #   @param port_name [Symbol,String] Name of port to be used. Expects port by name to be available 
+  #     in Persistence controller.
+  #
+  # @overload instance_persistence_bucket=( bucket_instance )
+  #
+  #   @param port_instance [Persistence::Port::Bucket,nil] Persistence::Port::Bucket instance to use.
+  #
   def instance_persistence_bucket=( persistence_bucket_class_or_name )
     
     bucket = nil
@@ -125,12 +156,19 @@ module ::Persistence::Object::ClassInstance
   end
 
   alias_method :store_as, :instance_persistence_bucket=
+  
   alias_method :persists_in, :instance_persistence_bucket=
   
   #################################
   #  instance_persistence_bucket  #
   #################################
 
+  ###
+  # Get persistence bucket that will be used with instances of this object. Will use name of class if bucket
+  #   does not already exist.
+  #
+  # @return [Persistence::Port,nil] Persistence port instance.
+  #
   def instance_persistence_bucket
 
     bucket_instance = nil
@@ -150,6 +188,34 @@ module ::Persistence::Object::ClassInstance
   #  persist  #
   #############
   
+  ###
+  # Retrieve object from persistence port.
+  #
+  # @overload persist( global_id )
+  #
+  #   @param global_id [Object] Object persistence ID.
+  #
+  # @overload persist( index_name, key )
+  # 
+  #   @param index_name [Symbol,String] Name of index for key-based retrieval.
+  #   @param key [Object] Key for retrieving object ID.
+  #
+  # @overload persist( index_name_key_hash )
+  #
+  #   @param index_name_key_hash [Hash{Symbol,String=>Object}] Name of index for key-based retrieval.
+  #
+  # @overload persist( index_instance, key )
+  #
+  #   @param index_instance [Symbol,String] Name of index for key-based retrieval.
+  #   @param key [Object] Key for retrieving object ID.
+  #
+  # @overload persist( index_instance_key_hash )
+  #
+  #   @param index_instance_key_hash [Hash{Persistence::Object::Index=>Object}] Name of index 
+  #     for key-based retrieval.
+  #
+  # @return [Object,nil] Persisted object.
+  #
   def persist( *args )
 
     persistence_value = nil
@@ -177,16 +243,39 @@ module ::Persistence::Object::ClassInstance
   #  persisted?  #
   ################
 
+  ###
+  # Query whether object is persisted in port.
+  #
+  # @overload persisted?( global_id )
+  #
+  #   @param global_id [Object] Object persistence ID.
+  #
+  # @overload persisted?( index_name, key )
+  # 
+  #   @param index_name [Symbol,String] Name of index for key-based retrieval.
+  #   @param key [Object] Key for retrieving object ID.
+  #
+  # @overload persisted?( index_name_key_hash )
+  #
+  #   @param index_name_key_hash [Hash{Symbol,String=>Object}] Name of index for key-based retrieval.
+  #
+  # @overload persisted?( index_instance, key )
+  #
+  #   @param index_instance [Symbol,String] Name of index for key-based retrieval.
+  #   @param key [Object] Key for retrieving object ID.
+  #
+  # @overload persisted?( index_instance_key_hash )
+  #
+  #   @param index_instance_key_hash [Hash{Persistence::Object::Index=>Object}] Name of index 
+  #     for key-based retrieval.
+  #
+  # @return [true,false] Whether object is persisted.
+  #
   def persisted?( *args )
     
-    index_instance, key, no_key = parse_args_for_index_value_no_value( args )
+    index, key, no_key = parse_args_for_index_value_no_value( args, true )
     
-    if no_key
-      raise ::Persistence::Exception::KeyValueRequired,
-              'Key required when specifying index for :persist!'
-    end
-    
-    global_id = index_instance ? index_instance.get_object_id( key ) : key
+    global_id = index ? index.get_object_id( key ) : key
     
     return instance_persistence_port.get_bucket_name_for_object_id( global_id ) ? true : false
   
@@ -199,7 +288,32 @@ module ::Persistence::Object::ClassInstance
   ###
   # Remove object properties stored for object ID from persistence bucket and indexes.
   #
-  # @param global_id Object persistence ID.
+  # @overload cease!( global_id )
+  #
+  #   @param global_id [Object] Object persistence ID.
+  #
+  # @overload cease!( index_name, key )
+  # 
+  #   @param index_name [Symbol,String] Name of index for key-based retrieval.
+  #
+  #   @param key [Object] Key for retrieving object ID.
+  #
+  # @overload cease!( index_name_key_hash )
+  #
+  #   @param index_name_key_hash [Hash{Symbol,String=>Object}] Name of index for key-based retrieval.
+  #
+  # @overload cease!( index_instance, key )
+  #
+  #   @param index_instance [Symbol,String] Name of index for key-based retrieval.
+  #
+  #   @param key [Object] Key for retrieving object ID.
+  #
+  # @overload cease!( index_instance_key_hash )
+  #
+  #   @param index_instance_key_hash [Hash{Persistence::Object::Index=>Object}] Name of index 
+  #     for key-based retrieval.
+  #
+  # @return [Object,nil] Persisted object.
   #
   def cease!( *args )
     
@@ -207,11 +321,7 @@ module ::Persistence::Object::ClassInstance
     
     index, key, no_key = parse_args_for_index_value_no_value( args, true )
 
-    if index
-      global_id = index.get_object_id( key )
-    else
-      global_id = key
-    end
+    global_id = index ? index.get_object_id( key ) : key
 
     indexes.each do |this_index_name, this_index|
       this_index.delete_keys_for_object_id!( global_id )
@@ -227,7 +337,16 @@ module ::Persistence::Object::ClassInstance
   #  index  #
   ###########
 
-   def index( index_name, ensure_exists = false )
+  ###
+  # Get index with given name.
+  #
+  # @param index_name Name of requested index.
+  #
+  # @param ensure_exists Throw exception if index does not exist.
+  #
+  # @return [Persistence::Object::Index,nil] Index instance.
+  #
+  def index( index_name, ensure_exists = false )
      
      index_instance = nil
 
@@ -245,6 +364,15 @@ module ::Persistence::Object::ClassInstance
   #  has_index?  #
   ################
   
+  ###
+  # Query whether index(es) exist for object.
+  #
+  # overload( index_name, ... )
+  #
+  #   @param index_name Name of requested index.
+  #
+  # @return [true,false] Whether index(es) exist.
+  #
   def has_index?( *index_names )
     
     has_index = false
@@ -261,6 +389,18 @@ module ::Persistence::Object::ClassInstance
   #  block_index  #
   #################
   
+  ###
+  # Create a block index.
+  #
+  # @overload block_index( index_name, ... )
+  #
+  #   @param index_name Name of index.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
   def block_index( *index_names, & indexing_block )
 
     index_names.each do |this_index_name|
@@ -275,6 +415,18 @@ module ::Persistence::Object::ClassInstance
   #  block_index_ordered  #
   #########################
   
+  ###
+  # Create an ordered block index. PENDING.
+  #
+  # @param index_name Name of index.
+  #
+  # @param ordering_proc Proc for determining sort order. See {::Array#sort_by}.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
   def block_index_ordered( index_name, ordering_proc, & indexing_block )
 
     instance = create_block_index( index_name, true, ordering_proc, & indexing_block )
@@ -287,12 +439,25 @@ module ::Persistence::Object::ClassInstance
   #  block_index_with_duplicates  #
   #################################
   
-  def block_index_with_duplicates( index_name, & indexing_block )
+  ###
+  # Create a block index that permits duplicates.
+  #
+  # @overload block_index( index_name, ... )
+  #
+  #   @param index_name Name of index.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
+  def block_index_with_duplicates( *index_names, & indexing_block )
 
-    instance = create_block_index( index_name, true, & indexing_block )
-
-    indexes[ index_name ] = block_indexes[ index_name ] = instance
-
+    index_names.each do |this_index_name|
+      this_instance = create_block_index( this_index_name, true, & indexing_block )
+      indexes[ this_index_name ] = block_indexes[ this_index_name ] = this_instance
+    end
+    
     return self
 
   end
@@ -301,6 +466,20 @@ module ::Persistence::Object::ClassInstance
   #  block_index_ordered_with_duplicates  #
   #########################################
   
+  ###
+  # Create an ordered block index that permits duplicates. PENDING.
+  #
+  # @param index_name Name of index.
+  #
+  # @param ordering_proc Proc for determining sort order. See {::Array#sort_by}.
+  #
+  # @param duplicates_ordering_proc Proc for determining sort order of duplicates. See {::Array#sort_by}.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
   def block_index_ordered_with_duplicates( index_name, ordering_proc, duplicates_ordering_proc = nil, & indexing_block )
     
     raise 'Pending.'
@@ -317,6 +496,15 @@ module ::Persistence::Object::ClassInstance
   #  has_block_index?  #
   ######################
   
+  ###
+  # Query whether block index(es) exist for object.
+  #
+  # overload( index_name, ... )
+  #
+  #   @param index_name Name of requested index.
+  #
+  # @return [true,false] Whether index(es) exist.
+  #
   def has_block_index?( *index_names )
     
     has_index = false
@@ -333,6 +521,18 @@ module ::Persistence::Object::ClassInstance
   #  explicit_index  #
   ####################
   
+  ###
+  # Create a explicit index.
+  #
+  # @overload explicit_index( index_name, ... )
+  #
+  #   @param index_name Name of index.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
   def explicit_index( *index_names )
 
     index_names.each do |this_index_name|
@@ -348,6 +548,18 @@ module ::Persistence::Object::ClassInstance
   #  explicit_index_ordered  #
   ############################
   
+  ###
+  # Create an ordered explicit index. PENDING.
+  #
+  # @param index_name Name of index.
+  #
+  # @param ordering_proc Proc for determining sort order. See {::Array#sort_by}.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
   def explicit_index_ordered( *index_names, & ordering_block )
     
     raise 'Pending.'
@@ -365,6 +577,18 @@ module ::Persistence::Object::ClassInstance
   #  explicit_index_with_duplicates  #
   ####################################
   
+  ###
+  # Create a explicit index that permits duplicates.
+  #
+  # @overload explicit_index( index_name, ... )
+  #
+  #   @param index_name Name of index.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
   def explicit_index_with_duplicates( *index_names )
 
     index_names.each do |this_index_name|
@@ -380,6 +604,20 @@ module ::Persistence::Object::ClassInstance
   #  explicit_index_ordered_with_duplicates  #
   ############################################
   
+  ###
+  # Create an ordered explicit index that permits duplicates. PENDING.
+  #
+  # @param index_name Name of index.
+  #
+  # @param ordering_proc Proc for determining sort order. See {::Array#sort_by}.
+  #
+  # @param duplicates_ordering_proc Proc for determining sort order of duplicates. See {::Array#sort_by}.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Index::BlockIndex] Index instance.
+  #
   def explicit_index_ordered_with_duplicates( index_name, duplicates_ordering_proc = nil, & ordering_block )
 
     raise 'Pending.'
@@ -395,6 +633,15 @@ module ::Persistence::Object::ClassInstance
   #  has_explicit_index?  #
   #########################
   
+  ###
+  # Query whether explicit index(es) exist for object.
+  #
+  # overload( index_name, ... )
+  #
+  #   @param index_name Name of requested index.
+  #
+  # @return [true,false] Whether index(es) exist.
+  #
   def has_explicit_index?( *index_names )
     
     has_index = false
@@ -411,11 +658,31 @@ module ::Persistence::Object::ClassInstance
   #  delete_index  #
   ##################
   
-  def delete_index( *attributes )
+  ###
+  # Delete index(es).
+  #
+  # @overload delete_index( index_name, ... )
+  #
+  #   @param index_name Name of index to delete.
+  #
+  # @return self
+  #
+  def delete_index( *index_names )
     
-    attributes.each do |this_index|
-      indexes.delete( this_index )
+    index_names.each do |this_index_name|
+
+      this_index = indexes.delete( this_index_name )
       persistence_port.delete_index( self, this_index )
+
+      case this_index
+        when ::Persistence::Object::Index::Explicit
+          explicit_indexes.delete( this_index_name )
+        when ::Persistence::Object::Index::Block
+          block_indexes.delete( this_index_name )
+        when ::Persistence::Object::Index::Attribute
+          attribute_indexes.delete( this_index_name )
+      end
+
     end
     
     return self
@@ -1397,7 +1664,11 @@ module ::Persistence::Object::ClassInstance
   ###
   # Persist first object in cursor context.
   #
-  # @param [Integer] count How many objects to persist from start of cursor context.
+  # @overload persist_first( count )
+  #
+  #   @param [Integer] count How many objects to persist from start of cursor context.
+  #
+  # @overload persist_first( :index, count )
   #
   # @return [Object,Array<Object>] Object or objects requested.
   #
@@ -1436,7 +1707,11 @@ module ::Persistence::Object::ClassInstance
   ###
   # Persist last object in cursor context.
   #
-  # @param [Integer] count How many objects to persist from end of cursor context.
+  # @overload persist_last( count )
+  #
+  #   @param [Integer] count How many objects to persist from end of cursor context.
+  #
+  # @overload persist_last( :index, count )
   #
   # @return [Object,Array<Object>] Object or objects requested.
   #
@@ -1475,7 +1750,11 @@ module ::Persistence::Object::ClassInstance
   ###
   # Persist any object in cursor context.
   #
-  # @param [Integer] count How many objects to persist from cursor context.
+  # @overload persist_any( count )
+  #
+  #   @param [Integer] count How many objects to persist from cursor context.
+  #
+  # @overload persist_any( :index, count )
   #
   # @return [Object,Array<Object>] Object or objects requested.
   #
@@ -1504,88 +1783,6 @@ module ::Persistence::Object::ClassInstance
     end
     
     return objects
-    
-  end
-  
-  ##########################
-  #  has_attribute_index?  #
-  ##########################
-  
-  def has_attribute_index?( *attributes )
-  
-    has_index = false
-  
-    attributes.each do |this_attribute|
-      break unless has_index = attribute_indexes.has_key?( this_attribute.accessor_name )
-    end
-  
-    return has_index
-  
-  end
-
-  ########################
-  #  persists_flat_hash  #
-  ########################
-
-  attr_hash :persists_flat_hash
-
-  ###############
-  #  attr_flat  #
-  ###############
-
-  def attr_flat( *attributes )
-
-    return persists_flat( *attributes )
-    
-  end
-
-  ################
-  #  attr_flat!  #
-  ################
-
-  def attr_flat!
-    
-    attr_flat( *persistent_attributes.keys )
-
-    return self
-    
-  end
-
-  ####################
-  #  persists_flat?  #
-  ####################
-
-  def persists_flat?( *attributes )
-
-    should_persist_flat = false
-
-    if attributes.empty?
-      should_persist_flat = persists_flat[ nil ]
-    else
-      attributes.each do |this_attribute|
-        break unless should_persist_flat = persists_flat_hash[ this_attribute ]
-      end
-    end
-    
-    return should_persist_flat
-    
-  end
-
-  ###################
-  #  persists_flat  #
-  ###################
-
-  def persists_flat( *attributes )
-
-    if attributes.empty?
-      persists_flat_hash[ nil ] = true
-    else
-      attributes.each do |this_attribute|
-        persists_flat_hash[ this_attribute ] = true
-      end
-    end
-    
-    return self
     
   end
   

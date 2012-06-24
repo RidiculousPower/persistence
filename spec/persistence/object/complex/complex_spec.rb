@@ -91,7 +91,7 @@ describe ::Persistence::Object::Complex do
         
         include ::Persistence::Object::Complex
   
-        persists_flat?( :some_attribute ).should == nil
+        persists_flat?( :some_attribute ).should == false
         attr_flat :some_attribute
         persists_flat?( :some_attribute ).should == true
         non_atomic_attributes[ :some_other_attribute ] = :accessor

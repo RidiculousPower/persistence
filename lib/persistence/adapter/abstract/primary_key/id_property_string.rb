@@ -1,5 +1,7 @@
 
 ###
+# @private
+###
 # Provides primary key with the object's persistence_id and the attribute name, connected by
 #  self.class::Delimiter in including adapter class.
 #

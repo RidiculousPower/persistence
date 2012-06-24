@@ -1,4 +1,10 @@
 
+###
+# @private
+###
+# Module used internally to extend Persistence and Persistence::Object to automatically determine what type of object
+#   (of types: Complex, Flat, Hash, Array, File) module is being included in, and to include the appropriate
+#   corresponding module branch.
 module ::Persistence::Object::Autodetermine
 
   ###################

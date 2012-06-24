@@ -5,6 +5,8 @@ module ::Persistence::Object::Complex::ClassInstance
   
   include ::Persistence::Object::Complex::ClassAndObjectInstance
   
+  include ::CascadingConfiguration::Array::Unique
+  
   ################
   #  attr_index  #
   ################
@@ -82,6 +84,22 @@ module ::Persistence::Object::Complex::ClassInstance
 
   end
 
+  ##########################
+  #  has_attribute_index?  #
+  ##########################
+  
+  def has_attribute_index?( *attributes )
+  
+    has_index = false
+  
+    attributes.each do |this_attribute|
+      break unless has_index = attribute_indexes.has_key?( this_attribute.accessor_name )
+    end
+  
+    return has_index
+  
+  end
+
   ############
   #  cease!  #
   ############
@@ -107,4 +125,65 @@ module ::Persistence::Object::Complex::ClassInstance
     
   end
   
+  ###############
+  #  attr_flat  #
+  ###############
+
+  def attr_flat( *attributes )
+
+    if attributes.empty?
+      persists_flat[ nil ] = true
+    else
+      attributes.each do |this_attribute|
+        persists_flat.push( this_attribute )
+      end
+    end
+    
+    return self
+    
+  end
+
+  ################
+  #  attr_flat!  #
+  ################
+
+  def attr_flat!
+    
+    attr_flat( *persistent_attribute_writers )
+
+    return self
+    
+  end
+
+  ####################
+  #  persists_flat?  #
+  ####################
+
+  def persists_flat?( *attributes )
+
+    should_persist_flat = false
+
+    if attributes.empty?
+      should_persist_flat = persists_flat.include?( nil )
+    else
+      attributes.each do |this_attribute|
+        break unless should_persist_flat = persists_flat.include?( this_attribute )
+      end
+    end
+    
+    return should_persist_flat
+    
+  end
+
+  ###################
+  #  persists_flat  #
+  ###################
+
+  ###
+  # Hash that tracks attributes specified to persist as if they are flat objects.
+  #
+  # @return [CompositingHash{Symbol,String=>true}] Hash with attribute details.
+  #
+  attr_unique_array :persists_flat
+
 end
