@@ -16,7 +16,7 @@ module ::Persistence::Adapter::Abstract
   # @return [String] Path to location of spec files.
   #
   def self.spec_location
-    return File.expand_path( File.dirname( __FILE__ ) + '/../../../spec_abstract/persistence/adapter/abstract/' )    
+    return File.expand_path( File.dirname( __FILE__ ) + '/../../../spec/persistence/adapter/spec_abstract/' )    
   end
 
 end
