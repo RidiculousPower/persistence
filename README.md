@@ -30,8 +30,8 @@ The persistence gem has a single "Mock" adapter built in. It also has abstract i
 
 To actually use Persistence you will want to install a real adapter. Currently, two are available:
 
-* KyotoCabinet Adapter (<a href="https://rubygems.org/gems/persistence-adapter-kyotocabinet">persistence-adapter-kyotocabinet</a>)
-* Flat File Adapter (<a href="https://rubygems.org/gems/persistence-adapter-flat_file">persistence-adapter-flat_file</a>)
+* <a href="https://rubygems.org/gems/persistence-adapter-kyotocabinet">KyotoCabinet Adapter</a> (<a href="https://github.com/RidiculousPower/persistence-adapter-kyotocabinet">on GitHub</a>).
+* <a href="https://rubygems.org/gems/persistence-adapter-flat_file">Flat File Adapter</a> (<a href="https://github.com/RidiculousPower/persistence-adapter-flat_file">on GitHub</a>).
 
 # Usage #
 
