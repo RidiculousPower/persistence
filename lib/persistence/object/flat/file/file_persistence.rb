@@ -1,14 +1,10 @@
 
+###
+# Common module used for look-up chain for file persistence configuration.
+#   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+#   Persistence singleton.
+#
 module ::Persistence::Object::Flat::File::FilePersistence
-
-  # used for:
-  # * File::ObjectInstance
-  # * File::ClassInstance
-  # * Persistence::Bucket instance
-  # * Persistence::Port instance
-  # * Persistence
-  #
-  # looks up configuration chain in that order
 
   include ::CascadingConfiguration::Setting
   
@@ -18,30 +14,73 @@ module ::Persistence::Object::Flat::File::FilePersistence
   #  persists_files_by_content?  #
   ################################
 
+  ###
+  #
+  # @method persists_files_by_content?
+  #
+  # Query whether File instances should be persisted by content (rather than by path).
+  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+  #   Persistence singleton.
+  #
+  # @return [true,false] Whether files should be persisted by content rather than by path.
+  #
   attr_setting :persists_files_by_content? => :persist_files_by_content=
   
   #############################
   #  persists_files_by_path?  #
   #############################
 
+  ###
+  #
+  # @method persists_files_by_path?
+  #
+  # Query whether File instances should be persisted by path (rather than by content).
+  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+  #   Persistence singleton.
+  #
+  # @return [true,false] Whether files should be persisted by path rather than by content.
+  #
   attr_setting :persists_files_by_path? => :persist_files_by_path=
 
   #####################################
   #  persists_file_paths_as_objects?  #
   #####################################
 
+  ###
+  #
+  # @method persists_file_paths_as_objects?
+  #
+  # Query whether File paths should be persisted as objects (rather than by strings).
+  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+  #   Persistence singleton.
+  #
+  # @return [true,false] Whether files should be persisted as objects rather than as strings.
+  #
   attr_setting :persists_file_paths_as_objects? => :persist_file_paths_as_objects=
 
   #####################################
   #  persists_file_paths_as_strings?  #
   #####################################
 
+  ###
+  #
+  # @method persists_file_paths_as_strings?
+  #
+  # Query whether File paths should be persisted as strings (rather than by objects).
+  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+  #   Persistence singleton.
+  #
+  # @return [true,false] Whether files should be persisted as strings rather than as objects.
+  #
   attr_setting :persists_file_paths_as_strings? => :persist_file_paths_as_strings=
 
   ############################
   #  persist_files_by_path!  #
   ############################
-
+  
+  ###
+  # Declare that files should be persisted by path (rather than by contents).
+  #
   def persist_files_by_path!
     
     self.persist_files_by_path = true
@@ -55,6 +94,9 @@ module ::Persistence::Object::Flat::File::FilePersistence
   #  persist_files_by_content!  #
   ###############################
 
+  ###
+  # Declare that files should be persisted by contents (rather than by path).
+  #
   def persist_files_by_content!
 
     self.persist_files_by_content = true
@@ -70,6 +112,9 @@ module ::Persistence::Object::Flat::File::FilePersistence
   #  persist_file_paths_as_objects!  #
   ####################################
 
+  ###
+  # Declare that file paths should be persisted as objects (rather than strings).
+  #
   def persist_file_paths_as_objects!
 
     self.persist_file_paths_as_objects = true
@@ -85,6 +130,9 @@ module ::Persistence::Object::Flat::File::FilePersistence
   #  persist_file_paths_as_strings!  #
   ####################################
 
+  ###
+  # Declare that file paths should be persisted as strings (rather than objects).
+  #
   def persist_file_paths_as_strings!
 
     self.persist_file_paths_as_strings = true

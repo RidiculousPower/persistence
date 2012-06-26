@@ -1,4 +1,7 @@
 
+###
+# Convenience module for extending hash types (singletons and instances) with persistence capabilities.
+#
 module ::Persistence::Object::Complex::Hash
 
   extend ModuleCluster::Define::ClusterCascades

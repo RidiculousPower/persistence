@@ -1,4 +1,7 @@
 
+###
+# Instance methods for File objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::Flat::File::ObjectInstance
 
   include ::Persistence::Object::Flat::File::FilePersistence

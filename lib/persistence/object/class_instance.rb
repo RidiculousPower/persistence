@@ -367,7 +367,7 @@ module ::Persistence::Object::ClassInstance
   ###
   # Query whether index(es) exist for object.
   #
-  # overload( index_name, ... )
+  # @overload has_index?( index_name, ... )
   #
   #   @param index_name Name of requested index.
   #
@@ -551,11 +551,11 @@ module ::Persistence::Object::ClassInstance
   ###
   # Create an ordered explicit index. PENDING.
   #
-  # @param index_name Name of index.
+  # @overload explicit_index_ordered( index_name, ..., & ordering_block )
   #
-  # @param ordering_proc Proc for determining sort order. See {::Array#sort_by}.
+  #   @param index_name Name of index.
   #
-  # @yield [object] Block to create index keys on object.
+  # @yield [object] Block for determining sort order. See {::Array#sort_by}.
   # @yieldparam object [Object] Object to index.
   #
   # @return [Persistence::Object::Index::BlockIndex] Index instance.
@@ -609,11 +609,9 @@ module ::Persistence::Object::ClassInstance
   #
   # @param index_name Name of index.
   #
-  # @param ordering_proc Proc for determining sort order. See {::Array#sort_by}.
-  #
   # @param duplicates_ordering_proc Proc for determining sort order of duplicates. See {::Array#sort_by}.
   #
-  # @yield [object] Block to create index keys on object.
+  # @yield [object] Block for determining sort order. See {::Array#sort_by}.
   # @yieldparam object [Object] Object to index.
   #
   # @return [Persistence::Object::Index::BlockIndex] Index instance.
@@ -1794,6 +1792,19 @@ module ::Persistence::Object::ClassInstance
   #  create_explicit_index  #
   ###########################
 
+  ###
+  # Internal helper method for common code creating explicit index.
+  #
+  # @param index_name [Symbol,String] Name of index to create.
+  #
+  # @param permits_duplicates [true,false] Whether index permits duplicates.
+  #
+  # @param sort_by_proc [Proc] Proc to use for sorting objects.
+  #
+  # @param sort_duplicates_by_proc [Proc] Proc to use for sorting duplicate objects.
+  #
+  # @return [Persistence::Object::Internal::ExplicitIndex]
+  #
   def create_explicit_index( index_name, permits_duplicates, sort_by_proc = nil, sort_duplicates_by_proc = nil )
     
     ensure_index_does_not_exist( index_name, permits_duplicates )
@@ -1814,6 +1825,22 @@ module ::Persistence::Object::ClassInstance
   #  create_block_index  #
   ########################
 
+  ###
+  # Internal helper method for common code creating explicit index.
+  #
+  # @param index_name [Symbol,String] Name of index to create.
+  #
+  # @param permits_duplicates [true,false] Whether index permits duplicates.
+  #
+  # @param sort_by_proc [Proc] Proc to use for sorting objects.
+  #
+  # @param sort_duplicates_by_proc [Proc] Proc to use for sorting duplicate objects.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Object::Internal::ExplicitIndex]
+  #
   def create_block_index( index_name, 
                           permits_duplicates, 
                           sort_by_proc = nil, 
@@ -1838,7 +1865,10 @@ module ::Persistence::Object::ClassInstance
   #################################
   #  ensure_index_does_not_exist  #
   #################################
-
+  
+  ###
+  # Helper that throws exception if index name already exists.
+  #
   def ensure_index_does_not_exist( index_name, permits_duplicates )
 
     if index_instance = indexes[ index_name ] and 

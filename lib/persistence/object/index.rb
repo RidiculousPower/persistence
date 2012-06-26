@@ -1,4 +1,7 @@
 
+###
+# Common module to all index instances that serves as base index type.
+#
 module ::Persistence::Object::Index
   
   include ::CascadingConfiguration::Setting
@@ -9,6 +12,20 @@ module ::Persistence::Object::Index
   #  initialize  #
   ################
 
+  ###
+  # 
+  # @param index_name Name of index.
+  #
+  # @param parent_bucket Bucket index is on.
+  #
+  # @param permits_duplicates Whether index permits duplicate entries.
+  #
+  # @param sorting_proc_or_sort_names Proc to use for sorting or name of sort method.
+  #
+  # @param duplicates_sorting_proc_or_sort_names Proc to use for sorting duplicates or name of sort method.
+  #
+  # @param ancestor_index_instance Instance to use as ancestor for configuration values.
+  #
   def initialize( index_name, 
                   parent_bucket, 
                   permits_duplicates = nil, 
@@ -41,12 +58,22 @@ module ::Persistence::Object::Index
   #  name  #
   ##########
 
+  ###
+  # Index name
+  # 
+  # @return [Symbol,String] Index name.
+  #
   attr_setting  :name
 
   ########################
   #  permits_duplicates  #
   ########################
 
+  ###
+  # Query whether index permits duplicates.
+  # 
+  # @return [true,false] Whether index permits duplicates.
+  #
   attr_setting :permits_duplicates?
   
   self.permits_duplicates = false
@@ -55,12 +82,24 @@ module ::Persistence::Object::Index
   #  parent_bucket  #
   ###################
 
+  ###
+  # Get reference to bucket index indexes.
+  # 
+  # @return [Persistence::Port::Bucket] Bucket index is on.
+  #
   attr_reader  :parent_bucket
 
   ###########################
   #  initialize_for_bucket  #
   ###########################
   
+  ###
+  # @private
+  #
+  # Initialize for parent bucket.
+  #
+  # @param parent_bucket Reference to bucket index indexes.
+  #
   def initialize_for_bucket( parent_bucket )
 
     @parent_bucket = parent_bucket
@@ -103,6 +142,11 @@ module ::Persistence::Object::Index
   #  disable  #
   #############
 
+  ###
+  # @private
+  # 
+  # Disable bucket. Used internally by port when port is disabled.
+  #
   def disable
 
     @adapter_index = nil
@@ -113,6 +157,15 @@ module ::Persistence::Object::Index
   #  init_sorting_procs  #
   ########################
   
+  ###
+  # @private
+  #
+  # Initializes sorting procs from procs or sorting method names.
+  #
+  # @param sorting_proc_or_sort_name Proc to use for sorting or name of sort method.
+  #
+  # @param duplicates_sorting_proc_or_sort_name Proc to use for sorting duplicates or name of sort method.
+  #
   def init_sorting_procs( sorting_proc_or_sort_name, duplicates_sorting_proc_or_sort_name )
     
     if sorting_proc_or_sort_name
@@ -149,6 +202,15 @@ module ::Persistence::Object::Index
   #  sorting_proc_for_sort_name  #
   ################################
 
+  ###
+  # @private
+  #
+  # Get sorting proc associated with sorting method name. PENDING.
+  #
+  # @param sort_name Name of sorting method.
+  #
+  # @return [Proc] Sorting proc.
+  #
   def sorting_proc_for_sort_name( sort_name )
     
     raise 'Pending'
@@ -260,6 +322,11 @@ module ::Persistence::Object::Index
   #  index_existing_objects  #
   ############################
 
+  ###
+  # Index objects that currently exist in parent bucket.
+  #
+  # @return self
+  #
   def index_existing_objects
     
     @parent_bucket.each do |this_object|
@@ -275,6 +342,10 @@ module ::Persistence::Object::Index
   #  adapter_index  #
   ###################
   
+  ###
+  # Get adapter index (provided by adapter) associated with bucket index (provided by 
+  #   {Persistence::Object::Index Persistence::Object::Index}). 
+  #
   def adapter_index
 
     unless @adapter_index
@@ -290,7 +361,7 @@ module ::Persistence::Object::Index
   ###########
 
   ###
-  # Get the number of objects in index.
+  # Get the number of objects in index. See {::Enumerable}.
   #
   # @return [Integer] Number of objects in current cursor context.
   #
@@ -314,6 +385,11 @@ module ::Persistence::Object::Index
   #  persisted?  #
   ################
 
+  ###
+  # Query whether key exists in index.
+  #
+  # @return [true,false] Whether key exists in index.
+  #
   def persisted?( key )
 
     return get_object_id( key ) ? true : false
@@ -324,6 +400,11 @@ module ::Persistence::Object::Index
   #  get_object_id  #
   ###################
 
+  ###
+  # Get object ID for key in index.
+  #
+  # @return [Object] Object persistence ID associated with key.
+  #
   def get_object_id( key )
 
     return adapter_index.get_object_id( key )
@@ -334,6 +415,13 @@ module ::Persistence::Object::Index
   #  index_object  #
   ##################
 
+  ###
+  # Index key for object instance.
+  #
+  # @param object [Object] Object to index.
+  #
+  # @param key [Object] Key to use for index entry.
+  #
   def index_object( object, key )
 
     return index_object_id( object.persistence_id, key )
@@ -344,6 +432,13 @@ module ::Persistence::Object::Index
   #  index_object_id  # 
   #####################
                      
+  ###
+  # Index key for object persistence ID.
+  #
+  # @param global_id [Object] Persistence ID associated with object to index.
+  #
+  # @param key [Object] Key to use for index entry.
+  #
   def index_object_id( global_id, key )
 
     return adapter_index.index_object_id( global_id, key )
@@ -354,6 +449,11 @@ module ::Persistence::Object::Index
   #  delete_keys_for_object!  #
   #############################
 
+  ###
+  # Delete keys associated with object instance.
+  #
+  # @param object [Object] Object to index.
+  #
   def delete_keys_for_object!( object )
 
     return delete_keys_for_object_id!( object.persistence_id )
@@ -364,6 +464,11 @@ module ::Persistence::Object::Index
   #  delete_keys_for_object_id!  #
   ################################
 
+  ###
+  # Delete keys associated with object persistence ID.
+  #
+  # @param global_id [Object] Persistence ID associated with object to index.
+  #
   def delete_keys_for_object_id!( global_id )
 
     return adapter_index.delete_keys_for_object_id!( global_id )

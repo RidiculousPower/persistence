@@ -1,10 +1,16 @@
 
+###
+# Controller methods for Persistence singleton.
+#
 module ::Persistence::Port::Controller
 
   ###################
   #  self.extended  #
   ###################
 
+  ###
+  # Initializes singleton when extended.
+  #
   def self.extended( instance )
     
     instance.module_eval do
@@ -18,6 +24,10 @@ module ::Persistence::Port::Controller
   #  ports  #
   ###########
 
+  ###
+  # Tracks persistence ports.
+  #
+  # @return [Hash{Symbol,String=>Persistence::Port}] Hash of ports.
   def ports
     
     return @ports
@@ -28,6 +38,13 @@ module ::Persistence::Port::Controller
   #  pending_buckets  #
   #####################
   
+  ###
+  # @private
+  #
+  # Tracks pending persistence buckets created before a port is enabled.
+  #
+  # @return [Hash{Symbol,String=>Persistence::Port::Bucket}]
+  #
   def pending_buckets
 
     return @pending_buckets
@@ -38,6 +55,16 @@ module ::Persistence::Port::Controller
   #  enable_port  #
   #################
 
+  ###
+  # Enable a port. If no port is already enabled, port will be set as current port.
+  #
+  # @param port_name Name of port to create or enable.
+  #
+  # @param adapter_instance Adapter instance to use to create port. If not provided attempt will be made to
+  #   enable existing port by name.
+  #
+  # @return [Persistence::Port] Port instance.
+  #
   def enable_port( port_name, adapter_instance = nil )
 
     port_instance = nil
@@ -83,7 +110,13 @@ module ::Persistence::Port::Controller
   #  disable_port  #
   ##################
 
-  # ::Persistence.disable_port( :port_name )
+  ###
+  # Disable port.
+  #
+  # @param port_name Port name to disable.
+  #
+  # @return self
+  #
   def disable_port( port_name )
     
     if port_instance = port( port_name )
@@ -104,6 +137,11 @@ module ::Persistence::Port::Controller
   #  current_port  #
   ##################
   
+  ###
+  # Get current port
+  # 
+  # @return [Persistence::Port,nil] Current port.
+  #
   def current_port
     return @current_port
   end
@@ -112,6 +150,13 @@ module ::Persistence::Port::Controller
   #  set_current_port  #
   ######################
   
+  ###
+  # Set current port
+  #
+  # @param persistence_port_or_name Port instance or name to set current port to.
+  #
+  # @return self
+  #
   def set_current_port( persistence_port_or_name )
     @current_port = port_for_name_or_port( persistence_port_or_name )
     return self
@@ -121,6 +166,13 @@ module ::Persistence::Port::Controller
   #  port  #
   ##########
   
+  ###
+  # Get port for name.
+  #
+  # @param port_name Port name.
+  #
+  # @return [Persistence::Port] Port instance.
+  #
   def port( port_name )
     return @ports[ port_name.to_sym ]
   end
@@ -129,6 +181,14 @@ module ::Persistence::Port::Controller
   #  port_for_name_or_port  #
   ###########################
   
+  ###
+  # Get port for name.
+  #
+  # @param persistence_port_or_name Port name or instance.
+  # @param ensure_exists Whether exception should be thrown is port does not exist.
+  #
+  # @return [Persistence::Port] Port instance.
+  #
   def port_for_name_or_port( persistence_port_or_name, ensure_exists = false )
     
     port_instance = nil
@@ -154,6 +214,15 @@ module ::Persistence::Port::Controller
   #  create_pending_buckets  #
   ############################
 
+  ###
+  # @private
+  #
+  # Creates pending buckets when port is enabled.
+  # 
+  # @param port Port to create pending buckets with.
+  #
+  # @return self
+  #
   def create_pending_buckets( port )
     
     @pending_buckets.delete_if do |this_class, this_bucket|
@@ -168,7 +237,17 @@ module ::Persistence::Port::Controller
   ####################
   #  pending_bucket  #
   ####################
-    
+  
+  ###
+  # @private
+  #
+  # Create pending bucket to be enabled with port is enabled.
+  #
+  # @param klass Class bucket is being created for.
+  # @param bucket_name Name to use for bucket.
+  #
+  # @return [Persistence::Port::Bucket]
+  #
   def pending_bucket( klass, bucket_name )
 
     bucket_instance = nil

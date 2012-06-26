@@ -1,4 +1,7 @@
 
+###
+# Module used for common methods for attributes hashes.
+#
 module ::Persistence::Object::Complex::Attributes::AttributesHash
 
   include ::AccessorUtilities::AccessorMath
@@ -33,6 +36,9 @@ module ::Persistence::Object::Complex::Attributes::AttributesHash
   #  add  #
   #########
   
+  ###
+  # Adds :reader, :writer or :accessor to key.
+  #
   def add( key, reader_writer_accessor )
     
     # figure out actual addition value
@@ -60,6 +66,12 @@ module ::Persistence::Object::Complex::Attributes::AttributesHash
   #  add_without_hooks  #
   #######################
   
+  ###
+  # @private
+  #
+  # Adds :reader, :writer or :accessor to key.
+  #   Used to prevent loops when array/hash relays to other arrays/hashes.
+  #
   def add_without_hooks( key, reader_writer_accessor )
     
     @without_hooks = true
@@ -74,6 +86,9 @@ module ::Persistence::Object::Complex::Attributes::AttributesHash
   #  subtract  #
   ##############
   
+  ###
+  # Subtracts :reader, :writer or :accessor to key.
+  #
   def subtract( key, reader_writer_accessor )
     
     # figure out actual subtraction value
@@ -105,6 +120,12 @@ module ::Persistence::Object::Complex::Attributes::AttributesHash
   #  subtract_without_hooks  #
   ############################
   
+  ###
+  # @private
+  #
+  # Subtracts :reader, :writer or :accessor from key.
+  #   Used to prevent loops when array/hash relays to other arrays/hashes.
+  #
   def subtract_without_hooks( key, reader_writer_accessor )
 
     @without_hooks = true
@@ -119,15 +140,22 @@ module ::Persistence::Object::Complex::Attributes::AttributesHash
   #  delete  #
   ############
   
-  def delete( key )
+  ###
+  # Deletes attribute and updates corresponding hashes/arrays.
+  #
+  # @param attribute Attribute to delete.
+  #
+  # @return [:reader,:writer,:accessor,nil] Setting removed.
+  #
+  def delete( attribute )
     
-    object = super( key )
+    deleted_reader_writer_accessor_setting = super( attribute )
     
     unless @without_hooks
-      update_for_subtraction( key, :accessor )
+      update_for_subtraction( attribute, :accessor )
     end
     
-    return object
+    return deleted_reader_writer_accessor_setting
     
   end
 
@@ -135,6 +163,15 @@ module ::Persistence::Object::Complex::Attributes::AttributesHash
   #  has_attributes?  #
   #####################
   
+  ###
+  # Query whether this hash includes attribute(s).
+  #
+  # @overload has_attributes?( attribute_name, ... )
+  #
+  #     @param attribute_name [Symbol,String] Attribute to query.
+  #
+  # @return [true,false] Whether this hash/array includes attribute(s).
+  #
   def has_attributes?( *attributes )
     
     has_attributes = false

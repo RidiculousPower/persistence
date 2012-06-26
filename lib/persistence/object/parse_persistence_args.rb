@@ -1,10 +1,26 @@
 
+###
+# @private
+#
+# Internal helper for parsing args of the format: method, method( global_id ), method( index_name, value ),
+#   method( index_instance, value ), method( index_name => value ), method( index_instance => value ).
 module ::Persistence::Object::ParsePersistenceArgs
 
   #########################################
   #  parse_args_for_index_value_no_value  #
   #########################################
   
+  ###
+  # Parse *args for index, key_value, no_value.
+  #
+  # @param args [Array] An array of args of the format: method, method( global_id ), method( index_name, value ),
+  #   method( index_instance, value ), method( index_name => value ), method( index_instance => value ).
+  #
+  # @param require_value [true,false] Whether key value must be provided; will throw exception if true and
+  #   key value is not provided.
+  #
+  # @return [Array] Array containing index instance, key value, whether key value was provided.
+  #
   def parse_args_for_index_value_no_value( args, require_value = false )
     
     # * nil
@@ -101,8 +117,16 @@ module ::Persistence::Object::ParsePersistenceArgs
   #  process_file_key  #
   ######################
   
-  # do we have a file key? if so we need to replace it with File::Path or File::Contents
+  ###
+  # Internal helper method to handle instances of File as key.
+  #
+  # @param file_key [File] File instance to process as key.
+  #
+  # @return [Persistence::Object::Flat::File::Path,Persistence::Object::Flat::File::Contents] Processed key.
+  #
   def process_file_key( file_key )
+
+    # do we have a file key? if so we need to replace it with File::Path or File::Contents
 
     processed_key = nil
     

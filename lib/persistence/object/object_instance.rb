@@ -15,7 +15,17 @@ module ::Persistence::Object::ObjectInstance
 
   attr_local_configuration :persistence_port
 
-  # declare name of persistence port where object will be stored
+  ###
+  # Assign a persistence port to be used with this object.
+  #
+  # @overload persistence_port=( port_name )
+  #    
+  #   @param port_name Name of port to be used. Expects port by name to be available in Persistence controller.
+  #
+  # @overload persistence_port=( port_instance )
+  #
+  #   @param port_instance Port instance to use.
+  #
   def persistence_port=( persistence_port_class_or_name )
 
     case persistence_port_class_or_name
@@ -41,6 +51,12 @@ module ::Persistence::Object::ObjectInstance
   #  persistence_port  #
   ######################
   
+  ###
+  # Get persistence port that will be used with this object. Will use instance persistence port if no port is assigned,
+  #   which will result in using the current port if no instance persistence port is specified.
+  #
+  # @return [Persistence::Port,nil] Persistence port instance.
+  #
   def persistence_port
 
     # if specified at instance level, use specified value
@@ -55,7 +71,18 @@ module ::Persistence::Object::ObjectInstance
 
   attr_instance_setting :persistence_bucket
 
-  # declare name of persistence bucket where object will be stored
+  ###
+  # Assign a persistence bucket to be used with this object.
+  #
+  # @overload instance_persistence_bucket=( bucket_name )
+  #    
+  #   @param port_name [Symbol,String] Name of port to be used. Expects port by name to be available 
+  #     in Persistence controller.
+  #
+  # @overload instance_persistence_bucket=( bucket_instance )
+  #
+  #   @param port_instance [Persistence::Port::Bucket,nil] Persistence::Port::Bucket instance to use.
+  #
   def persistence_bucket=( persistence_bucket_class_or_name )
     
     if persistence_bucket_class_or_name.nil?
@@ -94,6 +121,12 @@ module ::Persistence::Object::ObjectInstance
   #  persistence_bucket  #
   ########################
   
+  ###
+  # Get persistence bucket that will be used with this object. Will use name of class if bucket
+  #   does not already exist.
+  #
+  # @return [Persistence::Port,nil] Persistence port instance.
+  #
   def persistence_bucket
 
     # if specified at instance level, use specified value
@@ -105,13 +138,44 @@ module ::Persistence::Object::ObjectInstance
   ####################
   #  persistence_id  #
   ####################
-
+  
+  ###
+  # Get persistence ID, used to identify unique objects.
+  #
   attr_instance_setting :persistence_id
 
   ##############
   #  persist!  #
   ##############
   
+  ###
+  # Store object to persistence port. Will cause all non-atomic properties to be updated if object has already
+  #   been persisted.
+  #
+  # @overload persist!
+  #
+  # @overload persist!( index_name, key )
+  # 
+  #   @param index_name [Symbol,String] Name of index for explicit key-based indexing.
+  #   @param key [Object] Key for explicit indexing.
+  #
+  # @overload persist!( index_name_key_hash )
+  #
+  #   @param index_name_key_hash [Hash{Symbol,String=>Object}] Name of index for explicit key-based indexing,
+  #     pointing to index value.
+  #
+  # @overload persist!( index_instance, key )
+  #
+  #   @param index_instance [Symbol,String] Name of index for explicit key-based indexing.
+  #   @param key [Object] Key for explicit indexing.
+  #
+  # @overload persist!( index_instance_key_hash )
+  #
+  #   @param index_instance_key_hash [Hash{Persistence::Object::Index=>Object}] Name of index  
+  #     for explicit key-based indexing, pointing to index value.
+  #
+  # @return self
+  #
   def persist!( *args )
     
     index_instance, key, no_key = parse_args_for_index_value_no_value( args, false )
@@ -156,6 +220,11 @@ module ::Persistence::Object::ObjectInstance
   #  persisted?  #
   ################
 
+  ###
+  # Query whether object is persisted in port.
+  #
+  # @return [true,false] Whether object is persisted.
+  #
   def persisted?
     
     bucket_name = persistence_port.get_bucket_name_for_object_id( persistence_id )
@@ -189,24 +258,42 @@ module ::Persistence::Object::ObjectInstance
   #  explicit_indexes  #
   ######################
   
+  ###
+  #
+  # @method explicit_indexes
+  #
+  # Hash holding explicit indexes: index_name => index.
+  #
+  # @return [CompositingHash{Symbol,String=>Persistence::Object::Index::ExplicitIndex}]
+  #
   attr_hash :explicit_indexes, ::Persistence::Object::IndexHash
   
   ###################
   #  block_indexes  #
   ###################
   
+  ###
+  #
+  # @method block_indexes
+  #
+  # Hash holding block indexes: index_name => index.
+  #
+  # @return [CompositingHash{Symbol,String=>Persistence::Object::Index::BlockIndex}]
+  #
   attr_hash :block_indexes, ::Persistence::Object::IndexHash
   
-  #######################
-  #  attribute_indexes  #
-  #######################
-  
-  attr_hash :attribute_indexes, ::Persistence::Object::IndexHash
-      
   #############
   #  indexes  #
   #############
 
+  ###
+  #
+  # @method indexes
+  #
+  # Hash holding indexes: index_name => index.
+  #
+  # @return [CompositingHash{Symbol,String=>Persistence::Object::Index}]
+  #
   attr_hash :indexes do
     
     #======================#
@@ -232,52 +319,4 @@ module ::Persistence::Object::ObjectInstance
     
   end
   
-  ###########
-  #  stop!  #
-  ###########
-
-  attr_setting :suspended, :stopped
-  
-  # suspend atomic writes and quietly suppress explicit calls to persist!
-  def stop!
-
-    self.stopped = true
-
-    # if we have a block we stop until the end
-    if block_given?
-      yield
-      resume!
-    end
-
-  end
-
-  ##############
-  #  suspend!  #
-  ##############
-  
-  # suspend atomic writes and fail explicit calls to persist!
-  def suspend!
-
-    self.suspended = true
-
-    # if we have a block we suspend until the end
-    if block_given?
-      yield
-      resume!
-    end
-
-  end
-
-  #############
-  #  resume!  #
-  #############
-  
-  # resume atomic writes and no longer suppress explicit calls to persist!
-  def resume!
-
-    self.suspended = false
-    self.stopped = false
-
-  end
-
 end

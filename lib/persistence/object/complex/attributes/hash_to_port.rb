@@ -1,4 +1,9 @@
 
+###
+# @private
+#
+# Hash subclass used for encapsulating common process of translation from Ruby key/value to storage key/value.
+#
 class ::Persistence::Object::Complex::Attributes::HashToPort < ::Hash
 
   attr_accessor :persistence_object
@@ -7,9 +12,14 @@ class ::Persistence::Object::Complex::Attributes::HashToPort < ::Hash
   #  []=  #
   #########
   
+  ###
+  #
+  # @private
+  #
+  # Automatically convert key/value to primary key/storage value. 
+  #
   def []=( key, value )
 
-    
     primary_key = nil
     attribute_value_to_port = nil
     

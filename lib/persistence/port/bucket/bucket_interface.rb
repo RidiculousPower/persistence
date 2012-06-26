@@ -1,4 +1,7 @@
 
+###
+# Interface for Bucket implementation. Provided separately for easy overriding.
+#
 module ::Persistence::Port::Bucket::BucketInterface
 
   include ::Persistence::Object::Flat::File::FilePersistence
@@ -9,6 +12,12 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  initialize  #
   ################
 
+  ###
+  #
+  # @param parent_port Port where this bucket is active. Can be nil if no port is yet enabled.
+  #
+  # @param bucket_name Name of the bucket to open in port.
+  #
   def initialize( parent_port, bucket_name )
 
     @name = bucket_name
@@ -26,6 +35,11 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  initialize_for_port  #
   #########################
   
+  ###
+  # Initialize bucket for a port that has been enabled.
+  #
+  # @param port Parent port in which to initialize bucket.
+  #
   def initialize_for_port( port )
 
     if port = ::Persistence.port_for_name_or_port( port ) and port.enabled?
@@ -57,6 +71,11 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  adapter_bucket  #
   ####################
   
+  ###
+  # Retrieve parallel adapter bucket instance.
+  #
+  # @return [Object] Adapter bucket instance.
+  #
   def adapter_bucket
     
     unless @adapter_bucket
@@ -71,6 +90,11 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  name  #
   ##########
   
+  ###
+  # @!attribute [accessor] Name of bucket
+  #
+  # @return [Symbol,String] Name.
+  #
   attr_accessor :name
   
   #################
@@ -83,6 +107,12 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  disable  #
   #############
 
+  ###
+  # @private
+  #
+  # Disable bucket when port disables. Internal helper method necessary to ensure 
+  # that old references don't stick around.
+  #
   def disable
 
     @adapter_bucket = nil
@@ -98,6 +128,9 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  create_index  #
   ##################
   
+  ###
+  # Create a bucket index, which is a block index that runs on each inserted object, regardless of type.
+  #
   def create_index( index_name, sort_by_proc = nil, & indexing_block )
     
     return create_bucket_index( index_name, false, sort_by_proc, & indexing_block )
@@ -108,6 +141,9 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  create_index_with_duplicates  #
   ##################################
   
+  ###
+  # Create a bucket index that permits duplicates.
+  #
   def create_index_with_duplicates( index_name, sort_by_proc = nil, sort_duplicates_by_proc = nil, & indexing_block )
 
     return create_bucket_index( index_name, true, sort_by_proc, sort_duplicates_by_proc, & indexing_block )
@@ -118,6 +154,13 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  pend_index  #
   ################
   
+  ###
+  # @private
+  #
+  # Pend index instance for port to be enabled.
+  #
+  # @param index_instance Instance of index that is waiting for port to be enabled.
+  #
   def pend_index( index_instance )
     
     @pending_indexes.push( index_instance )
@@ -128,6 +171,15 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  index  #
   ###########
   
+  ###
+  # Retrieve index.
+  #
+  # @param index_name [Symbol,String] Name of index
+  # 
+  # @param ensure_exists [true,false] Whether exception should be thrown if index does not exist.
+  #
+  # @return [Persistence::Object::Index] Index instance
+  #
   def index( index_name, ensure_exists = false )
     
     index_instance = nil
@@ -146,9 +198,24 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  has_index?  #
   ################
   
-  def has_index?( index_name )
+  ###
+  # Query whether attribute index(es) exist for object.
+  #
+  # @overload has_attribute_index?( index_name, ... )
+  #
+  #   @param index_name Name of requested index.
+  #
+  # @return [true,false] Whether index(es) exist.
+  #
+  def has_index?( *indexes )
     
-    return ( @indexes[ index_name ] ? true : false )
+    has_index = false
+    
+    indexes.each do |this_index|
+      break unless has_index = @indexes.has_key?( index_name )
+    end
+    
+    return has_index
     
   end
 
@@ -156,6 +223,11 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  count  #
   ###########
 
+  ###
+  # Get the number of objects in index. See {::Enumerable}.
+  #
+  # @return [Integer] Number of objects in bucket.
+  #
   def count( *args, & count_block ) 
 
     return_value = 0
@@ -176,6 +248,15 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  delete_index_for_object  #
   #############################
 
+  ###
+  # @private
+  #
+  # Delete indexed entries for object.
+  #
+  # @param object Object that owns indexed entries.
+  #
+  # @param index_name Name of index.
+  #
   def delete_index_for_object( object, index_name )
 
     return delete_index_for_object_id( object.persistence_id )
@@ -186,6 +267,15 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  delete_index_for_object_id  #
   ################################
   
+  ###
+  # @private
+  #
+  # Delete indexed entries for object.
+  #
+  # @param global_id Object persistence ID that owns indexed entries.
+  #
+  # @param index_name Name of index.
+  #
   def delete_index_for_object_id( global_id, index_name )
 
     return adapter_bucket.delete_index_for_object_id( global_id )
@@ -195,7 +285,16 @@ module ::Persistence::Port::Bucket::BucketInterface
   ###################
   #  get_attribute  #
   ###################
-
+  
+  ###
+  # @private
+  #
+  # Get attribute for object from port. 
+  #
+  # @param object Object that owns indexed entries.
+  #
+  # @param attribute_name Name of attribute.
+  #
   def get_attribute( object, attribute_name )
     
     primary_key = primary_key_for_attribute_name( object, attribute_name )
@@ -211,69 +310,40 @@ module ::Persistence::Port::Bucket::BucketInterface
 
   end
 
-  ############
-  #  cursor  #
-  ############
-
-  ###
-  # Create and return cursor instance for this bucket.
-  #
-  # @return [Persistence::Cursor] New cursor instance.
-  #
-  def cursor( *args, & block )
-    
-    cursor_instance = ::Persistence::Cursor.new( self )
-    
-    if args.count > 0
-      cursor_instance.persisted?( *args )
-    end
-    
-    if block_given?
-      cursor_instance = cursor_instance.instance_eval( & block )
-      cursor_instance.close
-    end
-    
-    return cursor_instance
+  ####################
+  #  put_attribute!  #
+  ####################
   
-  end
-
-  ###################
-  #  atomic_cursor  #
-  ###################
-
   ###
-  # Create and return cursor instance for this index enabled to load all object properties as atomic.
-  #   See Persistence::Cursor#atomize.
+  # @private
   #
-  # @return [Persistence::Cursor] New cursor instance.
+  # Put attribute for object to port. 
   #
-  def atomic_cursor( *args )
+  # @param object Object that owns indexed entries.
+  #
+  # @param attribute_name Name of attribute.
+  #
+  # @param attribute_value Value to put.
+  #
+  def put_attribute!( object, attribute_name, attribute_value )
     
-    return cursor( *args ).atomize
-  
-  end
-
-  ##########
-  #  each  #
-  ##########
-
-  ###
-  # Iterate objects in current bucket.
-  #
-  # @yield [object] Current object.
-  #
-  # @yieldparam object Object stored in bucket.
-  #
-  def each( & block )
+    primary_key = primary_key_for_attribute_name( object, attribute_name )
     
-    return atomic_cursor.each( & block )
-
+    return adapter_bucket.put_attribute!( object, primary_key, attribute_value )
+    
   end
 
   #################
   #  put_object!  #
   #################
-
+  
+  ###
+  # @private
+  #
+  # Put object properties to persistence port.
+  #
+  # @param object Object to persist to port.
+  #
   def put_object!( object )    
 
     return adapter_bucket.put_object!( object )
@@ -284,6 +354,15 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  get_object  #
   ################
 
+  ###
+  # @private
+  #
+  # Get object from persistence port.
+  #
+  # @param global_id Object persistence ID to persist from port.
+  #
+  # @return [Object] Persisted object instance.
+  #
   def get_object( global_id )
     
     object = nil
@@ -316,6 +395,15 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  get_object_hash  #
   #####################
 
+  ###
+  # @private
+  #
+  # Get object properties from persistence port.
+  #
+  # @param global_id Object persistence ID to persist from port.
+  #
+  # @return [Hash] Persistence hash from port.
+  #
   def get_object_hash( global_id )
 
     return adapter_bucket.get_object( global_id )
@@ -326,6 +414,15 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  get_flat_object  #
   #####################
 
+  ###
+  # @private
+  #
+  # Get flat object from persistence port.
+  #
+  # @param global_id Object persistence ID to persist from port.
+  #
+  # @return [Object] Persisted object instance.
+  #
   def get_flat_object( global_id )
 
     flat_object = nil
@@ -346,28 +443,34 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  delete_object!  #
   ####################
 
+  ###
+  # @private
+  #
+  # Delete object from persistence port.
+  #
+  # @param global_id Object persistence ID to delete from port.
+  #
+  # @return [Hash] Persistence hash from port.
+  #
   def delete_object!( global_id )
     
     return adapter_bucket.delete_object!( global_id )
   
   end
 
-  ####################
-  #  put_attribute!  #
-  ####################
-  
-  def put_attribute!( object, attribute_name, attribute_value )
-    
-    primary_key = primary_key_for_attribute_name( object, attribute_name )
-    
-    return adapter_bucket.put_attribute!( object, primary_key, attribute_value )
-    
-  end
-
   #######################
   #  delete_attribute!  #
   #######################
 
+  ###
+  # @private
+  #
+  # Delete attribute for object from port. 
+  #
+  # @param object Object that owns indexed entries.
+  #
+  # @param attribute_name Name of attribute.
+  #
   def delete_attribute!( object, attribute_name )
 
     primary_key = primary_key_for_attribute_name( object, attribute_name )
@@ -380,6 +483,17 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  primary_key_for_attribute_name  #
   ####################################
 
+  ###
+  # @private
+  #
+  # Generate primary key for storage for attribute name on object.
+  #
+  # @param object Object for which attribute is being stored.
+  #
+  # @param attribute_name Name of attribute.
+  #
+  # @return [String] Primary key.
+  #
   def primary_key_for_attribute_name( object, attribute_name )
 
     return adapter_bucket.primary_key_for_attribute_name( object, attribute_name )
@@ -458,6 +572,65 @@ module ::Persistence::Port::Bucket::BucketInterface
     
   end
 
+  ############
+  #  cursor  #
+  ############
+
+  ###
+  # Create and return cursor instance for this bucket.
+  #
+  # @return [Persistence::Cursor] New cursor instance.
+  #
+  def cursor( *args, & block )
+    
+    cursor_instance = ::Persistence::Cursor.new( self )
+    
+    if args.count > 0
+      cursor_instance.persisted?( *args )
+    end
+    
+    if block_given?
+      cursor_instance = cursor_instance.instance_eval( & block )
+      cursor_instance.close
+    end
+    
+    return cursor_instance
+  
+  end
+
+  ###################
+  #  atomic_cursor  #
+  ###################
+
+  ###
+  # Create and return cursor instance for this index enabled to load all object properties as atomic.
+  #   See Persistence::Cursor#atomize.
+  #
+  # @return [Persistence::Cursor] New cursor instance.
+  #
+  def atomic_cursor( *args )
+    
+    return cursor( *args ).atomize
+  
+  end
+
+  ##########
+  #  each  #
+  ##########
+
+  ###
+  # Iterate objects in current bucket.
+  #
+  # @yield [object] Current object.
+  #
+  # @yieldparam object Object stored in bucket.
+  #
+  def each( & block )
+    
+    return atomic_cursor.each( & block )
+
+  end
+
   ##################################################################################################
       private ######################################################################################
   ##################################################################################################
@@ -466,6 +639,22 @@ module ::Persistence::Port::Bucket::BucketInterface
   #  create_bucket_index  #
   #########################
   
+  ###
+  # Internal helper method for common code to create bucket indexs.
+  #
+  # @param index_name Name of index to create.
+  # 
+  # @param permits_duplicates Whether index should permit duplicates.
+  # 
+  # @param sort_by_proc [Proc] Proc to use for sorting objects.
+  #
+  # @param sort_duplicates_by_proc [Proc] Proc to use for sorting duplicate objects.
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
+  # @return [Persistence::Port::Bucket::BucketIndex]
+  #
   def create_bucket_index( index_name, 
                            permits_duplicates, 
                            sort_by_proc = nil, 

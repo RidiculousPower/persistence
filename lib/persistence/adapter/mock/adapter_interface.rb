@@ -1,4 +1,7 @@
 
+###
+# Interface implementation for storage port in Mock adapter.
+#
 module ::Persistence::Adapter::Mock::AdapterInterface
 
   include ::Persistence::Adapter::Abstract::EnableDisable

@@ -1,4 +1,7 @@
 
+###
+# Class methods for array objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::Complex::Array::ClassInstance
   
   #############

@@ -1,29 +1,26 @@
 
+###
+# Module managing atomic/non-atomic attribute status to define how objects persist.
+#
 module ::Persistence::Object::Complex::Attributes
 
   include ::CascadingConfiguration::Hash
   include ::CascadingConfiguration::Array::Sorted::Unique
   include ::CascadingConfiguration::Setting
 
-  ##################
-  #  attr_atomic!  #
-  ##################
-
-  def attr_atomic!
-    
-    non_atomic_attributes.each do |this_attribute|
-      attr_atomic_accessor( this_attribute )
-    end
-    
-    return self
-    
-  end
-
   ##########################
   #  attr_atomic_accessor  #
   ##########################
 
-  # declare one or more attributes to persist atomically
+  ###
+  # Declare one or more attributes to persist atomically.
+  #
+  # @overload attr_atomic_accessor( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return self
+  #
   def attr_atomic_accessor( *attributes )
 
     attr_atomic_reader( *attributes )
@@ -37,7 +34,15 @@ module ::Persistence::Object::Complex::Attributes
   #  attr_atomic_reader  #
   ########################
 
-  # declare one or more attributes to persist from the database atomically (but not write atomically)
+  ###
+  # Declare one or more attributes to persist from the database atomically (but not write atomically).
+  #
+  # @overload attr_atomic_reader( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return self
+  #
   def attr_atomic_reader( *attributes )
 
     atomic_attribute_readers.push( *attributes )
@@ -54,7 +59,15 @@ module ::Persistence::Object::Complex::Attributes
   #  attr_atomic_writer  #
   ########################
 
-  # declare one or more attributes to persist to the database atomically (but not read atomically)
+  ###
+  # Declare one or more attributes to persist to the database atomically (but not read atomically).
+  #
+  # @overload attr_atomic_writer( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return self
+  #
   def attr_atomic_writer( *attributes )
 
     atomic_attribute_writers.push( *attributes )
@@ -71,7 +84,15 @@ module ::Persistence::Object::Complex::Attributes
   #  attr_non_atomic_accessor  #
   ##############################
 
-  # declare one or more attributes to persist only non-atomically
+  ###
+  # Declare one or more attributes to persist only non-atomically.
+  #
+  # @overload attr_atomic_writer( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return self
+  #
   def attr_non_atomic_accessor( *attributes )
     
     attr_non_atomic_reader( *attributes )
@@ -85,6 +106,15 @@ module ::Persistence::Object::Complex::Attributes
   #  attr_non_atomic_reader  #
   ############################
 
+  ###
+  # Declare one or more attributes to read from the database (but not write to it) only non-atomically.
+  #
+  # @overload attr_non_atomic_reader( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return self
+  #
   def attr_non_atomic_reader( *attributes )
 
     non_atomic_attribute_readers.push( *attributes )
@@ -103,6 +133,15 @@ module ::Persistence::Object::Complex::Attributes
   #  attr_non_atomic_writer  #
   ############################
 
+  ###
+  # Declare one or more attributes to write to the database (but not read from it) only non-atomically.
+  #
+  # @overload attr_non_atomic_writer( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return self
+  #
   def attr_non_atomic_writer( *attributes )
 
     non_atomic_attribute_writers.push( *attributes )
@@ -120,8 +159,10 @@ module ::Persistence::Object::Complex::Attributes
   ###################
   #  attrs_atomic!  #
   ###################
-
-  #  declare all attributes persist atomically
+  
+  ###
+  # Declare all attributes to persist atomically.
+  #
   def attrs_atomic!
 
     return attr_atomic_accessor( *non_atomic_attributes.keys )
@@ -132,7 +173,9 @@ module ::Persistence::Object::Complex::Attributes
   #  attrs_non_atomic!  #
   #######################
 
-  # declare all attributes persist non-atomically
+  ###
+  # Declare all attributes to persist non-atomically.
+  #
   def attrs_non_atomic!
 
     # move all declared elements from atomic into non-atomic
@@ -144,6 +187,15 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute?  #
   #######################
   
+  ###
+  # Query whether attribute(s) has atomic reader or writer.
+  #
+  # @overload atomic_attribute?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as atomic reader or writer.
+  #
   def atomic_attribute?( *attributes )
 
     return atomic_attributes.has_attributes?( *attributes )
@@ -154,6 +206,15 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_accessor?  #
   ################################
   
+  ###
+  # Query whether attribute(s) are both atomic readers and writers.
+  #
+  # @overload atomic_attribute_accessor?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as both atomic readers and writers.
+  #
   def atomic_attribute_accessor?( *attributes )
 
     return atomic_attribute_accessors.has_attributes?( *attributes )
@@ -163,7 +224,16 @@ module ::Persistence::Object::Complex::Attributes
   ##############################
   #  atomic_attribute_reader?  #
   ##############################
-  
+    
+  ###
+  # Query whether attribute(s) are atomic readers.
+  #
+  # @overload atomic_attribute_accessor?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as atomic readers.
+  #
   def atomic_attribute_reader?( *attributes )
 
     return atomic_attribute_readers.has_attributes?( *attributes )
@@ -174,6 +244,15 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_writer?  #
   ##############################
   
+  ###
+  # Query whether attribute(s) are atomic writers.
+  #
+  # @overload atomic_attribute_accessor?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as atomic writers.
+  #
   def atomic_attribute_writer?( *attributes )
 
     return atomic_attribute_writers.has_attributes?( *attributes )
@@ -184,6 +263,13 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_status  #
   #############################
   
+  ###
+  # Query atomic attribute(s) status (:reader/:writer/:accessor/nil).
+  #
+  # @param attribute Name of attribute.
+  #
+  # @return [:reader/:writer/:accessor/nil] Atomic attribute status.
+  #
   def atomic_attribute_status( attribute )
 
     return atomic_attributes[ attribute ]
@@ -194,6 +280,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute?  #
   ###########################
   
+  ###
+  # Query whether attribute(s) has non-atomic reader or writer.
+  #
+  # @overload non_atomic_attribute?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as non-atomic readers or writers.
+  #
   def non_atomic_attribute?( *attributes )
 
     return non_atomic_attributes.has_attributes?( *attributes )
@@ -204,6 +299,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_accessor?  #
   ####################################
   
+  ###
+  # Query whether attribute(s) are both non-atomic readers and writers.
+  #
+  # @overload atomic_attribute_accessor?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as non-atomic readers and writers.
+  #
   def non_atomic_attribute_accessor?( *attributes )
 
     return non_atomic_attribute_accessors.has_attributes?( *attributes )
@@ -214,6 +318,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_reader?  #
   ##################################
   
+  ###
+  # Query whether attribute(s) are non-atomic readers.
+  #
+  # @overload atomic_attribute_accessor?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as non-atomic readers.
+  #
   def non_atomic_attribute_reader?( *attributes )
 
     return non_atomic_attribute_readers.has_attributes?( *attributes )
@@ -224,6 +337,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_writer?  #
   ##################################
   
+  ###
+  # Query whether attribute(s) are non-atomic writers.
+  #
+  # @overload atomic_attribute_accessor?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as non-atomic writers.
+  #
   def non_atomic_attribute_writer?( *attributes )
 
     return non_atomic_attribute_writers.has_attributes?( *attributes )
@@ -234,6 +356,13 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_status  #
   #################################
   
+  ###
+  # Query non-atomic attribute(s) status (:reader/:writer/:accessor/nil).
+  #
+  # @param attribute Name of attribute.
+  #
+  # @return [:reader/:writer/:accessor/nil] Atomic attribute status.
+  #
   def non_atomic_attribute_status( attribute )
 
     return non_atomic_attributes[ attribute ]
@@ -244,6 +373,15 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute?  #
   ###########################
   
+  ###
+  # Query whether attribute(s) has atomic or non-atomic reader or writer.
+  #
+  # @overload persistent_attribute?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as atomic or non-atomic readers or writers.
+  #
   def persistent_attribute?( *attributes )
 
     return persistent_attributes.has_attributes?( *attributes )
@@ -254,6 +392,15 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_accessor?  #
   ####################################
   
+  ###
+  # Query whether attribute(s) are either atomic or non-atomic readers and writers.
+  #
+  # @overload persistent_attribute_accessor?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as either atomic or non-atomic readers and writers.
+  #
   def persistent_attribute_accessor?( *attributes )
 
     return persistent_attribute_accessors.has_attributes?( *attributes )
@@ -264,6 +411,15 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_reader?  #
   ##################################
   
+  ###
+  # Query whether attribute(s) are atomic or non-atomic readers.
+  #
+  # @overload persistent_attribute_reader?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as atomic or non-atomic readers.
+  #
   def persistent_attribute_reader?( *attributes )
 
     return persistent_attribute_readers.has_attributes?( *attributes )
@@ -274,6 +430,15 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_writer?  #
   ##################################
   
+  ###
+  # Query whether attribute(s) are atomic or non-atomic writers.
+  #
+  # @overload persistent_attribute_reader?( attribute_name, ... )
+  #
+  #   @param attribute_name Name of attribute.
+  #
+  # @return [true,false] Whether object has attribute(s) as atomic or non-atomic writers.
+  #
   def persistent_attribute_writer?( *attributes )
 
     return persistent_attribute_writers.has_attributes?( *attributes )
@@ -284,6 +449,13 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_status  #
   #################################
   
+  ###
+  # Query persistent attribute(s) status (:reader/:writer/:accessor/nil).
+  #
+  # @param attribute Name of attribute.
+  #
+  # @return [:reader/:writer/:accessor/nil] Persistent attribute status.
+  #
   def persistent_attribute_status( attribute )
 
     return persistent_attributes[ attribute ]
@@ -293,7 +465,16 @@ module ::Persistence::Object::Complex::Attributes
   #######################
   #  atomic_attributes  #
   #######################
-
+  
+  ###
+  #
+  # @method atomic_attributes
+  #
+  # Hash tracking atomic attribute status
+  #
+  # @return [CompositingHash] Hash extended with {::Persistence::Object::Complex::Attributes::AttributesHash 
+  #   Persistence::Object::Complex::Attributes::AttributesHash}.
+  #
   attr_hash  :atomic_attributes, AttributesHash do
 
     #=======================#
@@ -469,6 +650,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attributes  #
   ###########################
   
+  ###
+  #
+  # @method non_atomic_attributes
+  #
+  # Hash tracking non-atomic attribute status
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesHash 
+  #   Persistence::Object::Complex::Attributes::AttributesHash}.
+  #
   attr_hash  :non_atomic_attributes, AttributesHash do
 
     #=======================#
@@ -643,6 +833,16 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attributes  #
   ###########################
   
+  ###
+  #
+  # @method persistent_attributes
+  #
+  # Hash tracking persistent attribute status
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesHash 
+  #   Persistence::Object::Complex::Attributes::AttributesHash} and {::Persistence::Object::Complex::Attributes::AttributesHash 
+  #   Persistence::Object::Complex::Attributes::DefaultAtomicNonAtomic}.
+  #
   attr_hash  :persistent_attributes, AttributesHash, DefaultAtomicNonAtomic do
 
     #===================#
@@ -803,6 +1003,15 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_readers  #
   ##############################
 
+  ###
+  #
+  # @method atomic_attribute_readers
+  #
+  # Array tracking atomic attribute readers
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray}.
+  #
   attr_sorted_unique_array :atomic_attribute_readers, AttributesArray do
 
     #=================#
@@ -855,6 +1064,15 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_writers  #
   ##############################
 
+  ###
+  #
+  # @method atomic_attribute_writers
+  #
+  # Array tracking atomic attribute writers.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray}.
+  #
   attr_sorted_unique_array :atomic_attribute_writers, AttributesArray do
     
     #=================#
@@ -907,6 +1125,15 @@ module ::Persistence::Object::Complex::Attributes
   #  atomic_attribute_accessors  #
   ################################
 
+  ###
+  #
+  # @method atomic_attribute_accessors
+  #
+  # Array tracking atomic attribute accessors.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray}.
+  #
   attr_sorted_unique_array :atomic_attribute_accessors, AttributesArray do
     
     #=================#
@@ -958,6 +1185,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_readers  #
   ##################################
 
+  ###
+  #
+  # @method non_atomic_attribute_readers
+  #
+  # Array tracking non-atomic attribute readers.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray}.
+  #
   attr_sorted_unique_array :non_atomic_attribute_readers, AttributesArray do
 
     #=================#
@@ -1010,6 +1246,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_writers  #
   ##################################
 
+  ###
+  #
+  # @method non_atomic_attribute_writers
+  #
+  # Array tracking non-atomic attribute writers.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray}.
+  #
   attr_sorted_unique_array :non_atomic_attribute_writers, AttributesArray do
     
     #=================#
@@ -1062,6 +1307,15 @@ module ::Persistence::Object::Complex::Attributes
   #  non_atomic_attribute_accessors  #
   ####################################
 
+  ###
+  #
+  # @method non_atomic_attribute_accessors
+  #
+  # Array tracking non-atomic attribute accessors.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray}.
+  #
   attr_sorted_unique_array :non_atomic_attribute_accessors, AttributesArray do
     
     #=================#
@@ -1113,6 +1367,17 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_readers  #
   ##################################
 
+  ###
+  #
+  # @method persistent_attribute_readers
+  #
+  # Array tracking persistent attribute readers.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray} and 
+  #   {::Persistence::Object::Complex::Attributes::DefaultAtomicNonAtomic 
+  #   Persistence::Object::Complex::Attributes::DefaultAtomicNonAtomic}.
+  #
   attr_sorted_unique_array :persistent_attribute_readers, AttributesArray, DefaultAtomicNonAtomic do
 
     #===================#
@@ -1229,6 +1494,17 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_writers  #
   ##################################
 
+  ###
+  #
+  # @method persistent_attribute_writers
+  #
+  # Array tracking persistent attribute writers.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray} and 
+  #   {::Persistence::Object::Complex::Attributes::DefaultAtomicNonAtomic 
+  #   Persistence::Object::Complex::Attributes::DefaultAtomicNonAtomic}.
+  #
   attr_sorted_unique_array :persistent_attribute_writers, AttributesArray, DefaultAtomicNonAtomic do
     
     #===================#
@@ -1345,6 +1621,17 @@ module ::Persistence::Object::Complex::Attributes
   #  persistent_attribute_accessors  #
   ####################################
 
+  ###
+  #
+  # @method persistent_attribute_accessors
+  #
+  # Array tracking persistent attribute accessors.
+  #
+  # @return [CompositingHash] CompositingHash extended with {::Persistence::Object::Complex::Attributes::AttributesArray 
+  #   Persistence::Object::Complex::Attributes::AttributesArray} and 
+  #   {::Persistence::Object::Complex::Attributes::DefaultAtomicNonAtomic 
+  #   Persistence::Object::Complex::Attributes::DefaultAtomicNonAtomic}.
+  #
   attr_sorted_unique_array :persistent_attribute_accessors, AttributesArray, DefaultAtomicNonAtomic do
     
     #===================#
@@ -1465,6 +1752,9 @@ module ::Persistence::Object::Complex::Attributes
   #  define_reader  #
   ###################
 
+  ###
+  # Define attribute reader.
+  #
   def define_reader( attribute )
     
     instance_controller = ::CascadingConfiguration::Core::InstanceController.create_instance_controller( self )
@@ -1483,6 +1773,9 @@ module ::Persistence::Object::Complex::Attributes
   #  define_writer  #
   ###################
 
+  ###
+  # Define attribute writer.
+  #
   def define_writer( attribute )
 
     write_accessor_name = attribute.write_accessor_name
@@ -1503,6 +1796,9 @@ module ::Persistence::Object::Complex::Attributes
   #  define_atomic_accessor  #
   ############################
 
+  ###
+  # Define attribute accessor.
+  #
   def define_atomic_accessor( attribute )
     define_reader( attribute )
     define_writer( attribute )

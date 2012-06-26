@@ -1,11 +1,19 @@
 
+###
+# Interface for block index instances, which index keys provided by running a Proc on an object instance.
+#
 module ::Persistence::Object::Index::BlockIndex::BlockIndexInterface
   
   include ::Persistence::Object::Index
   
   include ::CascadingConfiguration::Setting
   include ::CascadingConfiguration::Array
-
+  
+  ###
+  #
+  # @yield [object] Block to create index keys on object.
+  # @yieldparam object [Object] Object to index.
+  #
   def initialize( index_name, 
                   parent_bucket, 
                   permits_duplicates = nil, 
@@ -29,24 +37,44 @@ module ::Persistence::Object::Index::BlockIndex::BlockIndexInterface
   #  requires_keys  #
   ###################
 
+  ###
+  # Whether index requires keys be generated when block is run.
+  #
+  # @return [true,false] Whether keys must be generated.
+  #
   attr_setting  :requires_keys
 
   #######################
   #  permits_nil_keys?  #
   #######################
   
+  ###
+  # Whether index permits nil keys be generated when block is run.
+  #
+  # @return [true,false] Whether keys must be non-nil.
+  #
   attr_setting  :permits_nil_keys?
 
   ####################
   #  indexing_procs  #
   ####################
-
+  
+  ###
+  # Procs used to generate keys.
+  #
+  # @return [CompositingArray<Proc>] Procs for key generation.
+  #
   attr_array  :indexing_procs
     
   ##################
   #  index_object  #
   ##################
 
+  ###
+  # Index keys for object instance.
+  #
+  # @param object [Object] Object to index.
+  #
   def index_object( object )
 
     # get key(s) from block(s)

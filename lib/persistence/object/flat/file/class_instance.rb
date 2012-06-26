@@ -1,4 +1,7 @@
 
+###
+# Class methods for File objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::Flat::File::ClassInstance
 
   include ::Persistence::Object::Flat::File::FilePersistence
@@ -45,6 +48,13 @@ module ::Persistence::Object::Flat::File::ClassInstance
   #  persists_files_by_path?  #
   #############################
 
+  ###
+  # Query whether File instances should be persisted by path (rather than by content).
+  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+  #   Persistence singleton.
+  #
+  # @return [true,false] Whether files should be persisted by path rather than by content.
+  #
   def persists_files_by_path?
     
     persists_files_by_path = nil
@@ -63,6 +73,13 @@ module ::Persistence::Object::Flat::File::ClassInstance
   #  persists_file_paths_as_objects?  #
   #####################################
 
+  ###
+  # Query whether File paths should be persisted as objects (rather than by strings).
+  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+  #   Persistence singleton.
+  #
+  # @return [true,false] Whether files should be persisted as objects rather than as strings.
+  #
   def persists_file_paths_as_objects?
     
     persists_file_paths_as_objects = nil
@@ -81,6 +98,13 @@ module ::Persistence::Object::Flat::File::ClassInstance
   #  persists_file_paths_as_strings?  #
   #####################################
 
+  ###
+  # Query whether File paths should be persisted as strings (rather than by objects).
+  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
+  #   Persistence singleton.
+  #
+  # @return [true,false] Whether files should be persisted as strings rather than as objects.
+  #
   def persists_file_paths_as_strings?
     
     persists_file_paths_as_strings = nil

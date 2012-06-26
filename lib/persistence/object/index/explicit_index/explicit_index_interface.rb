@@ -1,23 +1,30 @@
 
+###
+# Interface for explicit index instances, which index keys that are explicitly provided.
+#
 module ::Persistence::Object::Index::ExplicitIndex::ExplicitIndexInterface
   
   include ::Persistence::Object::Index
   
-  ############################
-  #  index_existing_objects  #
-  ############################
-  
-  def index_existing_objects
-    
-   # implement in module as necessary
-   # arbitrary key/value indexing does not ever index existing objects automatically
-
-  end
+  ###
+  #
+  # @method index_existing_objects
+  #
+  # We undefine :index_existing_objects because it makes no sense on an index requiring explicit keys.
+  # 
+  undef_method( :index_existing_objects )
 
   ##################
   #  index_object  #
   ##################
 
+  ###
+  # Index keys for object instance.
+  #
+  # @param object [Object] Object to index.
+  #
+  # @param keys [Array<Object>] Keys to use for index entries.
+  #
   def index_object( object, *keys )
     
     if keys.empty?

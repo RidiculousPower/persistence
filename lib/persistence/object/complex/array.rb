@@ -1,4 +1,7 @@
 
+###
+# Convenience module for extending array types (singletons and instances) with persistence capabilities.
+#
 module ::Persistence::Object::Complex::Array
 
   extend ModuleCluster::Define::ClusterCascades

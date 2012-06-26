@@ -1,10 +1,29 @@
 
+###
+# Methods applied to object instances of complex objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::Complex::ObjectInstance
 
   include ::Persistence::Object::Complex::Attributes
 
   include ::Persistence::Object::Complex::ClassAndObjectInstance
 
+  include ::CascadingConfiguration::Hash
+
+  #######################
+  #  attribute_indexes  #
+  #######################
+  
+  ###
+  #
+  # @method attribute_indexes
+  #
+  # Hash holding attribute indexes: index_name => index.
+  #
+  # @return [CompositingHash{Symbol,String=>Persistence::Object::Complex::Index::AttributeIndex}]
+  #
+  attr_hash :attribute_indexes, ::Persistence::Object::IndexHash
+      
   ########
   #  ==  # 
   ########
@@ -90,6 +109,13 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  index_attributes  #
   ######################
   
+  ###
+  # @private
+  #
+  # Perform indexing on attributes with indexes.
+  #
+  # @return self
+  #
   def index_attributes
 
     attribute_indexes.each do |this_attribute_name, this_attribute_index|
@@ -158,7 +184,12 @@ module ::Persistence::Object::Complex::ObjectInstance
   ###################
   #  get_attribute  #
   ###################
-
+ 
+  ####
+  # @private
+  #
+  # Method used when defining implicit getter for attr_atomic/attr_non_atomic.
+  #
   def get_attribute( attribute )
     
     value = nil
@@ -208,6 +239,11 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  set_attribute  #
   ###################
 
+  ####
+  # @private
+  #
+  # Method used when defining implicit setter for attr_atomic/attr_non_atomic.
+  #
   def set_attribute( attribute, value )
     
     variable_name = attribute.variable_name
@@ -242,6 +278,11 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  load_atomic_state  #
   #######################
   
+  ###
+  # Helper method to load atomic state into object so that it can be inspected.
+  #
+  # @return self
+  #
   def load_atomic_state
     
     atomic_attribute_readers.each do |this_attribute|
@@ -256,6 +297,11 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  persist_as_sub_object_or_attribute_and_return_id_or_value  #
   ###############################################################
  
+  ###
+  # @private
+  #
+  # Helper method for persistence for nested objects.
+  #
   def persist_as_sub_object_or_attribute_and_return_id_or_value( value )
   
     if is_complex_object?( value ) and ! self.class.persists_flat?( value )
@@ -278,9 +324,13 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  persistence_hash_to_port  #
   ##############################
 
-  # returns persistence hash unique key => storage data
-  # unique key is an array
-  # adapter responsible for constructing actual storage schema for unique identifier described by key
+  ###
+  # @private
+  #
+  # Generate hash representing object.
+  #
+  # @return [Hash] Hash representing information to reproduce object instance.
+  #
   def persistence_hash_to_port
 
     persistence_hash = ::Persistence::Object::Complex::Attributes::HashToPort.new
@@ -298,6 +348,17 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  load_persistence_hash  #
   ###########################
 
+  ###
+  # @private
+  # 
+  # Helper method for creating object when persisting from storage port.
+  #
+  # @param port Storage port object is being loaded from.
+  #
+  # @param persistence_ivar_hash Hash of data from storage port.
+  #
+  # @return self
+  #
   def load_persistence_hash( port, persistence_ivar_hash )
 
     self.persistence_port = port
@@ -320,10 +381,23 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  load_persistence_value  #
   ############################
   
+  ###
+  # @private
+  #
+  # Helper method for loading data from persistence hash from storage port.
+  #
+  # @param attribute_name Attribute being loaded.
+  #
+  # @param attribute_value Attribute value to load.
+  #
+  # @return self
+  #
   def load_persistence_value( attribute_name, attribute_value )
     
     __send__( attribute_name.write_accessor_name, attribute_value )
   
+    return self
+    
   end
 
   ##################################################################################################
@@ -334,6 +408,10 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  remove_atomic_attribute_values  #
   ####################################
   
+  ###
+  # Helper method for initial persistence to storage port to remove atomic variables once persistence ID
+  #   has been created.
+  #
   def remove_atomic_attribute_values
     
     encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
@@ -355,6 +433,13 @@ module ::Persistence::Object::Complex::ObjectInstance
   #  is_complex_object?  #
   ########################
   
+  ###
+  # Helper method to query whether object should be treated as a complex object.
+  #
+  # @param object Object to test
+  #
+  # @return [true,false] Whether object should be treated as a complex object.
+  #
   def is_complex_object?( object )
     
     is_complex = true

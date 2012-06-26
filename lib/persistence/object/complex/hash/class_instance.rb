@@ -1,4 +1,7 @@
 
+###
+# Class methods for hash objects enabled with persistence capabilities.
+#
 module ::Persistence::Object::Complex::Hash::ClassInstance
 
   #############

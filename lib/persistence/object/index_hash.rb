@@ -1,4 +1,9 @@
 
+###
+# @private
+#
+# Internal helper module with common features for hashes that store indexes.
+#
 module ::Persistence::Object::IndexHash
 
   ###################

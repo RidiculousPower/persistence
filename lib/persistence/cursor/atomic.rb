@@ -44,7 +44,7 @@ module ::Persistence::Cursor::Atomic
   #
   def persist( key )
     
-    return super.attr_atomic!
+    return super.attrs_atomic!
 
   end
 
@@ -63,10 +63,10 @@ module ::Persistence::Cursor::Atomic
     first_values = super
     if first_values.is_a?( Array )
       first_values.each do |this_value|
-        this_value.attr_atomic!
+        this_value.attrs_atomic!
       end
     elsif first_values
-      first_values.attr_atomic!
+      first_values.attrs_atomic!
     end
     return first_values
   end
@@ -82,7 +82,7 @@ module ::Persistence::Cursor::Atomic
   #
   def current
     current_value = super
-    current_value.attr_atomic! if current_value
+    current_value.attrs_atomic! if current_value
     return current_value
   end
 
@@ -99,10 +99,10 @@ module ::Persistence::Cursor::Atomic
     next_values = super
     if next_values.is_a?( Array )
       next_values.each do |this_value|
-        this_value.attr_atomic!
+        this_value.attrs_atomic!
       end
     elsif next_values
-      next_values.attr_atomic!
+      next_values.attrs_atomic!
     end
     return next_values
   end

@@ -1,4 +1,7 @@
 
+###
+# Interface for Port implementation. Provided separately for easy overriding.
+#
 module ::Persistence::Port::PortInterface
 
   include ::Persistence::Object::Flat::File::FilePersistence
@@ -7,6 +10,12 @@ module ::Persistence::Port::PortInterface
   #  initialize  #
   ################
 
+  ###
+  #
+  # @param port_name Name to use to identify port instance.
+  #
+  # @param adapter_instance Adapter instance for which port instance will be operative.
+  #
   def initialize( port_name, adapter_instance )
 
     super() if defined?( super )
@@ -26,6 +35,11 @@ module ::Persistence::Port::PortInterface
   #  adapter  #
   #############
   
+  ###
+  # Retrieve parallel adapter instance.
+  #
+  # @return [Object] Adapter instance.
+  #
   def adapter
     
     unless @adapter
@@ -40,12 +54,22 @@ module ::Persistence::Port::PortInterface
   #  name  #
   ##########
 
+  ###
+  # @!attribute [reader] Name of bucket
+  #
+  # @return [Symbol,String] Name.
+  #
   attr_reader :name
 
   ############
   #  enable  #
   ############
-
+  
+  ###
+  # Enable port.
+  #
+  # @return self
+  #
   def enable
     @enabled = true
     @adapter.enable
@@ -55,27 +79,15 @@ module ::Persistence::Port::PortInterface
     return self
   end
 
-  ##############
-  #  enabled?  #
-  ##############
-
-  def enabled?
-    return @enabled
-  end
-
-  ###############
-  #  disabled?  #
-  ###############
-
-  def disabled?
-
-    return ! @enabled
-  end
-  
   #############
   #  disable  #
   #############
 
+  ###
+  # Disable port.
+  #
+  # @return self
+  #
   def disable
 
     @enabled = false
@@ -95,16 +107,53 @@ module ::Persistence::Port::PortInterface
 
   end
 
+  ##############
+  #  enabled?  #
+  ##############
+
+  ###
+  # Query whether port is enabled.
+  #
+  # @return [true,false] Whether port is enabled.
+  #
+  def enabled?
+    return @enabled
+  end
+
+  ###############
+  #  disabled?  #
+  ###############
+
+  ###
+  # Query whether port is disabled.
+  #
+  # @return [true,false] Whether port is disabled.
+  #
+  def disabled?
+
+    return ! @enabled
+  end
+  
   #############
   #  buckets  #
   #############
 
+  ###
+  # @!attribute [reader] Hash of buckets.
+  #
+  # @return [Hash{Symbol,String=>Persistence::Port::Bucket] Bucket Hash.
+  #
   attr_reader :buckets
   
   #######################
   #  register_instance  #
   #######################
   
+  ###
+  # @private
+  #
+  # Register an instance as using this port. This is used to disable references to port when port is disabled.
+  #
   def register_instance( instance )
     
     @instances.push( instance )
@@ -117,6 +166,11 @@ module ::Persistence::Port::PortInterface
   #  initialize_persistence_bucket_from_instance  #
   #################################################
 
+  ###
+  # @private
+  #
+  # Use a bucket instance that has already been created with this port.
+  #
   def initialize_persistence_bucket_from_instance( bucket_instance )
 
     @buckets[ bucket_instance.name.to_sym ] = bucket_instance
@@ -130,7 +184,14 @@ module ::Persistence::Port::PortInterface
   ########################
   #  persistence_bucket  #
   ########################
-
+  
+  ###
+  # Get persistence bucket configured for this port.
+  #
+  # @param bucket_name Name of bucket.
+  #
+  # @return [Persistence::Port::Bucket] Bucket instance.
+  #
   def persistence_bucket( bucket_name )
     
     bucket_instance = nil
@@ -149,22 +210,51 @@ module ::Persistence::Port::PortInterface
   #  get_bucket_name_for_object_id  #
   ###################################
   
+  ###
+  # @private
+  #
+  # Use Object persistence ID to retrieve the name of the bucket in which object is currently being stored.
+  #
+  # @param global_id Object persistence ID that owns indexed entries.
+  #
+  # @return [String] Name of bucket.
+  #
   def get_bucket_name_for_object_id( global_id )
+    
     return adapter.get_bucket_name_for_object_id( global_id )
+
   end
 
   #############################
   #  get_class_for_object_id  #
   #############################
   
+  ###
+  # @private
+  #
+  # Use Object persistence ID to retrieve the class of the object.
+  #
+  # @param global_id Object persistence ID that owns indexed entries.
+  #
+  # @return [String] Name of bucket.
+  #
   def get_class_for_object_id( global_id )
+
     return adapter.get_class_for_object_id( global_id )
+
   end
 
   #################
   #  put_object!  #
   #################
 
+  ###
+  # @private
+  #
+  # Persist object in persistence port. Object configuration will be used to determine where and how.
+  #
+  # @return [Object] Object persistence ID
+  #
   def put_object!( object )    
 
     return object.persistence_bucket.put_object!( object )
@@ -175,6 +265,15 @@ module ::Persistence::Port::PortInterface
   #  delete_object!  #
   ####################
 
+  ###
+  # @private
+  #
+  # Delete object in persistence port.
+  #
+  # @param global_id Object persistence ID.
+  #
+  # @return [String] Name of bucket.
+  #
   def delete_object!( global_id )
   
     persistence_hash_from_port = nil
@@ -193,6 +292,15 @@ module ::Persistence::Port::PortInterface
   #  get_object  #
   ################
 
+  ###
+  # @private
+  #
+  # Get object from persistence port.
+  #
+  # @param global_id Object persistence ID.
+  #
+  # @return [Object] Persisted object instance.
+  #
   def get_object( global_id )
         
     object = nil
@@ -211,6 +319,15 @@ module ::Persistence::Port::PortInterface
   #  get_flat_object  #
   #####################
 
+  ###
+  # @private
+  #
+  # Get flat object from persistence port.
+  #
+  # @param global_id Object persistence ID to persist from port.
+  #
+  # @return [Object] Persisted object instance.
+  #
   def get_flat_object( global_id )
     
     flat_object = nil

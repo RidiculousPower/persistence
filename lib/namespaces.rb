@@ -1,5 +1,7 @@
 
 module ::Persistence
+  ###
+  # Namespace module.
   module Adapter
     module Abstract
       module PrimaryKey
@@ -26,6 +28,8 @@ module ::Persistence
       end
       module Attributes
       end
+      ###
+      # Namespace module.
       module Index
         class AttributeIndex
         end
@@ -44,6 +48,8 @@ module ::Persistence
   end
   class Cursor
   end
+  ###
+  # Namespace module.
   module Exception
   end
 end
