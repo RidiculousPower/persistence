@@ -50,14 +50,32 @@ describe ::Persistence::Adapter do
     
     # persistence id
     bucket_cursor = @bucket.cursor
-    bucket_cursor.first.should == 0
+    
+    if bucket_cursor.supports_bucket_order?
+    
+      bucket_cursor.first.should == @objects[ 0 ].persistence_id
 
-    bucket_cursor.persisted?( @objects[ 0 ].persistence_id ).should == true
-    bucket_cursor.current.should == @objects[ 0 ].persistence_id
+      bucket_cursor.persisted?( @objects[ 0 ].persistence_id ).should == true
+      bucket_cursor.current.should == @objects[ 0 ].persistence_id
 
-    bucket_cursor.persisted?( @objects[ 3 ].persistence_id ).should == true
-    bucket_cursor.persisted?( @objects[ 2 ].persistence_id ).should == true
-
+      bucket_cursor.persisted?( @objects[ 3 ].persistence_id ).should == true
+      bucket_cursor.persisted?( @objects[ 2 ].persistence_id ).should == true
+      
+    else
+      
+      begin
+        has_object = false
+        while this_object_id = bucket_cursor.next
+          @objects.each do |this_object|
+            break if has_object = ( this_object.persistence_id == this_object_id )
+          end
+          has_object.should == true
+        end
+      rescue ::StopIteration
+      end
+      
+    end
+    
     bucket_cursor.close
 
   end
@@ -66,12 +84,30 @@ describe ::Persistence::Adapter do
     
     # index
     index_cursor = @index.cursor
-    index_cursor.first.should == @objects[ 0 ].persistence_id
+    
+    if index_cursor.supports_index_order?
+      
+      index_cursor.first.should == @objects[ 0 ].persistence_id
 
-    index_cursor.persisted?( @objects[ 0 ].attribute ).should == true
-    index_cursor.current.should == @objects[ 0 ].persistence_id
+      index_cursor.persisted?( @objects[ 0 ].attribute ).should == true
+      index_cursor.current.should == @objects[ 0 ].persistence_id
 
-    index_cursor.persisted?( @objects[ 1 ].attribute ).should == true
+      index_cursor.persisted?( @objects[ 1 ].attribute ).should == true
+
+    else
+      
+      begin
+        has_object = false
+        while this_object_id = index_cursor.next
+          @objects.each do |this_object|
+            break if has_object = ( this_object.persistence_id == this_object_id )
+          end
+          has_object.should == true
+        end
+      rescue ::StopIteration
+      end
+      
+    end
     
     index_cursor.close
     

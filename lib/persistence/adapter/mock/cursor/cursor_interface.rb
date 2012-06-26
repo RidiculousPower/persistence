@@ -25,6 +25,26 @@ module ::Persistence::Adapter::Mock::Cursor::CursorInterface
 
   end
   
+  ############################
+  #  supports_bucket_order?  #
+  ############################
+  
+  def supports_bucket_order?
+    
+    return true
+    
+  end
+
+  ###########################
+  #  supports_index_order?  #
+  ###########################
+
+  def supports_index_order?
+    
+    return true
+
+  end
+  
   ###########
   #  close  #
   ###########

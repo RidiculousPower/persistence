@@ -28,7 +28,7 @@ module ::Persistence::Cursor::CursorInterface
     end
     
   end
-
+  
   ###########
   #  close  #
   ###########
