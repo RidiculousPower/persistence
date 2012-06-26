@@ -4,15 +4,23 @@ Gem::Specification.new do |spec|
 
   spec.name                      =  'persistence'
   spec.rubyforge_project         =  'persistence'
-  spec.version                   =  '0.0.1.pre'
+  spec.version                   =  '0.0.1'
 
-  spec.summary                   =  "Persistence."
-  spec.description               =  "Coming soon."
+  spec.summary                   =  "Persistence layer designed to take advantage of Ruby's object model. The back-end is abstracted so that many different adapters can be created."
+  spec.description               =  "Store and retrieve Ruby objects without thinking twice about how they are stored. Designed for maximum in flexibility and intuitive interface."
 
   spec.authors                   =  [ 'Asher' ]
   spec.email                     =  'asher@ridiculouspower.com'
   spec.homepage                  =  'http://rubygems.org/gems/persistence'
 
-  spec.date                      =  Date.today.to_s
+  spec.add_dependency            'module-cluster'
+  spec.add_dependency            'cascading-configuration'
+
+  spec.date                      = Date.today.to_s
+
+  spec.files                     = Dir[ '{lib,spec}/**/*',
+                                        'README*', 
+                                        'LICENSE*',
+                                        'CHANGELOG*' ]
 
 end
