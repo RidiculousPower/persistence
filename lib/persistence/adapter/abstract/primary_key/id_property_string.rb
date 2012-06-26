@@ -6,7 +6,9 @@
 #  self.class::Delimiter in including adapter class.
 #
 module ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString
-
+  
+  Delimiter = '.'
+  
   ####################################
   #  primary_key_for_attribute_name  #
   ####################################
