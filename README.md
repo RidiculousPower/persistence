@@ -1,4 +1,4 @@
-# Cascading Configuration #
+# Persistence #
 
 http://rubygems.org/gems/persistence
 
