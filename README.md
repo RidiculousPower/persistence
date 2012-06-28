@@ -167,7 +167,7 @@ object.name = :some_name
 object.some_atomic_property = :some_value
 object.persist!( :name, object.name )
 
-object_copy = SomeClass.persist( :name, :some_value )
+object_copy = SomeClass.persist( :name, :some_name )
 ```
 
 ### Block Indexes ###
@@ -186,7 +186,7 @@ object.name = :some_name
 object.some_atomic_property = :some_value
 object.persist!
 
-object_copy = SomeClass.persist( :name, :some_value )
+object_copy = SomeClass.persist( :name, :some_name )
 ```
 
 ### Attribute Indexes ###
@@ -203,7 +203,7 @@ object.name = :some_name
 object.some_atomic_property = :some_value
 object.persist!
 
-object_copy = SomeClass.persist( :name, :some_value )
+object_copy = SomeClass.persist( :name, :some_name )
 ```
 
 ### Bucket Indexes ###
@@ -222,7 +222,7 @@ object.name = :some_name
 object.some_atomic_property = :some_value
 object.persist!
 
-object_copy = SomeClass.persist( :name, :some_value )
+object_copy = SomeClass.persist( :name, :some_name )
 ```
 
 # Outline of General Premises #

@@ -1,4 +1,8 @@
+require 'module-cluster'
 
+require 'cascading-configuration'
+#require_relative '../../ruby/cascading-configuration/lib/cascading-configuration.rb'
+ 
 basepath = 'persistence'
 
 files = [ ]

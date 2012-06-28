@@ -1,9 +1,4 @@
 
-require 'module-cluster'
-
-require 'cascading-configuration'
-#require_relative '../../ruby/cascading-configuration/lib/cascading-configuration.rb'
- 
 # namespaces that have to be declared ahead of time for proper load order
 require_relative './namespaces'
 
