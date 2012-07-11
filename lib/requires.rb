@@ -1,7 +1,8 @@
-require 'module-cluster'
 
-require 'cascading-configuration'
-#require_relative '../../ruby/cascading-configuration/lib/cascading-configuration.rb'
+begin ; require 'development' ; rescue ::LoadError ; end
+
+require 'module-cluster'
+require 'cascading_configuration'
  
 basepath = 'persistence'
 
@@ -146,5 +147,3 @@ files.concat [
 files.each do |this_file|
   require_relative( File.join( basepath, this_file ) + '.rb' )
 end
-
-require_relative( basepath + '.rb' )

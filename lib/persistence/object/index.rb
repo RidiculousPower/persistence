@@ -75,7 +75,6 @@ module ::Persistence::Object::Index
   # @return [true,false] Whether index permits duplicates.
   #
   attr_setting :permits_duplicates?
-  
   self.permits_duplicates = false
 
   ###################

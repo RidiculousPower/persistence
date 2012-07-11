@@ -6,12 +6,9 @@
 #
 module ::Persistence::Object::Complex
 
-  extend ModuleCluster::Define::ClusterCascades
+  extend ::Module::Cluster
   
-  include ::Persistence::Object::ObjectInstance
-  include_or_extend_cascades_prepend_extends ::Persistence::Object::ClassInstance
-  
-  include ::Persistence::Object::Complex::ObjectInstance
-  include_or_extend_cascades_prepend_extends ::Persistence::Object::Complex::ClassInstance
+  cluster( :persistence ).before_include_or_extend.cascade.extend( ::Persistence::Object::ClassInstance,
+                                                                   ::Persistence::Object::Complex::ClassInstance )
 
 end

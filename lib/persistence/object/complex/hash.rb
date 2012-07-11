@@ -4,11 +4,11 @@
 #
 module ::Persistence::Object::Complex::Hash
 
-  extend ModuleCluster::Define::ClusterCascades
+  extend ::Module::Cluster
   
   include ::Persistence::Object::Complex
   
   include ::Persistence::Object::Complex::Hash::ObjectInstance
-  include_or_extend_cascades_prepend_extends ::Persistence::Object::Complex::Hash::ClassInstance
+  cluster( :persistence ).before_include_or_extend.cascade.extend( ::Persistence::Object::Complex::Hash::ClassInstance )
 
 end

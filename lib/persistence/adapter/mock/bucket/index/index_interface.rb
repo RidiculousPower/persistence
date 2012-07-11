@@ -136,7 +136,7 @@ module ::Persistence::Adapter::Mock::Bucket::Index::IndexInterface
     
     index_value_or_keys = @reverse_keys.delete( global_id )
 
-    if index_value_or_keys.is_a?( Array )
+    if index_value_or_keys.is_a?( ::Array )
 
       index_value_or_keys.each do |this_key|
         @keys.delete( this_key )

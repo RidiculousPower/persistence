@@ -22,7 +22,7 @@ module ::Persistence::Port::PortInterface
     
     @buckets = { }
     
-    @instances = ::UniqueArray.new
+    @instances = ::Array::Unique.new
     
     @name    = port_name
     @adapter = adapter_instance

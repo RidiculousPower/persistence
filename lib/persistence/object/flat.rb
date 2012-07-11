@@ -6,12 +6,12 @@
 #
 module ::Persistence::Object::Flat
   
-  extend ModuleCluster::Define::ClusterCascades
+  extend ::Module::Cluster
   
   include ::Persistence::Object::ObjectInstance
-  include_or_extend_cascades_prepend_extends ::Persistence::Object::ClassInstance
-  
   include ::Persistence::Object::Flat::ObjectInstance
-  include_or_extend_cascades_prepend_extends ::Persistence::Object::Flat::ClassInstance
-
+  
+  cluster( :persistence ).before_include_or_extend.cascade.extend( ::Persistence::Object::ClassInstance,
+                                                                   ::Persistence::Object::Flat::ClassInstance )
+  
 end

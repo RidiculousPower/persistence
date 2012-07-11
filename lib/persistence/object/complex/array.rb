@@ -4,11 +4,12 @@
 #
 module ::Persistence::Object::Complex::Array
 
-  extend ModuleCluster::Define::ClusterCascades
+  extend ::Module::Cluster
   
   include ::Persistence::Object::Complex
-  
+    
   include ::Persistence::Object::Complex::Array::ObjectInstance
-  include_or_extend_cascades_prepend_extends ::Persistence::Object::Complex::Array::ClassInstance
+  cluster( :persistence ).before_include_or_extend.cascade.extend( ::Persistence::Object::
+                                                                     Complex::Array::ClassInstance )
 
 end

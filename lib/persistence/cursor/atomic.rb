@@ -61,7 +61,7 @@ module ::Persistence::Cursor::Atomic
   #
   def first( count = 1 )
     first_values = super
-    if first_values.is_a?( Array )
+    if first_values.is_a?( ::Array )
       first_values.each do |this_value|
         this_value.attrs_atomic!
       end
@@ -97,7 +97,7 @@ module ::Persistence::Cursor::Atomic
   #  
   def next( count = 1 )
     next_values = super
-    if next_values.is_a?( Array )
+    if next_values.is_a?( ::Array )
       next_values.each do |this_value|
         this_value.attrs_atomic!
       end

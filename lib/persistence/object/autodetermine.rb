@@ -13,10 +13,9 @@ module ::Persistence::Object::Autodetermine
   
   def self.extended( persistence_object_module )
 
-    persistence_object_module.extend ModuleCluster::Define::Block::ClassOrModuleOrInstance
-    
-    persistence_object_module.class_or_module_include do |class_or_module|
-
+    persistence_object_module.extend( ::Module::Cluster )
+    persistence_object_module.cluster( :persistence ).after_include( :class, :module ) do |class_or_module|
+      
       # two types of objects: complex and flat
       # * complex objects persist ivars
       # * flat objects persist themselves (no ivars)
@@ -65,7 +64,7 @@ module ::Persistence::Object::Autodetermine
 
     end
 
-    persistence_object_module.class_or_module_or_instance_extend do
+    persistence_object_module.cluster( :persistence ).before_extend( :class, :module ) do
       raise 'Persistence does not expect to be used without class-level support.'
     end
     
