@@ -14,11 +14,10 @@ module ::Persistence::Object::Flat::File::ClassInstance
 
     persistence_value = super
 
-    if persists_file_paths_as_objects?  and 
-       persistence_value.is_a?( ::Persistence::Object::Flat::File::Path )
+    if persistence_value.is_a?( ::Persistence::Object::Flat::File::Path )
 
-      persistence_value = File.open( persistence_value, 
-                                     persistence_value.mode || 'r' )
+      persistence_value = open( persistence_value, 
+                                persistence_value.mode || 'r' )
 
     end
     
@@ -66,31 +65,6 @@ module ::Persistence::Object::Flat::File::ClassInstance
     end
     
     return persists_files_by_path
-    
-  end
-
-  #####################################
-  #  persists_file_paths_as_objects?  #
-  #####################################
-
-  ###
-  # Query whether File paths should be persisted as objects (rather than by strings).
-  #   Lookup chain is: File instance, File class, Persistence::Port::Bucket instance, Persistence::Port instance,
-  #   Persistence singleton.
-  #
-  # @return [true,false] Whether files should be persisted as objects rather than as strings.
-  #
-  def persists_file_paths_as_objects?
-    
-    persists_file_paths_as_objects = nil
-    
-    persists_file_paths_as_objects = super
-    
-    if persists_file_paths_as_objects.nil?
-      persists_file_paths_as_objects = instance_persistence_bucket.persists_file_paths_as_objects?
-    end
-    
-    return persists_file_paths_as_objects
     
   end
 

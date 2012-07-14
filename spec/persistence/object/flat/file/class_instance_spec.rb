@@ -45,7 +45,6 @@ describe ::Persistence::Object::Flat::File::ClassInstance do
     instance_to_persist_two.persistence_port.put_object!( instance_to_persist_two )
     instance_to_persist_two.persistence_id.should_not == nil
 
-    ::Persistence::Object::Flat::File::ClassInstance::FileMock.instance_persistence_port.persist_file_paths_as_objects!
     persisted_file_two = ::Persistence::Object::Flat::File::ClassInstance::FileMock.persist( instance_to_persist_two.persistence_id )
     persisted_file_two.is_a?( File ).should == true
     persisted_file_two.path.should == instance_to_persist_two

@@ -29,7 +29,6 @@ module ::Persistence
   extend ::Persistence::Object::Flat::File::FilePersistence
   
   persist_files_by_path!
-  persist_file_paths_as_strings!
         
 end
 

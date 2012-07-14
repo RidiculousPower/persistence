@@ -379,24 +379,6 @@ module ::Persistence::Port::PortInterface
   end
 
   #####################################
-  #  persists_file_paths_as_objects?  #
-  #####################################
-
-  def persists_file_paths_as_objects?
-    
-    persists_file_paths_as_objects = nil
-    
-    persists_file_paths_as_objects = super
-    
-    if persists_file_paths_as_objects.nil?
-      persists_file_paths_as_objects = ::Persistence.persists_file_paths_as_objects?
-    end
-    
-    return persists_file_paths_as_objects
-    
-  end
-
-  #####################################
   #  persists_file_paths_as_strings?  #
   #####################################
 

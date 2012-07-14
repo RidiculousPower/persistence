@@ -26,12 +26,12 @@ describe ::Persistence::Object::Flat::File do
     end
     file_object = ::Persistence::Object::Flat::File::FileMock.open( __FILE__, 'r' )
     file_object.persistence_port.persist_files_by_path!
-    file_object.persistence_port.persist_file_paths_as_strings!
+    file_object.persistence_port.persist_file_paths_as_strings = true
     file_object.persist!
     
     persisted_file = ::Persistence::Object::Flat::File::FileMock.persist( file_object.persistence_id )
     persisted_file.should == file_object.path
-    file_object.persistence_port.persist_file_paths_as_objects!
+    file_object.persistence_port.persist_file_paths_as_strings = false
     persisted_file = ::Persistence::Object::Flat::File::FileMock.persist( file_object.persistence_id )
     persisted_file.path.should == file_object.path
     
@@ -43,12 +43,12 @@ describe ::Persistence::Object::Flat::File do
     ::Persistence::Object::Flat::File::FileMock.persist( file_object.persistence_id ).should == nil
 
     file_object.persistence_port.persist_files_by_path!
-    file_object.persistence_port.persist_file_paths_as_strings!
+    file_object.persistence_port.persist_file_paths_as_strings = true
     file_object.persist!( :explicit_index => __FILE__ )
     
     persisted_file = ::Persistence::Object::Flat::File::FileMock.persist( :explicit_index => __FILE__ )
     persisted_file.should == file_object.path
-    file_object.persistence_port.persist_file_paths_as_objects!
+    file_object.persistence_port.persist_file_paths_as_strings = false
     persisted_file = ::Persistence::Object::Flat::File::FileMock.persist( :explicit_index => __FILE__ )
     persisted_file.path.should == file_object.path
     
