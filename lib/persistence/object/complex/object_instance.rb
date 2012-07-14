@@ -132,7 +132,7 @@ module ::Persistence::Object::Complex::ObjectInstance
   
   def persist( *args )
 
-    index_instance, key, no_key = parse_args_for_index_value_no_value( args )
+    index_instance, key, no_key = parse_object_args_for_index_value_no_value( args )
 
     unless persistence_id
       if no_key

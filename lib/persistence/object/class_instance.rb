@@ -4,7 +4,7 @@
 #
 module ::Persistence::Object::ClassInstance
   
-  include ::Persistence::Object::ParsePersistenceArgs
+  include ::Persistence::Object::ParsePersistenceArgs::ClassInstance
 
   include ::CascadingConfiguration::Setting
   include ::CascadingConfiguration::Hash
@@ -220,7 +220,7 @@ module ::Persistence::Object::ClassInstance
 
     persistence_value = nil
 
-    index_instance, key, no_key = parse_args_for_index_value_no_value( args )
+    index_instance, key, no_key = parse_class_args_for_index_value_no_value( args )
 
     # if no key, open a cursor for a list
     if no_key
@@ -273,7 +273,7 @@ module ::Persistence::Object::ClassInstance
   #
   def persisted?( *args )
     
-    index, key, no_key = parse_args_for_index_value_no_value( args, true )
+    index, key, no_key = parse_class_args_for_index_value_no_value( args, true )
     
     global_id = index ? index.get_object_id( key ) : key
     
@@ -319,7 +319,7 @@ module ::Persistence::Object::ClassInstance
     
     # FIX - future: archive if appropriate (distinct from delete/etc. see draft spec)
     
-    index, key, no_key = parse_args_for_index_value_no_value( args, true )
+    index, key, no_key = parse_class_args_for_index_value_no_value( args, true )
 
     global_id = index ? index.get_object_id( key ) : key
 
@@ -349,7 +349,11 @@ module ::Persistence::Object::ClassInstance
   def index( index_name, ensure_exists = false )
      
      index_instance = nil
-
+     
+     if index_name.nil?
+       raise ::ArgumentError, 'Index name required but received nil.'
+     end
+     
      unless index_instance = indexes[ index_name ]
        if ensure_exists
          raise ::ArgumentError, 'No index found by name ' << index_name.to_s + '.'
@@ -716,7 +720,7 @@ module ::Persistence::Object::ClassInstance
     
     cursor_instance = nil
     
-    index_instance, key, no_key = parse_args_for_index_value_no_value( args )
+    index_instance, key, no_key = parse_class_args_for_index_value_no_value( args )
     
     if index_instance
       

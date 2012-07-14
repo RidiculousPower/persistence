@@ -36,6 +36,8 @@ files.concat [
 files.concat [
 
   'object/parse_persistence_args',
+  'object/parse_persistence_args/class_instance',
+  'object/parse_persistence_args/object_instance',
 
   'object/index',
   

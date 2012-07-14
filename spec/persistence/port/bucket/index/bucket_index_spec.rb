@@ -54,6 +54,7 @@ describe ::Persistence::Port::Bucket::BucketIndex do
     
     instance = ::Persistence::Port::Bucket::BucketIndex::Mock.new
     instance.some_value = :a_value
+
     bucket.put_object!( instance )
     bucket.index( :index ).index_object( instance )
     bucket.count.should == 1

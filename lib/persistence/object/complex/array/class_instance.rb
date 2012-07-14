@@ -10,7 +10,7 @@ module ::Persistence::Object::Complex::Array::ClassInstance
   
   def persist( *args )
     
-    index, key, no_key = parse_args_for_index_value_no_value( args, true )
+    index, key, no_key = parse_class_args_for_index_value_no_value( args, true )
     
     if index
       global_id = index.get_object_id( key )

@@ -4,7 +4,7 @@
 #
 module ::Persistence::Object::ObjectInstance
   
-  include ::Persistence::Object::ParsePersistenceArgs
+  include ::Persistence::Object::ParsePersistenceArgs::ObjectInstance
 
   include ::CascadingConfiguration::Setting
   include ::CascadingConfiguration::Hash
@@ -178,7 +178,7 @@ module ::Persistence::Object::ObjectInstance
   #
   def persist!( *args )
     
-    index_instance, key, no_key = parse_args_for_index_value_no_value( args, false )
+    index_instance, key, no_key = parse_object_args_for_index_value_no_value( args, false )
 
     # call super to ensure object is persisted
     unless persistence_port
@@ -197,9 +197,6 @@ module ::Persistence::Object::ObjectInstance
 
       # and make sure we have an index that permits arbitrary keys
       unless self.class.explicit_indexes[ index_instance.name ] == index_instance
-        puts 'indexes: ' + self.class.explicit_indexes.to_s
-        puts 'instance: ' + index_instance.to_s
-        puts 'name: ' + index_instance.name.to_s
         raise ::Persistence::Exception::ExplicitIndexRequired,
               'Index ' + index_instance.name.to_s + ' was not declared as an explicit index '
               'and thus does not permit arbitrary keys.'

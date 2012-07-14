@@ -5,6 +5,10 @@ describe Class do
   
   before :all do
     ::Persistence.enable_port( :mock, ::Persistence::Adapter::Mock.new )
+    class Class
+      include ::Persistence::Object::Flat
+      explicit_index :explicit_index
+    end
   end
   
   after :all do
@@ -12,10 +16,6 @@ describe Class do
   end
 
   it "can put a class object to a persistence port and get it back" do
-    class Class
-      include ::Persistence::Object::Flat
-      explicit_index :explicit_index
-    end
 
     class_object = Object
     class_object.persist!
@@ -25,6 +25,11 @@ describe Class do
     ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default ).remove_configuration( Class, :instance_persistence_port )
     ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default ).remove_configuration( Class, :instance_persistence_bucket )
 
+  end
+
+  it "can put a class object to a persistence port and get it back by indexed key" do
+
+    class_object = Object
     storage_key   = String
     class_object.persist!( :explicit_index, storage_key )
     Class.persist( :explicit_index, storage_key ).should == class_object
