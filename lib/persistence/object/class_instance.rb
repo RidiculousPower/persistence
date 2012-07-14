@@ -231,7 +231,7 @@ module ::Persistence::Object::ClassInstance
 
       global_id = index_instance ? index_instance.get_object_id( key ) : key
       
-      persistence_value = instance_persistence_port.get_object( global_id )
+      persistence_value = instance_persistence_bucket.get_object( global_id )
 
     end
     
@@ -356,7 +356,7 @@ module ::Persistence::Object::ClassInstance
      
      unless index_instance = indexes[ index_name ]
        if ensure_exists
-         raise ::ArgumentError, 'No index found by name ' << index_name.to_s + '.'
+         raise ::ArgumentError, 'No index found by name ' << index_name.to_s + ' for ' << to_s + '.'
        end
      end
          

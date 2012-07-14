@@ -12,13 +12,32 @@ module ::Persistence::Object::Flat::File::ClassInstance
   
   def persist( *args )
 
-    persistence_value = super
+    persistence_value = nil
 
-    if persistence_value.is_a?( ::Persistence::Object::Flat::File::Path )
+    index_instance, key, no_key = parse_class_args_for_index_value_no_value( args )
 
-      persistence_value = open( persistence_value, 
-                                persistence_value.mode || 'r' )
+    # if no key, open a cursor for a list
+    if no_key
 
+      persistence_value = ::Persistence::Cursor.new( instance_persistence_bucket, index_instance )
+
+    else
+
+      if global_id = index_instance ? index_instance.get_object_id( key ) : key
+      
+        persistence_value_hash = instance_persistence_bucket.get_object_hash( global_id )
+      
+        persistence_value = persistence_value_hash.first[ 1 ]
+      
+        if persistence_value.is_a?( ::Persistence::Object::Flat::File::Path ) and
+           ! persists_file_paths_as_strings?
+
+          persistence_value = open( persistence_value, persistence_value.mode || 'r' )
+
+        end
+
+      end
+      
     end
     
     return persistence_value

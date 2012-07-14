@@ -6,39 +6,36 @@ module ::Persistence::Object::Flat::File::ObjectInstance
 
   include ::Persistence::Object::Flat::File::FilePersistence
 
-  ##############
-  #  persist!  #
-  ##############
+  ##############################
+  #  persistence_hash_to_port  #
+  ##############################
+  
+  ###
+  # @private
+  #
+  # Generate hash representing object.
+  #
+  # @return [Hash] Hash representing information to reproduce object instance.
+  #
+  def persistence_hash_to_port
 
-  def persist!( *args )
-    
-    starting_pos = self.pos
-    
+    persistence_contents = nil
+
     # if we are persisting by file path
-    persistence_instance = nil
     if persists_files_by_path?
-      persistence_instance = ::Persistence::Object::Flat::File::Path.new( path )
+      persistence_contents = ::Persistence::Object::Flat::File::Path.new( path )
     # if we are persisting by file contents
     else
-      persistence_instance = ::Persistence::Object::Flat::File::Contents.new( self.readlines.join )
+      starting_pos = self.pos
+      persistence_contents = ::Persistence::Object::Flat::File::Contents.new( self.readlines.join )
+      # rewind file to wherever we started
+      self.pos = starting_pos
     end
 
-    persistence_instance.persistence_port   = persistence_port
-    persistence_instance.persistence_bucket = persistence_bucket
-    
-    # set new instance ID to current ID
-    persistence_instance.persistence_id = persistence_id
-    
-    persistence_instance.persist!( *args )
+    primary_key = persistence_bucket.primary_key_for_attribute_name( self, self.class.to_s )
 
-    # if we got ID from persist! on our instance set our own ID to it
-    self.persistence_id = persistence_instance.persistence_id
+    return { primary_key => persistence_contents }
 
-    # rewind file to wherever we started
-    self.pos = starting_pos
-
-    return self
-  
   end
 
   ################################

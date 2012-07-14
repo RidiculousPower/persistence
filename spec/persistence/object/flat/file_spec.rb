@@ -17,12 +17,8 @@ describe ::Persistence::Object::Flat::File do
       explicit_index :explicit_index
     end
     class ::Persistence::Object::Flat::File::Contents
-      include ::Persistence::Object::Flat
-      explicit_index :explicit_index
     end
     class ::Persistence::Object::Flat::File::Path
-      include ::Persistence::Object::Flat
-      explicit_index :explicit_index
     end
     file_object = ::Persistence::Object::Flat::File::FileMock.open( __FILE__, 'r' )
     file_object.persistence_port.persist_files_by_path!
@@ -41,11 +37,12 @@ describe ::Persistence::Object::Flat::File do
     persisted_file.should == file_object.readlines.join
     file_object.cease!
     ::Persistence::Object::Flat::File::FileMock.persist( file_object.persistence_id ).should == nil
-
+    
     file_object.persistence_port.persist_files_by_path!
     file_object.persistence_port.persist_file_paths_as_strings = true
     file_object.persist!( :explicit_index => __FILE__ )
     
+    file_object.persistence_port.persist_file_paths_as_strings = true
     persisted_file = ::Persistence::Object::Flat::File::FileMock.persist( :explicit_index => __FILE__ )
     persisted_file.should == file_object.path
     file_object.persistence_port.persist_file_paths_as_strings = false

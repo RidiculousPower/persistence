@@ -53,6 +53,32 @@ describe ::Persistence::Object do
       instance.persistence_id.nil?.should == false
       instance.persisted?.should == true
 
+      class ObjectIndexMock
+      
+        include ::Persistence::Object::Complex
+
+        explicit_index :explicit_index
+        
+      end
+
+      encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
+
+      ObjectIndexMock.count.should == 0
+      ObjectIndexMock.count( :explicit_index ).should == 0
+      instance_one = ObjectIndexMock.new.persist!
+      instance_one.persistence_id.should_not == nil
+      ObjectIndexMock.count.should == 1
+      ObjectIndexMock.count( :explicit_index ).should == 0
+      
+      instance_two = ObjectIndexMock.new.persist!( :explicit_index, :some_key )
+      instance_two.persistence_id.should_not == nil
+      ObjectIndexMock.count.should == 2
+      ObjectIndexMock.count( :explicit_index ).should == 1
+      persisted_instance_two_a = ObjectIndexMock.persist( instance_two.persistence_id )
+      persisted_instance_two_a.should == instance_two
+      persisted_instance_two_b = ObjectIndexMock.persist( :explicit_index, :some_key )
+      persisted_instance_two_b.should == instance_two
+
     end
   end
 
@@ -93,88 +119,6 @@ describe ::Persistence::Object do
       instance.persistence_id.should == nil
       ( instance.persistence_port.get_bucket_name_for_object_id( global_id ) ? true : false ).should == false
     
-    end
-  end
-
-  #####################
-  #  persistence_id=  #
-  #  persistence_id   #
-  #####################
-  
-  it 'can set and get a persistence id that uniquely identifies the object instance' do
-    module ::Persistence::Object::PersistenceIDMock
-
-      class ObjectInstance
-        include ::Persistence::Object::Complex
-      end
-      
-      instance = ObjectInstance.new
-
-      instance.persistence_id.should == nil
-      instance.persistence_id = 1
-      instance.persistence_id.should == 1
-      
-    end
-  end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  ################
-  #  persist!    #
-  #  persisted?  #
-  #  persist     #
-  ################
-
-  it 'can persist with an index and explicit key' do
-    module ::Persistence::Object::PersistMock
-    
-      class ObjectIndexMock
-      
-        include ::Persistence::Object::Complex
-
-        explicit_index :explicit_index
-        
-      end
-
-      encapsulation = ::CascadingConfiguration::Core::Encapsulation.encapsulation( :default )
-
-      ObjectIndexMock.count.should == 0
-      ObjectIndexMock.count( :explicit_index ).should == 0
-      instance_one = ObjectIndexMock.new.persist!
-      instance_one.persistence_id.should_not == nil
-      ObjectIndexMock.count.should == 1
-      ObjectIndexMock.count( :explicit_index ).should == 0
-      
-      instance_two = ObjectIndexMock.new.persist!( :explicit_index, :some_key )
-      instance_two.persistence_id.should_not == nil
-      ObjectIndexMock.count.should == 2
-      ObjectIndexMock.count( :explicit_index ).should == 1
-      persisted_instance_two_a = ObjectIndexMock.persist( instance_two.persistence_id )
-      persisted_instance_two_a.should == instance_two
-      persisted_instance_two_b = ObjectIndexMock.persist( :explicit_index, :some_key )
-      persisted_instance_two_b.should == instance_two
-    
-    end
-  end
-
-  ############
-  #  cease!  #
-  ############
-
-  it 'can persist with an index and explicit key' do
-    module ::Persistence::Object::CeaseMock
-
       class ObjectIndexMock
 
         include ::Persistence::Object::Complex
@@ -215,6 +159,28 @@ describe ::Persistence::Object do
     
     end
   end
+
+  #####################
+  #  persistence_id=  #
+  #  persistence_id   #
+  #####################
+  
+  it 'can set and get a persistence id that uniquely identifies the object instance' do
+    module ::Persistence::Object::PersistenceIDMock
+
+      class ObjectInstance
+        include ::Persistence::Object::Complex
+      end
+      
+      instance = ObjectInstance.new
+
+      instance.persistence_id.should == nil
+      instance.persistence_id = 1
+      instance.persistence_id.should == 1
+      
+    end
+  end
+
 
   ##################################
   #  instance_persistence_bucket   #

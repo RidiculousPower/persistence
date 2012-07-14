@@ -56,7 +56,10 @@ module ::Persistence::Object::Flat::File::FilePersistence
   #
   # @return [true,false] Whether files should be persisted as strings rather than as objects.
   #
-  attr_setting :persists_file_paths_as_strings? => :persist_file_paths_as_strings=
+  attr_setting :persists_file_paths_as_strings? => :persists_file_paths_as_strings=
+
+  alias_method( :persist_file_paths_as_strings?, :persists_file_paths_as_strings? )
+  alias_method( :persist_file_paths_as_strings=, :persists_file_paths_as_strings= )
 
   ############################
   #  persist_files_by_path!  #

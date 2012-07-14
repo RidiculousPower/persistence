@@ -23,7 +23,7 @@ module ::Persistence::Object::Flat::ClassInstance
 
       global_id = index_instance ? index_instance.get_object_id( key ) : key
       
-      persistence_value = instance_persistence_port.get_flat_object( global_id )
+      persistence_value = instance_persistence_bucket.get_flat_object( global_id )
 
     end
     

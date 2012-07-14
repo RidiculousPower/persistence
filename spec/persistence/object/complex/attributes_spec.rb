@@ -1199,13 +1199,6 @@ describe ::Persistence::Object::Complex::Attributes do
       atomic_attribute?( :some_other_reader ).should == false
       atomic_attribute?( :some_other_writer ).should == false
 
-      atomic_attribute?( :some_accessor ).should == true
-      atomic_attribute?( :some_reader ).should == true
-      atomic_attribute?( :some_writer ).should == true
-      atomic_attribute?( :some_other_accessor ).should == false
-      atomic_attribute?( :some_other_reader ).should == false
-      atomic_attribute?( :some_other_writer ).should == false
-
     end
   end
 
@@ -1221,13 +1214,6 @@ describe ::Persistence::Object::Complex::Attributes do
       atomic_attributes[ :some_writer ] = :writer
     end
     ::Persistence::Object::Complex::Attributes::AtomicAttributeAccessorQ.new.instance_eval do
-
-      atomic_attribute_accessor?( :some_accessor ).should == true
-      atomic_attribute_accessor?( :some_reader ).should == false
-      atomic_attribute_accessor?( :some_writer ).should == false
-      atomic_attribute_accessor?( :some_other_accessor ).should == false
-      atomic_attribute_accessor?( :some_other_reader ).should == false
-      atomic_attribute_accessor?( :some_other_writer ).should == false
 
       atomic_attribute_accessor?( :some_accessor ).should == true
       atomic_attribute_accessor?( :some_reader ).should == false
@@ -1259,13 +1245,6 @@ describe ::Persistence::Object::Complex::Attributes do
       atomic_attribute_reader?( :some_other_reader ).should == false
       atomic_attribute_reader?( :some_other_writer ).should == false
 
-      atomic_attribute_reader?( :some_accessor ).should == true
-      atomic_attribute_reader?( :some_reader ).should == true
-      atomic_attribute_reader?( :some_writer ).should == false
-      atomic_attribute_reader?( :some_other_accessor ).should == false
-      atomic_attribute_reader?( :some_other_reader ).should == false
-      atomic_attribute_reader?( :some_other_writer ).should == false
-
     end
   end
 
@@ -1289,13 +1268,6 @@ describe ::Persistence::Object::Complex::Attributes do
       atomic_attribute_writer?( :some_other_reader ).should == false
       atomic_attribute_writer?( :some_other_writer ).should == false
 
-      atomic_attribute_writer?( :some_accessor ).should == true
-      atomic_attribute_writer?( :some_reader ).should == false
-      atomic_attribute_writer?( :some_writer ).should == true
-      atomic_attribute_writer?( :some_other_accessor ).should == false
-      atomic_attribute_writer?( :some_other_reader ).should == false
-      atomic_attribute_writer?( :some_other_writer ).should == false
-
     end
   end
 
@@ -1311,13 +1283,7 @@ describe ::Persistence::Object::Complex::Attributes do
       atomic_attributes[ :some_writer ] = :writer
     end
     ::Persistence::Object::Complex::Attributes::AtomicAttributeStatus.new.instance_eval do
-
-      atomic_attribute_status( :some_accessor ).should == :accessor
-      atomic_attribute_status( :some_reader ).should == :reader
-      atomic_attribute_status( :some_writer ).should == :writer
-      atomic_attribute_status( :some_other_accessor ).should == nil
-      atomic_attribute_status( :some_other_reader ).should == nil
-      atomic_attribute_status( :some_other_writer ).should == nil
+$blah = true
 
       atomic_attribute_status( :some_accessor ).should == :accessor
       atomic_attribute_status( :some_reader ).should == :reader
@@ -1349,13 +1315,6 @@ describe ::Persistence::Object::Complex::Attributes do
       non_atomic_attribute?( :some_other_reader ).should == false
       non_atomic_attribute?( :some_other_writer ).should == false
 
-      non_atomic_attribute?( :some_accessor ).should == true
-      non_atomic_attribute?( :some_reader ).should == true
-      non_atomic_attribute?( :some_writer ).should == true
-      non_atomic_attribute?( :some_other_accessor ).should == false
-      non_atomic_attribute?( :some_other_reader ).should == false
-      non_atomic_attribute?( :some_other_writer ).should == false
-
     end
   end
 
@@ -1371,13 +1330,6 @@ describe ::Persistence::Object::Complex::Attributes do
       non_atomic_attributes[ :some_writer ] = :writer
     end
     ::Persistence::Object::Complex::Attributes::NonAtomicAttributeAccessorQ.new.instance_eval do
-
-      non_atomic_attribute_accessor?( :some_accessor ).should == true
-      non_atomic_attribute_accessor?( :some_reader ).should == false
-      non_atomic_attribute_accessor?( :some_writer ).should == false
-      non_atomic_attribute_accessor?( :some_other_accessor ).should == false
-      non_atomic_attribute_accessor?( :some_other_reader ).should == false
-      non_atomic_attribute_accessor?( :some_other_writer ).should == false
 
       non_atomic_attribute_accessor?( :some_accessor ).should == true
       non_atomic_attribute_accessor?( :some_reader ).should == false
@@ -1409,13 +1361,6 @@ describe ::Persistence::Object::Complex::Attributes do
       non_atomic_attribute_reader?( :some_other_reader ).should == false
       non_atomic_attribute_reader?( :some_other_writer ).should == false
 
-      non_atomic_attribute_reader?( :some_accessor ).should == true
-      non_atomic_attribute_reader?( :some_reader ).should == true
-      non_atomic_attribute_reader?( :some_writer ).should == false
-      non_atomic_attribute_reader?( :some_other_accessor ).should == false
-      non_atomic_attribute_reader?( :some_other_reader ).should == false
-      non_atomic_attribute_reader?( :some_other_writer ).should == false
-
     end
   end
 
@@ -1439,13 +1384,6 @@ describe ::Persistence::Object::Complex::Attributes do
       non_atomic_attribute_writer?( :some_other_reader ).should == false
       non_atomic_attribute_writer?( :some_other_writer ).should == false
 
-      non_atomic_attribute_writer?( :some_accessor ).should == true
-      non_atomic_attribute_writer?( :some_reader ).should == false
-      non_atomic_attribute_writer?( :some_writer ).should == true
-      non_atomic_attribute_writer?( :some_other_accessor ).should == false
-      non_atomic_attribute_writer?( :some_other_reader ).should == false
-      non_atomic_attribute_writer?( :some_other_writer ).should == false
-
     end
   end
 
@@ -1461,13 +1399,6 @@ describe ::Persistence::Object::Complex::Attributes do
       non_atomic_attributes[ :some_writer ] = :writer
     end
     ::Persistence::Object::Complex::Attributes::NonAtomicAttributeStatus.new.instance_eval do
-
-      non_atomic_attribute_status( :some_accessor ).should == :accessor
-      non_atomic_attribute_status( :some_reader ).should == :reader
-      non_atomic_attribute_status( :some_writer ).should == :writer
-      non_atomic_attribute_status( :some_other_accessor ).should == nil
-      non_atomic_attribute_status( :some_other_reader ).should == nil
-      non_atomic_attribute_status( :some_other_writer ).should == nil
 
       non_atomic_attribute_status( :some_accessor ).should == :accessor
       non_atomic_attribute_status( :some_reader ).should == :reader
@@ -1502,20 +1433,6 @@ describe ::Persistence::Object::Complex::Attributes do
       persistent_attribute?( :some_non_atomic_other_reader ).should == false
       persistent_attribute?( :some_non_atomic_other_writer ).should == false
 
-      persistent_attribute?( :some_non_atomic_accessor ).should == true
-      persistent_attribute?( :some_non_atomic_reader ).should == true
-      persistent_attribute?( :some_non_atomic_writer ).should == true
-      persistent_attribute?( :some_non_atomic_other_accessor ).should == false
-      persistent_attribute?( :some_non_atomic_other_reader ).should == false
-      persistent_attribute?( :some_non_atomic_other_writer ).should == false
-
-      persistent_attribute?( :some_atomic_accessor ).should == true
-      persistent_attribute?( :some_atomic_reader ).should == true
-      persistent_attribute?( :some_atomic_writer ).should == true
-      persistent_attribute?( :some_atomic_other_accessor ).should == false
-      persistent_attribute?( :some_atomic_other_reader ).should == false
-      persistent_attribute?( :some_atomic_other_writer ).should == false
-                                   
       persistent_attribute?( :some_atomic_accessor ).should == true
       persistent_attribute?( :some_atomic_reader ).should == true
       persistent_attribute?( :some_atomic_writer ).should == true
@@ -1548,20 +1465,6 @@ describe ::Persistence::Object::Complex::Attributes do
       persistent_attribute_accessor?( :some_non_atomic_other_accessor ).should == false
       persistent_attribute_accessor?( :some_non_atomic_other_reader ).should == false
       persistent_attribute_accessor?( :some_non_atomic_other_writer ).should == false
-
-      persistent_attribute_accessor?( :some_non_atomic_accessor ).should == true
-      persistent_attribute_accessor?( :some_non_atomic_reader ).should == false
-      persistent_attribute_accessor?( :some_non_atomic_writer ).should == false
-      persistent_attribute_accessor?( :some_non_atomic_other_accessor ).should == false
-      persistent_attribute_accessor?( :some_non_atomic_other_reader ).should == false
-      persistent_attribute_accessor?( :some_non_atomic_other_writer ).should == false
-
-      persistent_attribute_accessor?( :some_atomic_accessor ).should == true
-      persistent_attribute_accessor?( :some_atomic_reader ).should == false
-      persistent_attribute_accessor?( :some_atomic_writer ).should == false
-      persistent_attribute_accessor?( :some_atomic_other_accessor ).should == false
-      persistent_attribute_accessor?( :some_atomic_other_reader ).should == false
-      persistent_attribute_accessor?( :some_atomic_other_writer ).should == false
 
       persistent_attribute_accessor?( :some_atomic_accessor ).should == true
       persistent_attribute_accessor?( :some_atomic_reader ).should == false
@@ -1596,20 +1499,6 @@ describe ::Persistence::Object::Complex::Attributes do
       persistent_attribute_reader?( :some_non_atomic_other_reader ).should == false
       persistent_attribute_reader?( :some_non_atomic_other_writer ).should == false
 
-      persistent_attribute_reader?( :some_non_atomic_accessor ).should == true
-      persistent_attribute_reader?( :some_non_atomic_reader ).should == true
-      persistent_attribute_reader?( :some_non_atomic_writer ).should == false
-      persistent_attribute_reader?( :some_non_atomic_other_accessor ).should == false
-      persistent_attribute_reader?( :some_non_atomic_other_reader ).should == false
-      persistent_attribute_reader?( :some_non_atomic_other_writer ).should == false
-
-      persistent_attribute_reader?( :some_atomic_accessor ).should == true
-      persistent_attribute_reader?( :some_atomic_reader ).should == true
-      persistent_attribute_reader?( :some_atomic_writer ).should == false
-      persistent_attribute_reader?( :some_atomic_other_accessor ).should == false
-      persistent_attribute_reader?( :some_atomic_other_reader ).should == false
-      persistent_attribute_reader?( :some_atomic_other_writer ).should == false
-
       persistent_attribute_reader?( :some_atomic_accessor ).should == true
       persistent_attribute_reader?( :some_atomic_reader ).should == true
       persistent_attribute_reader?( :some_atomic_writer ).should == false
@@ -1643,20 +1532,6 @@ describe ::Persistence::Object::Complex::Attributes do
       persistent_attribute_writer?( :some_non_atomic_other_reader ).should == false
       persistent_attribute_writer?( :some_non_atomic_other_writer ).should == false
 
-      persistent_attribute_writer?( :some_non_atomic_accessor ).should == true
-      persistent_attribute_writer?( :some_non_atomic_reader ).should == false
-      persistent_attribute_writer?( :some_non_atomic_writer ).should == true
-      persistent_attribute_writer?( :some_non_atomic_other_accessor ).should == false
-      persistent_attribute_writer?( :some_non_atomic_other_reader ).should == false
-      persistent_attribute_writer?( :some_non_atomic_other_writer ).should == false
-
-      persistent_attribute_writer?( :some_atomic_accessor ).should == true
-      persistent_attribute_writer?( :some_atomic_reader ).should == false
-      persistent_attribute_writer?( :some_atomic_writer ).should == true
-      persistent_attribute_writer?( :some_atomic_other_accessor ).should == false
-      persistent_attribute_writer?( :some_atomic_other_reader ).should == false
-      persistent_attribute_writer?( :some_atomic_other_writer ).should == false
-
       persistent_attribute_writer?( :some_atomic_accessor ).should == true
       persistent_attribute_writer?( :some_atomic_reader ).should == false
       persistent_attribute_writer?( :some_atomic_writer ).should == true
@@ -1689,20 +1564,6 @@ describe ::Persistence::Object::Complex::Attributes do
       persistent_attribute_status( :some_non_atomic_other_accessor ).should == nil
       persistent_attribute_status( :some_non_atomic_other_reader ).should == nil
       persistent_attribute_status( :some_non_atomic_other_writer ).should == nil
-
-      persistent_attribute_status( :some_non_atomic_accessor ).should == :accessor
-      persistent_attribute_status( :some_non_atomic_reader ).should == :reader
-      persistent_attribute_status( :some_non_atomic_writer ).should == :writer
-      persistent_attribute_status( :some_non_atomic_other_accessor ).should == nil
-      persistent_attribute_status( :some_non_atomic_other_reader ).should == nil
-      persistent_attribute_status( :some_non_atomic_other_writer ).should == nil
-
-      persistent_attribute_status( :some_atomic_accessor ).should == :accessor
-      persistent_attribute_status( :some_atomic_reader ).should == :reader
-      persistent_attribute_status( :some_atomic_writer ).should == :writer
-      persistent_attribute_status( :some_atomic_other_accessor ).should == nil
-      persistent_attribute_status( :some_atomic_other_reader ).should == nil
-      persistent_attribute_status( :some_atomic_other_writer ).should == nil
 
       persistent_attribute_status( :some_atomic_accessor ).should == :accessor
       persistent_attribute_status( :some_atomic_reader ).should == :reader

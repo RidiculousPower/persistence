@@ -20,7 +20,7 @@ module ::Persistence::Object::Complex::Attributes::AttributesArray
   def has_attributes?( *attributes )
     
     has_attributes = false
-    
+
     attributes.each do |this_attribute|
       break unless has_attributes = include?( this_attribute )
     end

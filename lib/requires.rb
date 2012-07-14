@@ -50,9 +50,6 @@ files.concat [
 
   'object/flat/file/file_persistence',
   
-  'object/flat/file/contents',
-  'object/flat/file/path',
-  
   'object/flat/file/class_instance',
   'object/flat/file/object_instance',
   
@@ -87,8 +84,11 @@ files.concat [
   'object/flat',
   'object/flat/file',
 
+  'object/flat/file/contents',
+  'object/flat/file/path',
+  
   'object/autodetermine',
-  'object',
+  'object'
 
 ]
 
