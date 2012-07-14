@@ -118,7 +118,7 @@ module ::Persistence::Object::Complex::ObjectInstance
   #
   def index_attributes
 
-    attribute_indexes.each do |this_attribute_name, this_attribute_index|
+    self.class.attribute_indexes.each do |this_attribute_name, this_attribute_index|
       this_attribute_index.index_object( self )
     end
     
@@ -260,7 +260,7 @@ module ::Persistence::Object::Complex::ObjectInstance
       persistence_bucket.put_attribute!( self, attribute, value )
 
       if self.class.has_attribute_index?( attribute )
-         attribute_indexes[ attribute ].index_object( self )
+         self.class.attribute_indexes[ attribute ].index_object( self )
       end
       
     # otherwise get from object

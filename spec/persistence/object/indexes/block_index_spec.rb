@@ -14,7 +14,7 @@ describe ::Persistence::Object::Index::BlockIndex do
     class ::Persistence::Object::Index::BlockIndex::Mock
   
       include ::Persistence::Object::Complex
-      
+
       block_index :block_index do |key, value|
         return value
       end

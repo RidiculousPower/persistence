@@ -8,6 +8,9 @@ module ::Persistence::Object::Complex
 
   extend ::Module::Cluster
   
+  include ::Persistence::Object::ObjectInstance
+  include ::Persistence::Object::Complex::ObjectInstance
+  
   cluster( :persistence ).before_include_or_extend.cascade.extend( ::Persistence::Object::ClassInstance,
                                                                    ::Persistence::Object::Complex::ClassInstance )
 

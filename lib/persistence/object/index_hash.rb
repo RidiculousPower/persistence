@@ -32,7 +32,10 @@ module ::Persistence::Object::IndexHash
     end
     
     child_index_instance = index_instance.class.new( nil, parent_bucket, nil, nil, nil, index_instance )
-    
+    puts 'name: ' + index_name.to_s
+    puts 'configuration instance: ' + configuration_instance.__id__.to_s
+    puts 'parent explicit: ' + index_instance.to_s
+    puts 'child explicit: ' + child_index_instance.to_s
     return child_index_instance
     
   end

@@ -11,7 +11,8 @@ module ::Persistence::Object::Flat
   include ::Persistence::Object::ObjectInstance
   include ::Persistence::Object::Flat::ObjectInstance
   
-  cluster( :persistence ).before_include_or_extend.cascade.extend( ::Persistence::Object::ClassInstance,
-                                                                   ::Persistence::Object::Flat::ClassInstance )
+  cascade = cluster( :persistence ).before_include_or_extend.cascade
+  cascade.extend( ::Persistence::Object::ClassInstance,
+                  ::Persistence::Object::Flat::ClassInstance )
   
 end

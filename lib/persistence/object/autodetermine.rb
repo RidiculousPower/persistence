@@ -1,10 +1,11 @@
 
 ###
 # @private
-###
+#
 # Module used internally to extend Persistence and Persistence::Object to automatically determine what type of object
 #   (of types: Complex, Flat, Hash, Array, File) module is being included in, and to include the appropriate
 #   corresponding module branch.
+#
 module ::Persistence::Object::Autodetermine
 
   ###################
@@ -14,8 +15,9 @@ module ::Persistence::Object::Autodetermine
   def self.extended( persistence_object_module )
 
     persistence_object_module.extend( ::Module::Cluster )
-    persistence_object_module.cluster( :persistence ).after_include( :class, :module ) do |class_or_module|
-      
+    
+    persistence_object_module.cluster( :persistence ).after_include do |class_or_module|
+
       # two types of objects: complex and flat
       # * complex objects persist ivars
       # * flat objects persist themselves (no ivars)

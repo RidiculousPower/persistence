@@ -48,8 +48,14 @@ module ::Persistence::Object::ParsePersistenceArgs
         index_or_id = args[ 0 ]
         if index_or_id.is_a?( Symbol ) or
            index_or_id.is_a?( String )
-
-           index = indexes[ index_or_id ]
+           
+           case self
+             when ::Module
+               index = indexes[ index_or_id ]
+             else
+               index = self.class.indexes[ index_or_id ]
+           end
+           
            unless index
              raise ::Persistence::Exception::ExplicitIndexRequired,
                    'Explicit index ' + index_or_id.to_s + ' did not exist.'
@@ -68,7 +74,13 @@ module ::Persistence::Object::ParsePersistenceArgs
           if index_name.is_a?( Symbol ) or
              index_name.is_a?( String )
              
-            index = indexes[ index_name ]
+            case self
+              when ::Module
+                index = indexes[ index_name ]
+              else
+                index = self.class.indexes[ index_name ]
+            end
+
             unless index
               raise ::Persistence::Exception::ExplicitIndexRequired,
                     'Explicit index :' + index_name.to_s + ' did not exist.'
@@ -89,7 +101,18 @@ module ::Persistence::Object::ParsePersistenceArgs
 
         index_or_name = args[ 0 ]
 
-        index = index_or_name.respond_to?( :index_object ) ? index_or_name : indexes[ index_or_name ]
+        
+        if index_or_name.respond_to?( :index_object )
+          index = index_or_name
+        else
+          case self
+            when ::Module
+              index = indexes[ index_or_name ]
+            else
+              index = self.class.indexes[ index_or_name ]
+          end
+        end
+        
         key_value = args[ 1 ]
 
         if ! index and ! key_value

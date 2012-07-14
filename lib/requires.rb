@@ -1,7 +1,7 @@
 
 begin ; require 'development' ; rescue ::LoadError ; end
 
-require 'module-cluster'
+require 'module/cluster'
 require 'cascading_configuration'
  
 basepath = 'persistence'

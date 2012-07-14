@@ -196,7 +196,10 @@ module ::Persistence::Object::ObjectInstance
       end
 
       # and make sure we have an index that permits arbitrary keys
-      unless explicit_indexes[ index_instance.name ] == index_instance
+      unless self.class.explicit_indexes[ index_instance.name ] == index_instance
+        puts 'indexes: ' + self.class.explicit_indexes.to_s
+        puts 'instance: ' + index_instance.to_s
+        puts 'name: ' + index_instance.name.to_s
         raise ::Persistence::Exception::ExplicitIndexRequired,
               'Index ' + index_instance.name.to_s + ' was not declared as an explicit index '
               'and thus does not permit arbitrary keys.'
@@ -206,8 +209,8 @@ module ::Persistence::Object::ObjectInstance
       
     end
     
-    unless block_indexes.empty?
-      block_indexes.each do |this_index_name, this_block_index|
+    unless self.class.block_indexes.empty?
+      self.class.block_indexes.each do |this_index_name, this_block_index|
         this_block_index.index_object( self )
       end
     end
@@ -242,7 +245,7 @@ module ::Persistence::Object::ObjectInstance
   #
   def cease!
 
-    indexes.each do |this_index_name, this_index|
+    self.class.indexes.each do |this_index_name, this_index|
       this_index.delete_keys_for_object_id!( persistence_id )
     end
 
@@ -266,7 +269,7 @@ module ::Persistence::Object::ObjectInstance
   #
   # @return [CompositingHash{Symbol,String=>Persistence::Object::Index::ExplicitIndex}]
   #
-  attr_hash :explicit_indexes, ::Persistence::Object::IndexHash
+  attr_module_hash :explicit_indexes, ::Persistence::Object::IndexHash
   
   ###################
   #  block_indexes  #
@@ -280,7 +283,7 @@ module ::Persistence::Object::ObjectInstance
   #
   # @return [CompositingHash{Symbol,String=>Persistence::Object::Index::BlockIndex}]
   #
-  attr_hash :block_indexes, ::Persistence::Object::IndexHash
+  attr_module_hash :block_indexes, ::Persistence::Object::IndexHash
   
   #############
   #  indexes  #
@@ -294,16 +297,16 @@ module ::Persistence::Object::ObjectInstance
   #
   # @return [CompositingHash{Symbol,String=>Persistence::Object::Index}]
   #
-  attr_hash :indexes do
+  attr_module_hash :indexes do
     
     #======================#
     #  child_pre_set_hook  #
     #======================#
     
     def child_pre_set_hook( index_name, index_instance )
-      
+
       child_instance = nil
-      
+
       case index_instance
         when ::Persistence::Object::Index::ExplicitIndex
           child_instance = configuration_instance.explicit_indexes[ index_name ]

@@ -1,7 +1,7 @@
 
 ###
 # @private
-###
+#
 # Provides home directory and enable/disable methods to including adapter class instances.
 #
 module ::Persistence::Adapter::Abstract::EnableDisable
