@@ -10,6 +10,15 @@ Persistence layer designed to take advantage of Ruby's object model. The back-en
 
 Store and retrieve Ruby objects without thinking twice about how they are stored. Designed for maximum in flexibility and intuitive interface.
 
+
+
+
+the idea is to make data storage native to ruby
+to the OO interface that is already present
+b/c we already have a schema to describe data
+so why expect it to be declared again for the DB?
+so persistence focuses not on mapping but instead on describing how you want your object persistence to behave
+
 # Install #
 
 Persistence is broken into the core 'persistence' gem and additional adapters. Persistence provides the Ruby interface, adapters provide the storage implementation.
