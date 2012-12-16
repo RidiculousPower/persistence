@@ -180,7 +180,10 @@ describe ::Persistence::Adapter do
 		    #this is tricky, we are not sure it worked even if it passed. All we will do is check for exceptions.
 		  end
 		
-		  it "will not put attribute if attribute name is invalid"
+		  it "will not put attribute if attribute name is invalid" do 
+		  	bucket.put_attribute!( @object, primary_key, :garbage )
+		  	bucket.get_attribute( @object, primary_key ).should == nil
+		  end
 		
 		  ###################
 		  #  get_attribute  #
