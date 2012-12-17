@@ -45,72 +45,68 @@ describe ::Persistence::Adapter do
   #  current     #
   #  next        #
   ################
-
-  it 'it can return an object ID for persistence ID' do
-    
-    # persistence id
-    bucket_cursor = @bucket.cursor
-    
-    if bucket_cursor.supports_bucket_order?
-    
-      bucket_cursor.first.should == @objects[ 0 ].persistence_id
-
-      bucket_cursor.persisted?( @objects[ 0 ].persistence_id ).should == true
-      bucket_cursor.current.should == @objects[ 0 ].persistence_id
-
-      bucket_cursor.persisted?( @objects[ 3 ].persistence_id ).should == true
-      bucket_cursor.persisted?( @objects[ 2 ].persistence_id ).should == true
-      
-    else
-      
-      begin
-        has_object = false
-        while this_object_id = bucket_cursor.next
-          @objects.each do |this_object|
-            break if has_object = ( this_object.persistence_id == this_object_id )
-          end
-          has_object.should == true
-        end
-      rescue ::StopIteration
-      end
-      
+  before :each do 
+   @bucket_cursor = @bucket.cursor 
+   @index_cursor = @index.cursor 
+  end
+  
+  after :each do 
+  	@bucket_cursor.close
+  	@index_cursor.close
+  end
+  
+  context "#bucket_cursor"  do
+  	#it can return an object ID for persistence ID
+    context ".persisted?" do 
+	    it "should return true if cursor contains object" do 
+	    	5.times do |index |
+			    @bucket_cursor.persisted?( @objects[ index ].persistence_id ).should == true
+		    end
+	    end
+	    it "should return false if cursor does not contain object" do 
+	    	#assumes simple ID
+	    	@bucket_cursor.persisted?( @objects.count ).should == false
+	    end
     end
     
-    bucket_cursor.close
+    context ".first" do 
+	    it "should return the first object in the cursor" do 
+	    	@bucket_cursor.first.should == @objects[ 0 ].persistence_id
+	    end
+	  end
+
+		context ".current" do 	    
+	    it "should return the current object in the cursor" do 
+		  	@bucket_cursor.first
+		    @bucket_cursor.current.should == @objects[ 0 ].persistence_id
+	    end
+		end    
 
   end
   
-  it 'it can return an object ID for key' do
-    
-    # index
-    index_cursor = @index.cursor
-    
-    if index_cursor.supports_index_order?
-      
-      index_cursor.first.should == @objects[ 0 ].persistence_id
-
-      index_cursor.persisted?( @objects[ 0 ].attribute ).should == true
-      index_cursor.current.should == @objects[ 0 ].persistence_id
-
-      index_cursor.persisted?( @objects[ 1 ].attribute ).should == true
-
-    else
-      
-      begin
-        has_object = false
-        while this_object_id = index_cursor.next
-          @objects.each do |this_object|
-            break if has_object = ( this_object.persistence_id == this_object_id )
-          end
-          has_object.should == true
-        end
-      rescue ::StopIteration
-      end
-      
+  context "#index_cursor" do 
+    #it can return an object ID for key  
+    context ".persisted?" do 
+	    it "should return true if cursor contains object" do 
+	    	5.times do |index |
+		    	@index_cursor.persisted?( @objects[ index ].attribute ).should == true
+		    end
+		  end
+		  it "should return false if cursor does not contain object" do 
+	    	@index_cursor.persisted?( :garbage_attr ).should == false
+	    end
+		end
+    context ".first" do     
+	    it "should return the first object in the cursor" do 
+		    @index_cursor.first.should == @objects[ 0 ].persistence_id
+	    end
+	  end
+		context ".current" do     
+	    it "should return the current object in the cursor" do 
+		    @index_cursor.first
+		    @index_cursor.current.should == @objects[ 0 ].persistence_id
+	    end
     end
-    
-    index_cursor.close
-    
   end
 
 end
