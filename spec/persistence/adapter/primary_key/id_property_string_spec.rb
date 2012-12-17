@@ -7,14 +7,17 @@ describe ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString do
   #  primary_key_for_attribute_name  #
   ####################################
 
-  it 'can be used for a simple primary key' do
-    class ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString::Mock
+  before :all do 
+  	class ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString::Mock
       include ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString
       Delimiter = '-'
       def persistence_port
         return ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString::MockPort.new
       end
     end
+  end
+
+  it 'should persist with a simple primary key' do    
     ::Persistence::Adapter::Abstract::PrimaryKey::IDPropertyString::Mock.new.instance_eval do
       instance = Object.new
       instance.extend( ::CascadingConfiguration::Setting )
