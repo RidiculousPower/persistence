@@ -35,39 +35,81 @@ describe ::Persistence::Cursor do
   ###########
   #  count  #
   ###########
-
-  it 'can count' do
-    ::Persistence::Cursor::ClassInstanceMock.instance_persistence_bucket.count.should == 5
-    ::Persistence::Cursor::ClassInstanceMock.instance_persistence_bucket.count do |object|
-      object == @objects[ 2 ]
-    end.should == 1
-    ::Persistence::Cursor::ClassInstanceMock.instance_persistence_bucket.count( @objects[ 2 ] ).should == 1
-
-    ::Persistence::Cursor::ClassInstanceMock.count.should == 5
-    ::Persistence::Cursor::ClassInstanceMock.count do |object|
-      object == @objects[ 2 ]
-    end.should == 1
-    ::Persistence::Cursor::ClassInstanceMock.count( nil, @objects[ 2 ] ).should == 1
-  end
-
-  ###########
-  #  count  #
-  ###########
-
-  it 'can count' do
-
-    ::Persistence::Cursor::ClassInstanceMock.index( :key ).count.should == 5
-    ::Persistence::Cursor::ClassInstanceMock.index( :key ).count do |object|
-      object == @objects[ 2 ]
-    end.should == 1
-    ::Persistence::Cursor::ClassInstanceMock.index( :key ).count( @objects[ 2 ] ).should == 1
-
-    ::Persistence::Cursor::ClassInstanceMock.count( :key ).should == 5
-    ::Persistence::Cursor::ClassInstanceMock.count( :key ) do |object|
-      object == @objects[ 2 ]
-    end.should == 1
-    ::Persistence::Cursor::ClassInstanceMock.count( :key, @objects[ 2 ] ).should == 1
-  end
-
+  context "#count" do 
+  	
+  	context "on class" do 
+	  	it "should return the number of objects" do
+		    ::Persistence::Cursor::ClassInstanceMock.count.should == 5
+		  end
+		  
+		  it "should pass the objects as to a block and return the number of objects" do 
+		  	::Persistence::Cursor::ClassInstanceMock.count { |object| object }.should == 5
+		  end
+		  
+		  it "should pass the objects as to a block and the block should be able to filter the count" do 
+		  	::Persistence::Cursor::ClassInstanceMock.count { |object| object == @objects[ 2 ]  }.should == 1
+		  end
+	  end 
+	  	
+  	context "on instance_persistence_bucket" do 
+		  it 'should return the number of objects' do
+		    ::Persistence::Cursor::ClassInstanceMock.instance_persistence_bucket.count.should == 5
+		  end
+		  
+		  it "should pass the objects as to a block and return the number of objects" do 
+		  	::Persistence::Cursor::ClassInstanceMock.instance_persistence_bucket.count { |object| object }.should == 5
+		  end
+		  
+		  it "should pass the objects as to a block and the block should be able to filter the count" do 
+		    ::Persistence::Cursor::ClassInstanceMock.instance_persistence_bucket.count { |object|  object == @objects[ 2 ] }.should == 1
+		  end
+	
+	  end
+	  
+	  context "on index with key" do 
+			  it 'should return the number of objects' do
+			    ::Persistence::Cursor::ClassInstanceMock.index( :key ).count.should == 5
+			  end
+			  
+			  it "should pass the objects as to a block and return the number of objects" do 
+			    ::Persistence::Cursor::ClassInstanceMock.index( :key ).count { |object| object }.should == 5
+			  end
+			  
+			  it "should pass the objects as to a block and the block should be able to filter the count" do 
+			    ::Persistence::Cursor::ClassInstanceMock.index( :key ).count { |object| object == @objects[ 2 ] }.should == 1
+			  end
+			  
+		  end
+	  
+	  context "with arguments" do 
+	  	context "on class" do 
+			  it "with nil index, should test if object is in the bucket" do  
+			    ::Persistence::Cursor::ClassInstanceMock.count( nil, @objects[ 2 ] ).should == 1
+			  end
+			  context "with key" do 
+			  	it "should return the number of objects" do 
+				    ::Persistence::Cursor::ClassInstanceMock.count( :key ).should == 5
+				  end
+				  
+				  it "should pass the object(s) to a block and return the number of object(s)" do 
+				    ::Persistence::Cursor::ClassInstanceMock.count( :key ) { |object| object == @objects[ 2 ] }.should == 1
+				  end
+			  	it "and object should test if object is in the bucket" do 
+				    ::Persistence::Cursor::ClassInstanceMock.count( :key, @objects[ 2 ] ).should == 1
+				  end
+			  end
+		  end
+		  context "on instance_persistence_bucket" do
+			  it "should test if object is in the bucket" do 
+			    ::Persistence::Cursor::ClassInstanceMock.instance_persistence_bucket.count( @objects[ 2 ] ).should == 1
+			  end
+		  end
+		  context "on index with key" do 
+	  		it "should test if object is in the bucket" do 
+		  		::Persistence::Cursor::ClassInstanceMock.index( :key ).count( @objects[ 2 ] ).should == 1
+		    end
+			end
+	  end
+	 end
 end
 
