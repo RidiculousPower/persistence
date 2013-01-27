@@ -40,7 +40,7 @@ describe Bignum do
   end
 
   context "with index" do
-    it "should persist" do
+    it "should persist! and persist" do
       #can put a bignum number object to a persistence port and get it back via an indexed value
       storage_key   = 10**40
       @bignum_object.persist!( :explicit_index => storage_key )
